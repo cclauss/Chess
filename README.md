@@ -22,7 +22,7 @@ Things that it lacks:
 Things that work:
 - Move validation
 - Pretty printing
-- Save/load boards  (load works, save is being wonky)
+- Save/load boards
 - Read/write FEN strings
 - Algebraic chess notation
 

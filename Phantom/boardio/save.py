@@ -18,10 +18,8 @@ def save(board):
 
     newline = format.format(name=board.name, fen=board.fen_str())
     
-    with open(savefilename, 'r') as file_read:
-        with open(savefilename, 'w') as file_write:
-            lines = file_read.readlines().append(newline)
-            file_write.writelines(lines)
+    with open(savefilename, 'a') as f:
+        f.write(newline)
     
-    os.chdir(orig_dir)
+    os.chdir(origdir)
 

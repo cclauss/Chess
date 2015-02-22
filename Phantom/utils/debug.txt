@@ -226,3 +226,5 @@ fen_str called with args ((<Chess.core.board.Board at 0x743e76c>,), {})
 fen_str returned 1r1qk1nr/p1pbppbp/1p6/8/P7/1P6/2PPNPPP/RNQ1KB1R w KQk - 0 5
 fen_str called with args ((<Chess.core.board.Board at 0x477bbcc>,), {})
 fen_str returned 1r1qk1nr/p1pbppbp/1p6/8/P7/1P6/2PPNPPP/RNQ1KB1R w KQk - 0 5
+fen_str called with args ((<Phantom.core.board.Board at 0x47fc38c>,), {})
+fen_str returned rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
