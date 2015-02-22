@@ -1,0 +1,55 @@
+# -*- coding: utf-8 -*-
+# R0 20150215T2214
+def top(): pass
+#                                           IMPLEMENTATION DETAILS
+
+
+# some common abbreviations used in this file:
+# in - the file, (function)|(class & method) the detail is located in
+# q - the question/problem
+# cs - the currently implemented solution
+
+def detail_0(): return """
+–––––––––––––––––––
+ in: Chess.core.board.Board.__getitem__
+ q: if there is more than one item that matches the specified parameter,
+    should they all be returned in a list OR simply the first one found?
+    Further, should there be a decision-making process on which one to
+    return if there are more than one?
+ cs: return a list of them all with no ordering
+"""
+
+def detail_1(): return """
+–––––––––––––––––––
+ in Chess.core.board.Board.__getitem__
+ q: what should __getitem__ search?  The board's list of pieces for a coord or the board's list of tiles?
+ cs: Board.pieces for a specified coord
+"""
+
+def detail_2(): return """
+–––––––––––––––––––
+ in: Chess.core.coord.vectored_lists
+ q: should the list gens include the position of the piece itself?
+ cs: no
+"""
+
+def detail_3(): return """
+–––––––––––––––––––
+ in: Chess.core.coord.vectored_lists
+ q: should the lists returned include instances of the Coord class or the Tile class?
+ cs: Coord
+"""
+
+def detail_4(): return """
+–––––––––––––––––––
+ in: Chess.boardio.save
+ q: what should the format be to save a game to a file?
+ cs: games are written to a single file containing the fields
+     'name of the game': 'game FEN string'
+"""
+
+def detail_5(): return """
+–––––––––––––––––––
+ in: 
+
+def bottom(): pass
