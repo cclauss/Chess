@@ -16,9 +16,7 @@ files = [os.path.join(folder, format.format(color, type))
 img_names = {}
 for file in files:
     name = os.path.split(file)[1]
-    im = Image.open(file).convert('RGBA')
-    im.show()
-    img = scene.load_pil_image(im)
+    img = scene.load_image_file(file)
     img_names.update({name: img})
 
 if __name__ == '__main__':

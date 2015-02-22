@@ -5,7 +5,6 @@
 from scene import *
 from Phantom.core.coord.point import Coord, bounds
 from Phantom.core.game_class import ChessGame
-from Phantom.gui_pythonista.sprites import img_names
 from Phantom.constants import *
 import sys
 
@@ -42,6 +41,8 @@ class ChessMainScreen (Scene):
         self.selected = Coord(float('nan'), float('nan'))
         self.target = self.selected
         self.err = None
+        from Phantom.gui_pythonista.sprites import img_names
+        self.img_names = img_names
     
     def did_err(self, e):
         self.err = sys.exc_info()
@@ -71,7 +72,7 @@ class ChessMainScreen (Scene):
         fill(1, 1, 1)
         for piece in self.game.board.pieces:
             pos = piece.coord.as_screen()
-            img = img_names[piece.pythonista_gui_imgname]
+            img = self.img_names[piece.pythonista_gui_imgname]
             image(img, pos.x, pos.y, scale_factor, scale_factor)
         
 
