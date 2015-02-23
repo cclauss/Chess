@@ -11,7 +11,7 @@ class Cfg (object):
         self.coord_mode = kwargs.get('coord_mode', 'chess')
         self.move_limit = kwargs.get('move_limit', 50)
         self.disp_sqrs = kwargs.get('disp_sqrs', True)
-        self.do_checkmate = kwargs.get('do_checkmate', True)
+        self.do_checkmate = kwargs.get('do_checkmate', False)
         self.use_unicode = kwargs.get('use_unicode', True)
         self.board = None
         self.game = None

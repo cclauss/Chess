@@ -21,3 +21,17 @@ from Phantom.boardio.load import loadgame, listgames
 from Phantom.boardio.boardcfg import Cfg
 import Phantom.boardio as boardio
 
+from Phantom.ai.pos_eval.advanced import pos_eval_advanced
+from Phantom.ai.pos_eval.basic import pos_eval_basic
+from Phantom.ai.phases import Phase
+from Phantom.ai.tree.leaves import Node
+from Phantom.ai.prediction.alphabeta import alpha_beta_value
+from Phantom.ai.prediction.minimax import minimax_value
+#from Phanotm.ai.tree.generate import spawn_tree  # not yet implemented
+import Phantom.ai as ai
+
+from Phantom.functions import dist, round_down, round_up
+import Phantom.functions as functions
+
+import Phantom.constants as constants
+

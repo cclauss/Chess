@@ -10,9 +10,10 @@ import sys
 
 class ChessMainScreen (Scene):
     
-    def __init__(self, game):
+    def __init__(self, game, main=None):
         self.game = game
         self.tmp_t = 0
+        self.parent = main  # Phantom.gui_pythonista.main_scene.MultiScene object
     
     def setup(self):
         self.highlight = self.game.board.cfg.highlight
@@ -22,7 +23,19 @@ class ChessMainScreen (Scene):
         self.selected = Coord(float('nan'), float('nan'))
         self.target = self.selected
         self.err = None
-        from Phantom.gui_pythonista.sprites import img_names
+        import os
+        folder = 'imgs'
+        format = 'Chess set images {} {}.jpg'
+
+        files = [os.path.join(folder, format.format(color, type))
+                 for type in ('pawn', 'rook', 'queen', 'king', 'bishop', 'knight')
+                 for color in ('black', 'white')]
+
+        img_names = {}
+        for file in files:
+            name = os.path.split(file)[1]
+            img = scene.load_image_file(file)
+            img_names.update({name: img})
         self.img_names = img_names
     
     def did_err(self, e):
@@ -52,9 +65,11 @@ class ChessMainScreen (Scene):
         background(0, 0, 0)
         fill(1, 1, 1)
         for piece in self.game.board.pieces:
+            tint(1, 1, 1, 0.5)
             pos = piece.coord.as_screen()
             img = self.img_names[piece.pythonista_gui_imgname]
             image(img, pos.x, pos.y, scale_factor, scale_factor)
+            tint(1, 1, 1, 1)
         for tile in self.game.board.tiles:
             color = tile.color.tilecolor
             color += (0.3,)  # alpha value

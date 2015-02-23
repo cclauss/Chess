@@ -3,8 +3,6 @@
 """To start a new game, simply run this file."""
 
 from Phantom.core.game_class import ChessGame
-from Phantom.core.board import load
-from Phantom.boardio.load import listgames
 from Phantom.docs.documentation import program_use
 
 game = ChessGame()

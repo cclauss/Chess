@@ -29,4 +29,16 @@ class MultiScene (Scene):
         self.active_scene.touch_moved(touch)
     def touch_ended(self, touch):
         self.active_scene.touch_ended(touch)
+    
+    def set_main_scene(self, s):
+        self.main_scene = s
+    
+    def set_load_scene(self, s):
+        self.load_scene = s
+    
+    def set_dbg_scene(self, s):
+        self.dbg_scene = s
+    
+    def did_begin(self):
+        self.switch_scene(self.main_scene)
 
