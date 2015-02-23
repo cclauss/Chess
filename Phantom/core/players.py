@@ -79,8 +79,14 @@ class Player (object):
         return self.color == self.board.turn
     
     def add_owned_piece(self, p):
+        wasfrozen = False
+        if self.isFrozen:
+            wasfrozen = True
+            self.unfreeze()
         self.owned_pieces.add(p)
         self._update()
+        if wasfrozen:
+            self.freeze()
         
     def freeze(self):
         self.isFrozen = True

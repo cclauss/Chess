@@ -27,7 +27,7 @@ class Tile (object):
     def __init__(self, pos, color):
         self.x = pos.x
         self.y = pos.y
-        self.color = color
+        self.color = Side(color)
         self.coord = pos
         self.char = d_white_space if self.color == 'white' else d_black_space
 
@@ -172,9 +172,15 @@ class Board (object):
                 elif y in range(0, 8) and x in (-1, 8):
                     char = str(y+1)
                     if y == 0 and self.turn == 'white' and x == 8:
-                        char += ' {}'.format(turn_indicator)
+                        if self.cfg.use_unicode:
+                            char += ' {}'.format(d_turn_indicator)
+                        else:
+                            char += ' {}'.format(c_turn_indicator)
                     elif y == 7 and self.turn == 'black' and x == 8:
-                        char += ' {}'.format(turn_indicator)
+                        if self.cfg.use_unicode:
+                            char += ' {}'.format(d_turn_indicator)
+                        else:
+                            char += ' {}'.format(c_turn_indicator)
                 elif x in (-1, 8):
                     char = ' '
                 else:
@@ -372,11 +378,18 @@ class Board (object):
     
     # TODO: make this work
     def is_checkmate(self):
+        if not self.cfg.do_checkmate:
+            return False
         return False
     
     # TODO: make this work
     def will_checkmate(self, p1, p2):
-        return False
+        if not self.cfg.do_checkmate:
+            return False
+        test = Board(fen=self.fen_str())
+        test.move(p1, p2)
+        test.cfg.do_checkmate = self.cfg.do_checkmate
+        return test.is_checkmate()
 
 if __name__ == '__main__':
     b = Board()

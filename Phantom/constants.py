@@ -16,26 +16,13 @@ except ImportError:
 ############################################### USER SETTINGS #####################################################
 ###################################################################################################################
 
-# Whether to run the scene or play a text-based game
-# Setting the debug level to >3 automatically disables
-# this
-gui = True
+# Debug level
+# This can make the program slow
+# (just kidding I havent inserted many debugging statements yet)
+debug = 7
 
-# Override the auto-disabling gui
-# Depending on the debugger level, this can become EXTREMELY slow
-# and/or crash the app  (I don't recommend using this option)
-force_gui = False
-
-# debugging level, select from range(0, 8)
-# this can make things slow
-# (just kidding, I havent inserted many debugging statements yet)
-debug = 1
-
-# Whether to load from the previous layout
-loading = False
-
-# Whether to record moves and save for future
-recording = True
+# Use the unicode prettyprinter or an ASCII prettyprinter
+use_unicode = True
 
 # Adjusts the scale of the board in the GUI
 screen_height = 768  # pixels
@@ -118,6 +105,9 @@ c_white_queen = 'Q'
 c_black_queen = 'q'
 c_white_king = 'K'
 c_black_king = 'k'
+c_white_space = ' '
+c_black_space = '.'
+c_turn_indicator = '<'
 
 d_white_pawn = u'\u2659'
 d_black_pawn = u'\u265f'
@@ -133,8 +123,7 @@ d_white_king = u'\u2654'
 d_black_king = u'\u265a'
 d_white_space = u'\u25e6'  # hollow bullet
 d_black_space = u'\u2022'  # solid bullet
-
-turn_indicator = u'\u25c0'
+d_turn_indicator = u'\u25c0'
 
 opening_fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
 fen_rank_split = '/'

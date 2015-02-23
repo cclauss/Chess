@@ -49,5 +49,5 @@ def alpha_beta_value(node, depth, alpha, beta, maximizing):
 
 
 # Initial call would be 
-# `alpha_beta_value(root, Chess.ai.settings.maxdepth, float('-inf'), float(inf), True)`
+# `alpha_beta_value(root, Chess.ai.settings.maxdepth, float('-inf'), float('inf'), True)`
 

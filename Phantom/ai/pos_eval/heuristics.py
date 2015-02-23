@@ -29,6 +29,7 @@ print "Final score:", score
 from Phantom.ai.phases import Phase
 from Phantom.core.coord.point import Coord
 from Phantom.constants import *
+from Phantom.utils.debug import call_trace
 
 board_north_edge = [Coord(x, 7) for x in range(grid_width)]
 board_south_edge = [Coord(x, 0) for x in range(grid_width)]
@@ -36,17 +37,20 @@ board_east_edge = [Coord(7, y) for y in range(grid_height)]
 board_west_edge = [Coord(0, y) for y in range(grid_height)]
 board_rim = board_north_edge + board_south_edge + board_east_edge + board_west_edge
 
-a_file = [Coord(0, y) for y in range(grid_height)]
-b_file = [Coord(1, y) for y in range(grid_height)]
-c_file = [Coord(2, y) for y in range(grid_height)]
-d_file = [Coord(3, y) for y in range(grid_height)]
-e_file = [Coord(4, y) for y in range(grid_height)]
-f_file = [Coord(5, y) for y in range(grid_height)]
-g_file = [Coord(6, y) for y in range(grid_height)]
-h_file = [Coord(7, y) for y in range(grid_height)]
+files = dict(
+a = [Coord(0, y) for y in range(grid_height)],
+b = [Coord(1, y) for y in range(grid_height)],
+c = [Coord(2, y) for y in range(grid_height)],
+d = [Coord(3, y) for y in range(grid_height)],
+e = [Coord(4, y) for y in range(grid_height)],
+f = [Coord(5, y) for y in range(grid_height)],
+g = [Coord(6, y) for y in range(grid_height)],
+h = [Coord(7, y) for y in range(grid_height)],
+)
 
 all_rules = []
 
+@call_trace(3)
 def knight_on_edge(board):
     from Phantom.ai.settings import knight_on_edge_score
     score = 0
@@ -60,6 +64,7 @@ def knight_on_edge(board):
     return score
 all_rules.append(knight_on_edge)
 
+@call_trace(3)
 def developed_pieces(board):
     from Phantom.ai.settings import developed_scores
     score = 0
@@ -72,6 +77,7 @@ def developed_pieces(board):
     return score
 all_rules.append(developed_pieces)
 
+@call_trace(3)
 def advanced_pawns(board):
     from Phantom.ai.settings import advanced_pawn_mul
     from Phantom.constants import grid_height
@@ -87,6 +93,7 @@ def advanced_pawns(board):
     return score
 all_rules.append(advanced_pawns)
 
+@call_trace(3)
 def rate_kings(board):
     from Phantom.ai.settings import king_endgame
     from Phantom.ai.phases import Phase
@@ -101,6 +108,7 @@ def rate_kings(board):
     return score
 all_rules.append(rate_kings)
 
+@call_trace(3)
 def bishop_pair(board):
     from Phantom.ai.settings import bishop_pair_bonus
     score = 0
@@ -118,6 +126,7 @@ def bishop_pair(board):
     return score
 all_rules.append(bishop_pair)
 
+@call_trace(3)
 def has_castled(board):
     from Phantom.ai.settings import castle_opening_bonus, castle_midgame_bonus, castle_endgame_bonus
     from Phantom.ai.phases import Phase
@@ -150,6 +159,7 @@ def has_castled(board):
     return score
 all_rules.append(has_castled)
 
+@call_trace(3)
 def pawn_structure(board):
     score = 0
     from Phantom.ai.settings import (doubled_pawn, tripled_pawn, isolated_pawn,
@@ -175,5 +185,38 @@ def pawn_structure(board):
         if pawn.coord.y <= 2:
             score -= passed_pawn
     
-    
+    for pawn in white_pawns:
+        xf = files[pawn.coord.as_chess()[0]]
+        for c in xf:
+            p = pawn.owner.board[c]
+            if (p is None) or (p is pawn):
+                continue
+            if (p.ptype == 'pawn') and (p.color == 'white'):
+                if p.coord.y == (pawn.coord.y - 1):
+                    score += doubled_pawn
+    for pawn in black_pawns:
+        xf = files[pawn.coord.as_chess()[0]]
+        for c in xf:
+            p = pawn.owner.board[c]
+            if (p is None) or (p is pawn):
+                continue
+            if (p.ptype == 'pawn') and (p.color == 'black'):
+                if p.coord.y == (pawn.coord.y - 1):
+                    score += doubled_pawn
+    return score
+all_rules.append(pawn_structure)
+
+@call_trace(3)
+def mobility(board):
+    from Phantom.ai.settings import mobility_mul
+    score = 0
+    for piece in board.pieces:
+        if piece.color == 'white':
+            score += mobility_mul * len(piece.valid)
+        elif piece.color == 'black':
+            score -= mobility_mul * len(piece.valid)
+    return score
+# Currently this is not added to the rules list due to the fact that it takes ***forever***
+# It also has a habit of causing recursion errors
+#all_rules.append(mobility)
 

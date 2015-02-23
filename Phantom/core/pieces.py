@@ -30,7 +30,10 @@ class ChessPiece (object):
         self.firstmove = True
         self._uuid = uuid.uuid4()
         self.fen_char = eval('c_{}_{}'.format(self.color.color, self.ptype))
-        self.disp_char = eval('d_{}_{}'.format(self.color.color, self.ptype))
+        if use_unicode:
+            self.disp_char = eval('d_{}_{}'.format(self.color.color, self.ptype))
+        else:
+            self.disp_char = self.fen_char
         self.pythonista_gui_imgname = 'Chess set images {} {}.jpg'.format(self.color.color, self.ptype)
         if owner:
             self.owner = None  # Set the attribute before it can be checked in set_owner()

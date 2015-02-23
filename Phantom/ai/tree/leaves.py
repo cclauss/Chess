@@ -41,25 +41,4 @@ class Node (object):
     
     def set_child(self, c):
         self.children.append(c)
-    
-    def spawn_children(self):
-        if self.is_terminal:
-            return
-        spawning_depth = self.spawndepth
-        num_spawn = window
-        for n in xrange(window):
-            variation = self.get_new_variation()
-            vfen = variation.fen_str()
-            if vfen in self.used_layouts:
-                continue
-            else:
-                newnode = Node(spawning_depth, False, Board(fen=vfen))
-                self.children.append(newnode)
-    
-    def get_new_variation(self):
-        from Phantom.ai.basic.mover import make_random_move
-        fen = self.board.fen_str()
-        new = make_random_move(self.board)
-        self.board = Board(fen=fen)
-        return new
 

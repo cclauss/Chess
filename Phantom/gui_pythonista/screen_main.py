@@ -8,25 +8,6 @@ from Phantom.core.game_class import ChessGame
 from Phantom.constants import *
 import sys
 
-import scene
-import Image
-import os
-
-folder = 'imgs'
-format = 'Chess set images {} {}.jpg'
-
-files = [os.path.join(folder, format.format(color, type))
-         for type in ('pawn', 'rook', 'queen', 'king', 'bishop', 'knight')
-         for color in ('black', 'white')]
-
-img_names = {}
-for file in files:
-    name = os.path.split(file)[1]
-    im = Image.open(file).convert('RGBA')
-    im.show()
-    img = scene.load_pil_image(im)
-    img_names.update({name: img})
-
 class ChessMainScreen (Scene):
     
     def __init__(self, game):
@@ -74,6 +55,12 @@ class ChessMainScreen (Scene):
             pos = piece.coord.as_screen()
             img = self.img_names[piece.pythonista_gui_imgname]
             image(img, pos.x, pos.y, scale_factor, scale_factor)
+        for tile in self.game.board.tiles:
+            color = tile.color.tilecolor
+            pos = piece.coord.as_screen()
+            fill(*color)
+            rect(scale_factor, scale_factor, pos.x, pos.y)
+            fill(1, 1, 1)
         
 
 run(ChessMainScreen(ChessGame()))

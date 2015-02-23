@@ -41,4 +41,7 @@ pawn_ram = -75.0
 isolated_pawn = -100.0
 eight_pawns = -75
 passed_pawn = 250.0
+mobility_mul = 10.0  # although move moves are better, most possible moves in chess are pointless
+bishop_open_bonus = -170.0
+knight_closed_bonus = 40.0
 

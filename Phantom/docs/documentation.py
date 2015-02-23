@@ -182,6 +182,65 @@ def why_freeze(): return '''
     the set of pieces to a list before the AI can make a choice.
 '''
      
-
+def program_use(): return """
+                    HOW DO I USE PHANTOM?
+–––––––––––––––––––––––––––––––––––––––––
+ That depends what you're trying to do. 
+ 
+ To simply play chess against another human, you can do this: 
+     ```
+     >>> from Phantom.core.game_class import ChessGame
+     >>> g = ChessGame()
+     >>> g
+          New Game 1
+     –––––––––––––––––––
+       a b c d e f g h
+     8 r n b q k b n r 8
+     7 p p p p p p p p 7
+     6   .   .   .   . 6
+     5 .   .   .   .   5
+     4   .   .   .   . 4
+     3 .   .   .   .   3
+     2 P P P P P P P P 2
+     1 R N B Q K B N R 1 <
+       a b c d e f g h
+     
+     >>> g.move('e2e4')  # accepts moves in algebraic chess notation
+     >>> g
+     
+          New Game 1
+     –––––––––––––––––––
+       a b c d e f g h
+     8 r n b q k b n r 8 <
+     7 p p p p p p p p 7
+     6   .   .   .   . 6
+     5 .   .   .   .   5
+     4   .   . P .   . 4
+     3 .   .   .   .   3
+     2 P P P P   P P P 2
+     1 R N B Q K B N R 1
+       a b c d e f g h
+     ```
+ and you can continue to play from here.
+ If you wish to load a previously saved game:
+     ```
+     >>> from Phantom.core.game_class import ChessGame
+     >>> g = ChessGame('Game 1')  # load one of the default games
+     >>> g=
+            Game 1
+     –––––––––––––––––––
+       a b c d e f g h  
+     8 r n   q   b n r 8 <
+     7 .   . b p k p p 7
+     6 p p p .   .   . 6
+     5 .   . p . p .   5
+     4   .   P P B P . 4
+     3 .   N   .   . N 3
+     2 P P P . Q P   P 2
+     1 .   K R . B . R 1
+       a b c d e f g h
+     ```
+"""
+    
 def bottom(): pass
 

@@ -14,6 +14,8 @@ Phantom is a (in development) game of Chess written in Python.  It's not very gr
 ```
 and will use Unicode characters as well.  A proper GUI is underway for the iOS app [Pythonista][].  
 
+Please note: this project is a huge learning experience for me.  This is the 3rd revision (I've restarted from scratch twice) of my ongoing chess project, each one getting better.  Hopefully there is no 4th revision.  If you find a bug, *please* don't hesitate to let me know so I can fix it.
+
 Things that it lacks:
 - Checkmate detection  (work-in-progress)
 - Analysis engine  (work-in-progress)

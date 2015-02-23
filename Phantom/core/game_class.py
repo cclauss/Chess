@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
-"""The class that holds a complete game of Phantom."""
+"""The class that holds a complete game of Chess.
+
+Generally, use this class rather than Phantom.core.board.Board, because this class
+keeps track of history, which Board doesn't."""
 
 from Phantom.core.board import Board, Tile, load
 from Phantom.core.players import Player, Side
@@ -31,9 +34,13 @@ class ChessGame (object):
         
         self.board.set_game(self)
         self.history = []
+        self._uuid = self.board._uuid
     
     def __repr__(self):
         return self.board._pprnt()
+    
+    def __hash__(self):
+        return int(self._uuid) % (self.board.__hash__() + 1)
     
     def move(self, *args):
         self.history.append(self.board.fen_str())

@@ -3,7 +3,6 @@
 """Load images into a scene-usable image."""
 
 import scene
-import Image
 import os
 
 folder = 'imgs'

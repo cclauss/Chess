@@ -25,7 +25,7 @@ def clear_log():
 
 def log_msg(msg, level):
     from Phantom.constants import dbgname, debug
-    import inspect, os
+    import inspect, os, sys
     
     if level > debug:
         return False
@@ -48,7 +48,7 @@ def log_msg(msg, level):
     finally:
         os.chdir(orig_dir)
     
-    print "### {}".format(msg)
+    sys.stdout.write("### {}\n".format(msg))
     
     return ret
 
@@ -65,5 +65,6 @@ class call_trace (object):
             returned = f(*args, **kwargs)
             log_msg('{} returned {}'.format(f.__name__, returned), self.level)
             return returned
+        wrapped.__name__ = f.__name__
         return wrapped
 

@@ -12,6 +12,7 @@ class Cfg (object):
         self.move_limit = kwargs.get('move_limit', 50)
         self.disp_sqrs = kwargs.get('disp_sqrs', True)
         self.do_checkmate = kwargs.get('do_checkmate', True)
+        self.use_unicode = kwargs.get('use_unicode', True)
         self.board = None
         self.game = None
     
