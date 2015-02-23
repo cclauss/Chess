@@ -3,9 +3,10 @@
 """Test the Phantom.core.board.Board.move() method"""
 
 from Phantom.core.board import Board
-from Phantom.utils.debug import log_msg
+from Phantom.utils.debug import log_msg, clear_log
 
 def main():
+    clear_log()
     b = Board()  # white to move, opening layout
     try:
         b.move('e2e4')

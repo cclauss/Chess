@@ -4,9 +4,10 @@
 
 from Phantom.core.game_class import ChessGame
 from Phantom.ai.pos_eval.advanced import pos_eval_advanced
-from Phantom.utils.debug import log_msg
+from Phantom.utils.debug import log_msg, clear_log
 
 def main():
+    clear_log()
     game = ChessGame('Game 1')
     score = None
     try:

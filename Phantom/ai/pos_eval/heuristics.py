@@ -208,15 +208,115 @@ all_rules.append(pawn_structure)
 
 @call_trace(3)
 def mobility(board):
-    from Phantom.ai.settings import mobility_mul
+    from Phantom.ai.settings import mobility_mul, colors
     score = 0
     for piece in board.pieces:
-        if piece.color == 'white':
-            score += mobility_mul * len(piece.valid)
-        elif piece.color == 'black':
-            score -= mobility_mul * len(piece.valid)
+            score += (mobility_mul * len(piece.valid)) * colors[piece.color.color]
     return score
 # Currently this is not added to the rules list due to the fact that it takes ***forever***
 # It also has a habit of causing recursion errors
 #all_rules.append(mobility)
+
+@call_trace(3)
+def pawn_assess(board):
+    from Phantom.ai.pos_eval.piece_tables import white_pawns, black_pawns
+    from Phantom.constants import grid_height
+    score = 0
+    for piece in board.pieces:
+        x, y = piece.coord.x, (grid_height - piece.coord.y) - 1
+        if piece.ptype == 'pawn':
+            if piece.color == 'white':
+                score += white_pawns[y][x]
+            elif piece.color == 'black':
+                score += black_pawns[y][x]
+    return score
+all_rules.append(pawn_assess)
+
+@call_trace(3)
+def knight_assess(board):
+    from Phantom.ai.pos_eval.piece_tables import white_knights, black_knights
+    from Phantom.constants import grid_height
+    score = 0
+    for piece in board.pieces:
+        x, y = piece.coord.x, (grid_height - piece.coord.y) - 1
+        if piece.ptype == 'knight':
+            if piece.color == 'white':
+                score += white_knights[y][x]
+            elif piece.color == 'black':
+                score += black_knights[y][x]
+    return score
+all_rules.append(knight_assess)
+
+@call_trace(3)
+def bishop_assess(board):
+    from Phantom.ai.pos_eval.piece_tables import white_bishops, black_bishops
+    from Phantom.constants import grid_height
+    score = 0
+    for piece in board.pieces:
+        x, y = piece.coord.x, (grid_height - piece.coord.y) - 1
+        if piece.ptype == 'bishop':
+            if piece.color == 'white':
+                score += white_bishops[y][x]
+            elif piece.color == 'black':
+                score += black_bishops[y][x]
+    return score
+all_rules.append(bishop_assess)
+
+@call_trace(3)
+def rook_assess(board):
+    from Phantom.ai.pos_eval.piece_tables import white_rooks, black_rooks
+    from Phantom.constants import grid_height
+    score = 0
+    for piece in board.pieces:
+        x, y = piece.coord.x, (grid_height - piece.coord.y) - 1
+        if piece.ptype == 'rook':
+            if piece.color == 'white':
+                score += white_rooks[y][x]
+            elif piece.color == 'black':
+                score += black_rooks[y][x]
+    return score
+all_rules.append(rook_assess)
+
+@call_trace(3)
+def queen_assess(board):
+    from Phantom.ai.pos_eval.piece_tables import white_queen, black_queen
+    from Phantom.constants import grid_height
+    score = 0
+    for piece in board.pieces:
+        x, y = piece.coord.x, (grid_height - piece.coord.y) - 1
+        if piece.ptype == 'queen':
+            if piece.color == 'white':
+                score += white_queen[y][x]
+            elif piece.color == 'black':
+                score += black_queen[y][x]
+    return score
+all_rules.append(queen_assess)
+
+@call_trace(3)
+def king_assess(board):
+    from Phantom.ai.pos_eval.piece_tables import (white_kings, black_kings,
+                                                  white_kings_endgame,
+                                                  black_kings_endgame)
+    from Phantom.ai.phases import Phase
+    from Phantom.constants import grid_height
+    score = 0
+    phase = Phase.analyze(board)
+    if phase in (Phase.opening, Phase.midgame):
+        for piece in board.pieces:
+            x, y = piece.coord.x, (grid_height - piece.coord.y) - 1
+            if piece.ptype == 'king':
+                if piece.color == 'white':
+                    score += white_kings[y][x]
+                elif piece.color == 'black':
+                    score += black_kings[y][x]
+    elif phase == Phase.endgame:
+        for piece in board.pieces:
+            x, y = piece.coord.x, (grid_height - piece.coord.y) - 1
+            if piece.ptype == 'king':
+                if piece.color == 'white':
+                    score += white_kings_endgame[y][x]
+                elif piece.color == 'black':
+                    score += black_kings_endgame[y][x]
+    return score
+all_rules.append(king_assess)
 

@@ -57,7 +57,8 @@ class ChessMainScreen (Scene):
             image(img, pos.x, pos.y, scale_factor, scale_factor)
         for tile in self.game.board.tiles:
             color = tile.color.tilecolor
-            pos = piece.coord.as_screen()
+            color += (0.3,)  # alpha value
+            pos = tile.coord.as_screen()
             fill(*color)
             rect(scale_factor, scale_factor, pos.x, pos.y)
             fill(1, 1, 1)

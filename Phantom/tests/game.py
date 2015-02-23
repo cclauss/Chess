@@ -3,9 +3,10 @@
 """Test the game class itself."""
 
 from Phantom.core.game_class import ChessGame
-from Phantom.utils.debug import log_msg
+from Phantom.utils.debug import log_msg, clear_log
 
 def main():
+    clear_log()
     g = None
     try:
         g = ChessGame()
