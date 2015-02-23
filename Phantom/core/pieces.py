@@ -219,6 +219,8 @@ class King (ChessPiece):
         return False
 
     def apply_ruleset(self, target):
+        if not self.owner.board.cfg.do_checkmate:
+            return self._apply_ruleset(target)
         empty_board = self._apply_ruleset(target)  # could move if there were no pieces on the board
         other_allowed = []
         self.owner.board.set_checkmate_validation(False)  # avoid recursion
