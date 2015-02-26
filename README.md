@@ -16,16 +16,39 @@ and will use Unicode characters as well.  A proper GUI is underway for the iOS a
 
 Please note: this project is a huge learning experience for me.  This is the 3rd revision (I've restarted from scratch twice) of my ongoing chess project, each one getting better.  Hopefully there is no 4th revision.  If you find a bug, *please* don't hesitate to let me know so I can fix it.
 
-Things that it lacks:
-- Checkmate detection  (work-in-progress)
-- Analysis engine  (work-in-progress)
-- Descriptive game notation
+## Features
 
-Things that work:
-- Move validation
-- Pretty printing
-- Save/load boards
-- Read/write FEN strings
-- Algebraic chess notation
+[x] Human vs. human play
+[ ] Checkmate detection  (work-in-progress)
+[x] Static board analysis (always improving)
+[ ] Move search engine (work-in-progress)
+[ ] Descriptive game notation
+[x] Move validation
+[x] Pretty printing
+[x] Save/load boards
+[x] Read/write FEN strings
+[x] Algebraic chess notation
+[ ] Pythonista GUI
+[ ] Windows GUI
+[x] Self-test suite
+
+## Installation
+To download & extract PhantomChess, the first thing to do is download the `Phantom_installer.py` file in the master branch.  Place it in the directory to extract to and run.
+
+## Static board analysis
+How exactly does Phantom analyze a board and give it a score?  It uses a set of heuristics coded into the Phantom.ai.pos_eval.heuristics file.  This is a list of the currently active heuristics that are used to analyze a board:
+
+- developed pieces
+- advanced pawns
+- separate scoring method for kings
+- does player have the bishop pair
+- has the player castled
+- analyze pawn structure (work-in-progress)
+- assess pawns, knights, bishops, rooks, queens & kings according to the Phantom.ai.pos_eval.piece_tables file
+
+as well as the much simpler material analysis.
+
+### Score system
+Scores are given in "centipawns", such that 100 cp = 1 pawn.  The values used are too many to list here, and can be found in the Phantom.ai.settings file.
 
 [Pythonista]: http://omz-software.com/pythonista
