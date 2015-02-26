@@ -12,7 +12,7 @@ def main(clear=True):
     try:
         g = ChessGame()
     except Exception as e:
-        log_msg('ChessGame instantiation test failed:\n{}'.format(e), 0)
+        log_msg('ChessGame instantiation test failed:\n{}'.format(e), 0, err=True)
     finally:
         log_msg('Test complete', 0)
     return g

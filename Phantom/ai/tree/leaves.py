@@ -41,4 +41,11 @@ class Node (object):
     
     def set_child(self, c):
         self.children.append(c)
+    
+    def variate(self, *args):
+        fen = self.board.fen_str()
+        self.board.move(*args)
+        ret = Board(fen=self.board.fen_str())
+        self.board = Board(fen=fen)
+        return ret
 

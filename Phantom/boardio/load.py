@@ -3,10 +3,9 @@
 """Get a FEN string for a given board save-name."""
 
 from Phantom.core.exceptions import ChessError, LogicError
+from Phantom.constants import save_fen
 import os
 import inspect
-
-savefilename = 'savegames.txt'
 
 def loadgame(name):
     
@@ -14,12 +13,15 @@ def loadgame(name):
     save_dir = os.path.split(inspect.getfile(loadgame))[0]
     os.chdir(save_dir)
     
-    with open(savefilename, 'r') as file_read:
+    with open(save_fen, 'r') as file_read:
         lines = file_read.readlines()
     
     os.chdir(orig_dir)
     
     for line in lines:
+        line = line.strip()
+        if (line == '') or (line[0] == '#'):
+            continue
         split = line.index(':')
         bname = line[:split]
         fen = line[split+1:]
@@ -32,13 +34,16 @@ def listgames():
     save_dir = os.path.split(inspect.getfile(listgames))[0]
     os.chdir(save_dir)
     
-    with open(savefilename, 'r') as file_read:
+    with open(save_fen, 'r') as file_read:
         lines = file_read.readlines()
     
     os.chdir(orig_dir)
     
     ret = []
     for line in lines:
+        line = line.strip()
+        if (line == '') or (line[0] == '#'):
+            continue
         split = line.index(':')
         name = line[:split]
         ret.append(name)

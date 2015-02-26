@@ -5,13 +5,17 @@
 Generally, use this class rather than Phantom.core.board.Board, because this class
 keeps track of history, which Board doesn't."""
 
-from Phantom.core.board import Board, Tile, load
+from Phantom.core.board import Board, Tile, load as _loadboard
 from Phantom.core.players import Player, Side
 from Phantom.core.pieces import ChessPiece, Pawn, Rook, Knight, Bishop, King, Queen
 from Phantom.core.exceptions import ChessError, LogicError, InvalidMove, InvalidDimension
 from Phantom.core.coord import *
 from Phantom.boardio.boardcfg import Cfg
 from Phantom.boardio.load import listgames
+
+def loadgame(name):
+    board = _loadboard(name)
+    return CessGame(board)
 
 class ChessGame (object):
     
@@ -23,7 +27,7 @@ class ChessGame (object):
         if len(args) > 0:
             if isinstance(args[0], str):
                 # assume name of a game and load it
-                self.board = load(args[0])
+                self.board = _loadboard(args[0])
         
         for arg in args:
             if isinstance(arg, Board):
@@ -34,6 +38,7 @@ class ChessGame (object):
         
         self.board.set_game(self)
         self.history = []
+        self.moves = []
         self._uuid = self.board._uuid
     
     def __repr__(self):
@@ -45,6 +50,7 @@ class ChessGame (object):
     def move(self, *args):
         self.history.append(self.board.fen_str())
         self.board.move(*args)
+        self.moves.append(self.board.lastmove)
     
     def castle(self, *args):
         self.history.append(self.board.fen_str())
@@ -61,10 +67,10 @@ class ChessGame (object):
         try:
             return make_random_move(self.board)
         except:
-            return False
+            return self.ai_easy()  # keep trying until a move can be made
 
 if __name__ == '__main__':
     games = listgames()
-    g = ChessGame()
+    g = ChessGame('kaufman 2')
     g.board.cfg.disp_sqrs = False
 

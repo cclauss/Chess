@@ -10,7 +10,7 @@ from Phantom.core.pieces import ChessPiece, King, Queen, Rook, Bishop, Knight, P
 from Phantom.core.coord.vectored_lists import north, south, east, west, ne, se, nw, sw
 from Phantom.boardio.save import save
 from Phantom.boardio.load import loadgame, listgames
-from Phantom.boardio.boardcfg import Cfg
+from Phantom.boardio.boardcfg import Cfg, Namespace
 from Phantom.utils.debug import call_trace
 import uuid
 
@@ -49,7 +49,9 @@ class Board (object):
         self.cfg = Cfg(**cfgkws)
         self.cfg.set_board(self)
         self.game = None
+        self.lastmove = (None, None)
         self._uuid = uuid.uuid4()
+        self.data = Namespace()
         
         tile_color = 'black'
         op_color = lambda c: 'white' if c == 'black' else 'black'
@@ -63,7 +65,7 @@ class Board (object):
         # parse given FEN and create board layout
         fields = fen.split()
         if not len(fields) == 6:
-            raise ChessError('Invalid FEN given to board')
+            raise ChessError('Invalid FEN given to board', 'Phantom.core.board.Board.__init__')
         pieces = fields[0]
         moving_color = Side(fields[1])
         castling = fields[2]
@@ -128,7 +130,7 @@ class Board (object):
     def __contains__(self, elem):
         return elem in self.pieces
     
-    @call_trace(0)
+    @call_trace(4)
     def fen_str(self):
         rank_split = '/'
         fen = ''
@@ -159,7 +161,7 @@ class Board (object):
     def all_legal(self):
         ret = {}
         for piece in self.pieces:
-            ret.update({piece: piece.valid})
+            ret.update({piece: piece.valid()})
         return ret
     
     def _pprnt(self):
@@ -256,6 +258,7 @@ class Board (object):
         self.dead.add(piece)
         self.pieces.remove(piece)
     
+    @call_trace(1)
     def move(self, p, p2=None):
         if p2 is None:
             p1 = Coord.from_chess(p[0:2])
@@ -268,9 +271,9 @@ class Board (object):
             if isinstance(p2, str):
                 p2 = Coord.from_chess(p2)
         if self.isfrozen:
-            raise LogicError('Board is frozen and cannot move')
+            raise LogicError('Board is frozen and cannot move', 'Phantom.core.board.Board.move()')
         if self[p1] is None:
-            raise ChessError('No piece at {}'.format(p1))
+            raise ChessError('No piece at {}'.format(p1), 'Phantom.core.board.Board.move()')
         self.premove()
         player = self[p1].owner
         is_valid = player.validatemove(p1, p2)
@@ -309,9 +312,10 @@ class Board (object):
             
             self.kill(self[p2])
             player.make_move(p1, p2)
+            self.lastmove = (p1, p2)
         else:
             self.postmove()
-            raise InvalidMove('Attempted move is invalid!')
+            raise InvalidMove('Attempted move ({} -> {}) is invalid!'.format(p1, p2), 'Phantom.core.board.Board.move()')
         self.postmove()
         self.switch_turn()
     
@@ -334,7 +338,8 @@ class Board (object):
                     self.switch_turn()
                     return
                 else:
-                    raise InvalidMove('Cannot castle {}: pieces in the way'.format(pos))
+                    raise InvalidMove('Cannot castle {}: pieces in the way'.format(pos), 
+                                      'Phantom.core.board.Board.castle()')
             elif pos == 'Q':
                 if (self[Coord(3, 0)] is None) and (
                    self[Coord(2, 0)] is None) and (
@@ -346,6 +351,9 @@ class Board (object):
                     self.castling_rights = self.castling_rights.replace('Q', '')
                     self.postmove()
                     self.switch_turn()
+                else:
+                    raise InvalidMove('Cannot castle {}: pieces in the way'.format(pos), 
+                                      'Phantom.core.board.Board.castle()')
         elif pos == pos.lower():
             if pos == 'k':
                 if (self[Coord(5, 7)] is None) and (self[Coord(6, 7)] is None):
@@ -358,7 +366,8 @@ class Board (object):
                     self.switch_turn()
                     return
                 else:
-                    raise InvalidMove('Cannot castle {}: pieces in the way'.format(pos))
+                    raise InvalidMove('Cannot castle {}: pieces in the way'.format(pos),
+                                      'Phantom.core.board.Board.castle()')
             elif pos == 'q':
                 if (self[Coord(3, 7)] is None) and (
                    self[Coord(2, 7)] is None) and (
@@ -370,6 +379,9 @@ class Board (object):
                     self.castling_rights = self.castling_rights.replace('q', '')
                     self.postmove()
                     self.switch_turn()
+                else:
+                    raise InvalidMove('Cannot castle {}: pieces in the way'.format(pos), 
+                                      'Phantom.core.board.Board.castle()')
         if self.castling_rights == '':
             self.castling_rights = '-'
                        

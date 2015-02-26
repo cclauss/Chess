@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
-"""A package of user settings to go with a game."""
+"""A package of user settings to go with a game.
+
+This file is import clean.
+"""
 
 class Cfg (object):
     
@@ -23,4 +26,17 @@ class Cfg (object):
 
     def set_game(self, g):
         self.game = g
+
+# A quick & dirty class to prevent polluting the globals
+# Usage would be as a 'data' or similar attribute:
+# self.data = Namespace()
+# then to set/get variables:
+# self.data.x = 5; print self.data.x
+class Namespace (object): 
+    
+    def __getitem__(self, i):
+        return getattr(self, i)
+    
+    def __setitem__(self, i, val):
+        setattr(self, i, val)
 

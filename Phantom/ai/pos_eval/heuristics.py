@@ -24,6 +24,9 @@ for rule in all_rules:
 
 print "Final score:", score
 ```
+
+I'm not going to document the reasoning for each of these rules -- they should be easily
+locatable on the internet.
 """ 
 
 from Phantom.ai.phases import Phase
@@ -211,12 +214,14 @@ def mobility(board):
     from Phantom.ai.settings import mobility_mul, colors
     score = 0
     for piece in board.pieces:
-            score += (mobility_mul * len(piece.valid)) * colors[piece.color.color]
+        score += (mobility_mul * len(piece.valid())) * colors[piece.color.color]
     return score
 # Currently this is not added to the rules list due to the fact that it takes ***forever***
 # It also has a habit of causing recursion errors
 #all_rules.append(mobility)
 
+
+# --------------------assess piece layout according to Phantom.ai.pos_eval.piece_tables-------------------------------------
 @call_trace(3)
 def pawn_assess(board):
     from Phantom.ai.pos_eval.piece_tables import white_pawns, black_pawns
@@ -279,16 +284,16 @@ all_rules.append(rook_assess)
 
 @call_trace(3)
 def queen_assess(board):
-    from Phantom.ai.pos_eval.piece_tables import white_queen, black_queen
+    from Phantom.ai.pos_eval.piece_tables import white_queens, black_queens
     from Phantom.constants import grid_height
     score = 0
     for piece in board.pieces:
         x, y = piece.coord.x, (grid_height - piece.coord.y) - 1
         if piece.ptype == 'queen':
             if piece.color == 'white':
-                score += white_queen[y][x]
+                score += white_queens[y][x]
             elif piece.color == 'black':
-                score += black_queen[y][x]
+                score += black_queens[y][x]
     return score
 all_rules.append(queen_assess)
 
@@ -319,4 +324,6 @@ def king_assess(board):
                     score += black_kings_endgame[y][x]
     return score
 all_rules.append(king_assess)
+
+# ----------------------------------------end piece layout assessment-------------------------------------------------------
 

@@ -14,11 +14,11 @@ def main(clear=True):
     try:
         score = pos_eval_basic(game.board)
     except Exception as e:
-        log_msg('AI basic position evaluation failed: \n{}'.format(e), 0)
+        log_msg('AI basic position evaluation failed: \n{}'.format(e), 0, err=True)
     try:
         material = pos_material(game.board)
     except Exception as e:
-        log_msg('AI material assesment failed: \n{}'.format(e), 0)
+        log_msg('AI material assesment failed: \n{}'.format(e), 0, err=True)
     log_msg('Test complete', 0)
     return score, material
 

@@ -19,7 +19,7 @@ def main(clear=True):
             log_msg(rule.__name__ + ' returned {}'.format(r), 0)
             score += r
         except Exception as e:
-            log_msg('{} failed:\n{}'.format(f.__name__, e), 0)
+            log_msg('{} failed:\n{}'.format(f.__name__, e), 0, err=True)
     log_msg('Test complete', 0)
     
     return score

@@ -92,7 +92,9 @@ ncounter = 0
 
 filename = 'move_record.py'
 rawname  = 'raw_record'
-savename = 'save_layout'
+save_fen = 'savegames_fen.txt'
+save_epd = 'savegames_epd.txt'
+test_suite = 'Phantom_test_suite.txt'  # don't add your own games to this!
 dbgname  = 'debug.txt'
 
 c_white_pawn = 'P'
@@ -129,3 +131,6 @@ d_turn_indicator = u'\u25c0'
 
 opening_fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
 fen_rank_split = '/'
+
+default_halfmove = 0
+default_fullmove = 1

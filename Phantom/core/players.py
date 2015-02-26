@@ -20,7 +20,8 @@ class Side (object):
         elif 'b' in color.lower():
             self.color = 'black'
         else:
-            raise LogicError("Couldn't identify color: {}".format(color))
+            raise LogicError("Couldn't identify color: {}".format(color),
+                             'Phantom.core.players.Side.__init__()')
         self.tilecolor = grid_colors[self.color]
     
     def __eq__(self, other):

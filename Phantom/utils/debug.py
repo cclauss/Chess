@@ -23,13 +23,21 @@ def clear_log():
     finally:
         os.chdir(orig_dir)
 
-def log_msg(msg, level):
+def log_msg(msg, level, err=False):
     from Phantom.constants import dbgname, debug
     import inspect, os, sys
     
-    if level > debug:
+    if (level > debug) and (not err):
         return False
     ret = True
+    
+    if err:
+        msg = '!' + msg
+    else:
+        msg = ' ' + msg
+    
+    if len(msg) >= 88:
+        msg = msg[:88] + '\n -' + msg[88:]
     
     orig_dir = os.getcwd()
     util_dir = inspect.getfile(log_msg)
@@ -55,16 +63,24 @@ def log_msg(msg, level):
 
 class call_trace (object):
     
-    def __init__(self, level):
+    def __init__(self, level, name=None):
         self.level = level
+        self.name = name
     
     def __call__(self, f, *args, **kwargs):
         from Phantom.utils.debug import log_msg
+        
         def wrapped(*args, **kwargs):
             log_msg('{} called with args ({}, {})'.format(f.__name__, args, kwargs), self.level)
             returned = f(*args, **kwargs)
             log_msg('{} returned {}'.format(f.__name__, returned), self.level)
             return returned
-        wrapped.__name__ = f.__name__
+        
+        # keep the same function name to make life easier
+        if self.name:
+            wrapped.__name__ = self.name
+        else:
+            wrapped.__name__ = f.__name__
+        
         return wrapped
 

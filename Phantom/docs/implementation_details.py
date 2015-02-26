@@ -50,6 +50,9 @@ def detail_4(): return """
 
 def detail_5(): return """
 –––––––––––––––––––
- in: 
+ in: Phantom.core.pieces.ChessPiece.valid
+ q: should the property list instances of Phantom.core.coord.point.Coord or Phantom.core.board.Tile?
+ cs: Coord
+"""
 
 def bottom(): pass

@@ -14,7 +14,7 @@ def main(clear=True):
     try:
         score = pos_eval_advanced(game.board)
     except Exception as e:
-        log_msg('Advanced position evaluation failed: \n{}'.format(e), 0)
+        log_msg('Advanced position evaluation failed: \n{}'.format(e), 0, err=True)
     finally:
         log_msg('Test complete', 0)
     return score

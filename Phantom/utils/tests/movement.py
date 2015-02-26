@@ -12,7 +12,7 @@ def main(clear=True):
     try:
         b.move('e2e4')
     except Exception as e:
-        log_msg('Phantom.core.board.Board.move() method test failed:\n{}'.format(e), 0)
+        log_msg('Phantom.core.board.Board.move() method test failed:\n{}'.format(e), 0, err=True)
     finally:
         log_msg('Test complete', 0)
 

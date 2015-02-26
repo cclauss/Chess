@@ -8,7 +8,9 @@ from Phantom.core.exceptions import InvalidMove, InvalidDimension
 from Phantom.core.coord.vectored_lists import *
 from Phantom.core.coord.dirs import dirfinder
 from Phantom.core.players import Side
+from Phantom.boardio.boardcfg import Namespace
 from Phantom.functions import dist, round_up, round_down
+from Phantom.utils.debug import call_trace, log_msg
 import uuid
 
 class ChessPiece (object):
@@ -23,7 +25,8 @@ class ChessPiece (object):
     def __init__(self, pos, color, owner=None):
         self.color = Side(color)
         if not pos in self.bounds:
-            raise InvalidDimension('Piece spawned out of bounds: {}'.format(str(pos)))
+            raise InvalidDimension('Piece spawned out of bounds: {}'.format(str(pos)), 
+                                   'Phantom.core.pieces.ChessPiece.__init__()')
         self.coord = pos
         self.isFrozen = False  # piece level freeze
         self.promotable = False
@@ -66,7 +69,7 @@ class ChessPiece (object):
         return '{}_{}'.format(self.color, self.ptype)
     
     # implementation detail 5
-    @property
+    @call_trace(3)
     def valid(self):
         ret = []
         for tile in self.owner.board.tiles:
@@ -85,6 +88,7 @@ class ChessPiece (object):
                     return True
         return False
     
+    @call_trace(3)
     def check_target(self, target):
         piece = self.owner.board[target]
         if (piece == []) or (piece is None):
@@ -94,6 +98,7 @@ class ChessPiece (object):
         else:
             return True
     
+    @call_trace(3)
     def check_path(self, path):
         for pos in path[:-1]:
             piece = self.owner.board[pos]
@@ -101,6 +106,7 @@ class ChessPiece (object):
                 return False
         return True
 
+    @call_trace(3)
     def path_to(self, target):
         start = self.coord
         end = target
@@ -110,6 +116,7 @@ class ChessPiece (object):
         squares = path[:dist_to]
         return squares
     
+    @call_trace(2)
     def is_move_valid(self, target):
         does_follow_rules = self.apply_ruleset(target)
         is_valid_target = self.check_target(target)
@@ -140,6 +147,7 @@ class Pawn (ChessPiece):
     ptype = 'pawn'
     default_origins = [Coord(x, y) for x in range(grid_width) for y in (1, 6)]
     
+    @call_trace(4)
     def apply_ruleset(self, target):
         
         if self.color == 'white':
@@ -170,6 +178,7 @@ class Rook (ChessPiece):
     ptype = 'rook'
     default_origins = [Coord(x, y) for x in (0, 7) for y in (0, 7)]
     
+    @call_trace(4)
     def apply_ruleset(self, target):
         allowed = []
         allowed.extend(north(self))
@@ -183,6 +192,7 @@ class Bishop (ChessPiece):
     ptype = 'bishop'
     default_origins = [Coord(x, y) for x in (2, 5) for y in (0, 7)]
     
+    @call_trace(4)
     def apply_ruleset(self, target):
         allowed = []
         allowed.extend(ne(self))
@@ -196,6 +206,7 @@ class Queen (ChessPiece):
     ptype = 'queen'
     default_origins = [Coord(3, y) for y in (0, 7)]
     
+    @call_trace(4)
     def apply_ruleset(self, target):
         allowed = []
         allowed.extend(north(self))
@@ -213,11 +224,13 @@ class King (ChessPiece):
     ptype = 'king'
     default_origins = [Coord(4, y) for y in (0, 7)]
     
+    @call_trace(4)
     def _apply_ruleset(self, target):
         if round_down(dist(self.coord, target)) == 1:
             return True
         return False
 
+    @call_trace(4)
     def apply_ruleset(self, target):
         if not self.owner.board.cfg.do_checkmate:
             return self._apply_ruleset(target)
@@ -240,6 +253,7 @@ class Knight (ChessPiece):
     ptype = 'knight'
     default_origins = [Coord(x, y) for x in (1, 6) for y in (0, 7)]
     
+    @call_trace(4)
     def apply_ruleset(self, target):
         allowed = [self.coord + Coord(1, 2),
                    self.coord + Coord(2, 1),
@@ -251,7 +265,7 @@ class Knight (ChessPiece):
                    self.coord - Coord(1, -2)]
         return target in allowed
     
-    
+    @call_trace(4)
     def path_to(self, target):
         return [0]
 
