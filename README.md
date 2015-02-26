@@ -18,19 +18,19 @@ Please note: this project is a huge learning experience for me.  This is the 3rd
 
 ## Features
 
-[x] Human vs. human play
-[ ] Checkmate detection  (work-in-progress)
-[x] Static board analysis (always improving)
-[ ] Move search engine (work-in-progress)
-[ ] Descriptive game notation
-[x] Move validation
-[x] Pretty printing
-[x] Save/load boards
-[x] Read/write FEN strings
-[x] Algebraic chess notation
-[ ] Pythonista GUI
-[ ] Windows GUI
-[x] Self-test suite
+- [x] Human vs. human play
+- [ ] Checkmate detection  (work-in-progress)
+- [x] Static board analysis (always improving)
+- [ ] Move search engine (work-in-progress)
+- [ ] Descriptive game notation
+- [x] Move validation
+- [x] Pretty printing
+- [x] Save/load boards
+- [x] Read/write FEN strings
+- [x] Algebraic chess notation
+- [ ] Pythonista GUI
+- [ ] Windows GUI
+- [x] Self-test suite
 
 ## Installation
 To download & extract PhantomChess, the first thing to do is download the `Phantom_installer.py` file in the master branch.  Place it in the directory to extract to and run.
