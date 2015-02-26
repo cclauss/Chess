@@ -65,7 +65,8 @@ def knight_on_edge(board):
                 else:
                     score += knight_on_edge_score
     return score
-all_rules.append(knight_on_edge)
+# this is left out for the more advanced & precise assess_knights()
+#all_rules.append(knight_on_edge)
 
 @call_trace(3)
 def developed_pieces(board):

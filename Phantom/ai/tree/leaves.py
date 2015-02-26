@@ -31,6 +31,9 @@ class Node (object):
     def __hash__(self):
         return self.depth * self.board.__hash__()
     
+    def __repr__(self):
+        return '<Phantom search node at {}>'.format(hex(id(self)))
+    
     def set_tree(self, t):
         self.tree = t
         self.tree.used_layouts.append(self.board.fen_str())

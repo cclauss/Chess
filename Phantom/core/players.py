@@ -6,6 +6,7 @@ from Phantom.constants import *
 from Phantom.core.exceptions import InvalidMove, LogicError
 from Phantom.core.coord.point import Coord
 from Phantom.functions import round_down, dist
+from Phantom.utils.debug import call_trace, log_msg
 import uuid
 
 class Side (object):
@@ -76,6 +77,8 @@ class Player (object):
                                  self.bishops +
                                  self.kings +
                                  self.queens)
+    
+    @call_trace(5)
     def is_turn(self):
         return self.color == self.board.turn
     
@@ -130,6 +133,7 @@ class Player (object):
         self._update()
         self.unfreeze()
     
+    @call_trace(2)
     def validatemove(self, p1, p2):
         piece = self.board[p1]
         turn = self.is_turn()
@@ -140,16 +144,13 @@ class Player (object):
             check = not self.board.will_checkmate(p1, p2)
         else:
             check = True
+        log_msg('validatemove: piece={}, turn={}, allowed={}, path={}, path_check={}, check={}'.format(
+                               piece,    turn,    allowed,    path,    path_check,    check), 0)
         return turn and allowed and path_check and check
     
     def make_move(self, p1, p2):
         self.board.freeze()
         piece = self.board[p1]
         piece.coord = p2
-        if piece.ptype == 'pawn' and piece.firstmove:
-            if round_down(dist(p1, p2)) == 2:
-                y = abs(p2.y - p1.y) / 2
-                pos = Coord(p1.x, y)
-                self.board.en_passant_rights = pos.as_chess()
         self.board.unfreeze()
 

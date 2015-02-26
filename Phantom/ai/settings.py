@@ -12,7 +12,7 @@ pawn = 100.0
 ,bishop = 300.0
 ,rook = 500.0
 ,queen = 900.0
-,king = 1e10)
+,king = 1e10)  # use 1e10 to signal the capture of a king is better than all other options
 
 king_material = 400  # use the endgame score for material worth totalling
 

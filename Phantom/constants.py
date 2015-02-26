@@ -1,18 +1,12 @@
 # -*- coding: utf-8 -*-
 
 try:
-    __import__('imp').find_module('type')
-    lacking_ctype = False
-except ImportError:
-    lacking_ctype = True
-
-try:
     import scene
     in_pythonista = True
 except ImportError:
     in_pythonista = False
 
-version = '0.6'
+version = '0.6.5'
 
 ###################################################################################################################
 ############################################### USER SETTINGS #####################################################
@@ -20,7 +14,7 @@ version = '0.6'
 
 # Debug level
 # This can make the program slow
-# (just kidding I havent inserted many debugging statements yet)
+# Please select from range(0, 11)
 debug = 7
 
 # Use the unicode prettyprinter or an ASCII prettyprinter

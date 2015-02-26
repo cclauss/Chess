@@ -12,6 +12,8 @@ from Phantom.boardio.save import save
 from Phantom.boardio.load import loadgame, listgames
 from Phantom.boardio.boardcfg import Cfg, Namespace
 from Phantom.utils.debug import call_trace
+from Phantom.utils.decorators import exc_catch
+from Phantom.functions import round_down, dist
 import uuid
 
 def load(name):
@@ -259,6 +261,7 @@ class Board (object):
         self.pieces.remove(piece)
     
     @call_trace(1)
+    @exc_catch(LogicError, ChessError, ret='Cannot make specified move')
     def move(self, p, p2=None):
         if p2 is None:
             p1 = Coord.from_chess(p[0:2])
@@ -298,6 +301,17 @@ class Board (object):
                     self.castling_rights = self.castling_rights.replace('k', '')
                     self.castling_rights = self.castling_rights.replace('q', '')
             
+            # update en_passant rights
+            self.en_passant_rights = '-'
+            if piece.ptype == 'pawn':
+                if piece.firstmove:
+                    if round_down(dist(p1, p2)) == 2:
+                        file = piece.coord.as_chess()[0]
+                        if piece.color == 'black':
+                            self.en_passant_rights = '{}6'.format(file)
+                        elif piece.color == 'white':
+                            self.en_passant_rights = '{}3'.format(file)
+            
             # update halfmove & fullmove
             
             # Here we update the halfmove_clock BEFORE it is altered, to save some else 
@@ -310,7 +324,14 @@ class Board (object):
             if piece.color == 'black':
                 self.fullmove_clock += 1    
             
-            self.kill(self[p2])
+            if not move_en_passant:
+                self.kill(self[p2])
+            else:
+                if self[p1].color == 'white':
+                    self.kill(self[p2 - Coord(0, 1)])
+                elif self[p1].color == 'black':
+                    self.kill(self[p2 + Coord(0, 1)])
+
             player.make_move(p1, p2)
             self.lastmove = (p1, p2)
         else:

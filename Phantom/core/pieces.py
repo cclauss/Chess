@@ -148,29 +148,31 @@ class Pawn (ChessPiece):
     default_origins = [Coord(x, y) for x in range(grid_width) for y in (1, 6)]
     
     @call_trace(4)
-    def apply_ruleset(self, target):
+    def apply_ruleset(self, target, skip_ep=False):
         
         if self.color == 'white':
-            allowed = [Coord(self.coord.x, self.coord.y+1)]
-            if self.firstmove:
-                allowed.append(Coord(self.coord.x, self.coord.y+2))
-            tests = [Coord(self.coord.x+1, self.coord.y+1),
-                     Coord(self.coord.x-1, self.coord.y+1)]
-            for test in tests:
-                if self.owner.board[test] is not None:
-                    allowed.append(test)
-            
+            op = lambda a, b: a + b
         elif self.color == 'black':
-            allowed = [Coord(self.coord.x, self.coord.y-1)]
-            if self.firstmove:
-                allowed.append(Coord(self.coord.x, self.coord.y-2))
-            tests = [Coord(self.coord.x+1, self.coord.y-1),
-                     Coord(self.coord.x-1, self.coord.y-1)]
-            for test in tests:
-                if self.owner.board[test] is not None:
-                    allowed.append(test)
+            op = lambda a, b: a - b
+        
+        allowed = [Coord(self.coord.x, op(self.coord.y, 1))]
+        if self.firstmove:
+            allowed.append(Coord(self.coord.x, op(self.coord.y, 2)))
+        tests = [Coord(self.coord.x+1, op(self.coord.y, 1)),
+                 Coord(self.coord.x-1, op(self.coord.y, 1))]
+        for test in tests:
+            if self.owner.board[test] is not None:
+                allowed.append(test)
             
-        return target in allowed
+        ret = target in allowed
+        
+        if self.owner.board.en_passant_rights == '-' or skip_ep:
+            return ret  # skip further validation if possible
+        
+        if Coord.from_chess(self.owner.board.en_passant_rights) in tests:
+            ret = True
+        
+        return ret
 
 
 class Rook (ChessPiece):
@@ -266,6 +268,10 @@ class Knight (ChessPiece):
         return target in allowed
     
     @call_trace(4)
+    # override this method for two reasons:
+    # A. knights can jump over pieces so this is irrevelent
+    # B. the path generator doesn't work properly for the knight's direction of movement
+    #    and this saves having to implement special-case code in the ChessPiece.path_to method
     def path_to(self, target):
         return [0]
 

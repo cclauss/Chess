@@ -130,6 +130,8 @@ class Coord (object):
     
     @classmethod
     def from_chess(klass, chess):
+        if chess == '-':
+            return Coord(None, None)
         x = klass.fromchesskeys[chess[0]]
         y = int(chess[1])
         return Coord(x, y - 1)

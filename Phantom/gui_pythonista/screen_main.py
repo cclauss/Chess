@@ -4,7 +4,7 @@
 
 from scene import *
 from Phantom.core.coord.point import Coord, bounds
-from Phantom.core.game_class import ChessGame
+from Phantom.utils.debug import log_msg, call_trace
 from Phantom.constants import *
 import sys
 
@@ -20,7 +20,7 @@ class ChessMainScreen (Scene):
         self.coord_disp_mode = {'onoff': self.game.board.cfg.disp_coords,
                                 'mode': self.game.board.cfg.coord_mode}
         self.is_selected = False
-        self.selected = Coord(float('nan'), float('nan'))
+        self.selected = Coord(None, None)
         self.target = self.selected
         self.err = None
         import os
@@ -40,7 +40,7 @@ class ChessMainScreen (Scene):
     
     def did_err(self, e):
         self.err = sys.exc_info()
-        self.selected = Coord(float('nan'), float('nan'))
+        self.selected = Coord(None, None)
         self.is_selected = False
         self.game.board.freeze()
     
@@ -53,7 +53,7 @@ class ChessMainScreen (Scene):
                 if piece is not None:
                     self.selected = cpos
                 else:
-                    self.selected = Coord(float('nan'), float('nan'))
+                    self.selected = Coord(None, None)
             else:
                 self.target = cpos
                 try:
@@ -63,21 +63,36 @@ class ChessMainScreen (Scene):
     
     def draw(self):
         background(0, 0, 0)
-        fill(1, 1, 1)
+        fill(1, 1, 1, 1)
         for piece in self.game.board.pieces:
             tint(1, 1, 1, 0.5)
             pos = piece.coord.as_screen()
             img = self.img_names[piece.pythonista_gui_imgname]
             image(img, pos.x, pos.y, scale_factor, scale_factor)
             tint(1, 1, 1, 1)
+            if piece.coord == self.selected:
+                fill(0.8, 1, 0.8, 0.3)
+                rect(pos.x, pos.y, scale_factor, scale_factor)
+                fill(1, 1, 1, 1)
         for tile in self.game.board.tiles:
+            
+            # this returns either (0.27462, 0.26326, 0.27367) if the piece is white
+            # or (0.86174, 0.85795, 0.85417) if the piece is black
             color = tile.color.tilecolor
             color += (0.3,)  # alpha value
+            
+            # get the position of the tile in screen coords
+            # this method DOES function correctly as shown by the above `for piece in pieces` loop
             pos = tile.coord.as_screen()
+            
+            # draw
             fill(*color)
-            rect(scale_factor, scale_factor, pos.x, pos.y)
-            fill(1, 1, 1)
+            rect(pos.x, pos.y, scale_factor, scale_factor)
+            fill(1, 1, 1, 1)
         
 
-run(ChessMainScreen(ChessGame()))
+if __name__ == '__main__':
+    from Phantom.core.game_class import ChessGame
+    s = ChessMainScreen(ChessGame())
+    run(s)
 

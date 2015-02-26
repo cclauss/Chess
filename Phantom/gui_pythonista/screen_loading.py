@@ -24,4 +24,6 @@ class ChessLoadingScreen (Scene):
         if debug:
             text('Debugger set to level {}'.format(debug), x=screen_width/2, y=(screen_height/2)-20)
 
-run(ChessLoadingScreen())
+if __name__ == '__main__':
+    run(ChessLoadingScreen())
+
