@@ -1,5 +1,22 @@
 # -*- coding: utf-8 -*-
 
+#########################################################################
+# This file is part of PhantomChess.                                    #
+#                                                                       #
+# PhantomChess is free software: you can redistribute it and/or modify  #
+# it under the terms of the GNU General Public License as published by  # 
+# the Free Software Foundation, either version 3 of the License, or     #
+# (at your option) any later version.                                   #
+#                                                                       #
+# PhantomChess is distributed in the hope that it will be useful,       #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of        # 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
+# GNU General Public License for more details.                          #
+#                                                                       #
+# You should have received a copy of the GNU General Public License     #
+# along with PhantomChess.  If not, see <http://www.gnu.org/licenses/>. #
+#########################################################################
+
 """Read Extended Position Description (EPD) notation.
 
 Syntax:
@@ -111,18 +128,20 @@ def _load_name(name):
     import os, inspect
     workdir = os.path.split(inspect.getfile(_load_name))[0]
     read = os.path.join(workdir, save_epd)
-    with open(read, 'r') as f:
+    with open('Phantom_test_suite.txt', 'r') as f:
         lines = f.readlines()
     ret = None
     for line in lines:
         line = line.strip()
-        if (line[0] == '#') or (line == ''):
-            continue
-        split = line.index(':')
-        lname = line[:split]
-        val = line[split+1:].strip()
-        if lname == name:
-            ret = val
+        print line
+        if (line == '') or (line[0] == '#'):
+            pass
+        else:
+            split = line.index(':')
+            lname = line[:split]
+            val = line[split+1:].strip()
+            if lname == name:
+                ret = val
     return ret
 
 def listgames():
@@ -168,4 +187,48 @@ def load_epd(string):
     if 'hmvc' in op_data:
         b.halfmove_clock = int(op_data['hmvc'])
     return b
+
+def load_test_string(name):
+    from Phantom.constants import test_suite
+    import os, inspect
+    fdir = os.path.split(inspect.getfile(load_test))[0]
+    read = os.path.join(fdir, test_suite)
+    with open(read, 'r') as f:
+        lines = f.readlines()
+    ret = None
+    for line in lines:
+        line = line.strip()
+        if (line == '') or (line[0] == '#'):
+            continue
+        else:
+            split = line.index(':')
+            lname = line[:split]
+            if lname == name:
+                ret = line[split+1:].strip()
+                break
+    return ret
+
+def load_test(name):
+    """Load a test from the self-test suite."""
+    epd = load_test_string(name)
+    b = load_epd(epd)
+    return b
+
+def list_tests():
+    from Phantom.constants import test_suite
+    import os, inspect
+    fdir = os.path.split(inspect.getfile(load_test))[0]
+    read = os.path.join(fdir, test_suite)
+    with open(read, 'r') as f:
+        lines = f.readlines()
+    ret = []
+    for line in lines:
+        line = line.strip()
+        if (line == '') or (line[0] == '#'):
+            continue
+        else:
+            split = line.index(':')
+            name = line[:split]
+            ret.append(name)
+    return ret
 

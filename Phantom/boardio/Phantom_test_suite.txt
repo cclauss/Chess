@@ -1,10 +1,28 @@
 # A set of savegames in EPD format to test the Phantom engine.
+
+#########################################################################
+# This file is part of PhantomChess.                                    #
+#                                                                       #
+# PhantomChess is free software: you can redistribute it and/or modify  #
+# it under the terms of the GNU General Public License as published by  # 
+# the Free Software Foundation, either version 3 of the License, or     #
+# (at your option) any later version.                                   #
+#                                                                       #
+# PhantomChess is distributed in the hope that it will be useful,       #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of        # 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
+# GNU General Public License for more details.                          #
+#                                                                       #
+# You should have received a copy of the GNU General Public License     #
+# along with PhantomChess.  If not, see <http://www.gnu.org/licenses/>. #
+#########################################################################
 # Please don't write directly to this file.
 
 # ------------ Some random studies ------------
 behting study: 8/8/7p/3KNN1k/2p4p/8/3P2p1/8 w - - bm Kc6; id "Behting study";
 djaja study: 6R1/P2k4/r7/5N1P/r7/p7/7K/8 w - - bm Nh6; id "Djaja study";
 en passant: rnbqkbnr/2pp1ppp/8/3PpP2/1pPp4/8/PP1PPP2/RNBQKBNR w KQkq e5 bm Pfxe5; id "En passant test";
+eval test 1: r1bqkbr1/p1pp1ppp/4p3/7N/6P1/PPPPPPBP/RNBQ1RK1 b q - bm g5; id "pos-eval test 1";
 
 # ------------- Nolot suite -------------
 nolot 1: r3qb1k/1b4p1/p2pr2p/3n4/Pnp1N1N1/6RP/1B3PP1/1B1QR1K1 w - - bm Nxh6; id "nolot pos 1";

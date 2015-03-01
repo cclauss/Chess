@@ -1,5 +1,22 @@
 # -*- coding: utf-8 -*-
 
+#########################################################################
+# This file is part of PhantomChess.                                    #
+#                                                                       #
+# PhantomChess is free software: you can redistribute it and/or modify  #
+# it under the terms of the GNU General Public License as published by  # 
+# the Free Software Foundation, either version 3 of the License, or     #
+# (at your option) any later version.                                   #
+#                                                                       #
+# PhantomChess is distributed in the hope that it will be useful,       #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of        # 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
+# GNU General Public License for more details.                          #
+#                                                                       #
+# You should have received a copy of the GNU General Public License     #
+# along with PhantomChess.  If not, see <http://www.gnu.org/licenses/>. #
+#########################################################################
+
 """Piece-square tables.  Ratings based on the postion of a piece and it's type.
 This file is import clean.
 
@@ -72,7 +89,7 @@ white_kings = [
 [-20, -30, -30, -40, -40, -30, -30, -20],
 [-10, -20, -20, -30, -30, -20, -20, -10],
 [20,  20,  0,   0,   0,   0,   20,  20 ],
-[20,  30,  30,  10,   0,   10,  30,  20 ]]
+[20,  30,  30,  10,  0,   10,  30,  20 ]]
 black_kings = [[-k for k in row] for row in white_kings[::-1]]
 
 white_kings_endgame = [

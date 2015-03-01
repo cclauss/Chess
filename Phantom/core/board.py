@@ -1,26 +1,46 @@
 # -*- coding: utf-8 -*-
 
+#########################################################################
+# This file is part of PhantomChess.                                    #
+#                                                                       #
+# PhantomChess is free software: you can redistribute it and/or modify  #
+# it under the terms of the GNU General Public License as published by  # 
+# the Free Software Foundation, either version 3 of the License, or     #
+# (at your option) any later version.                                   #
+#                                                                       #
+# PhantomChess is distributed in the hope that it will be useful,       #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of        # 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
+# GNU General Public License for more details.                          #
+#                                                                       #
+# You should have received a copy of the GNU General Public License     #
+# along with PhantomChess.  If not, see <http://www.gnu.org/licenses/>. #
+#########################################################################
+
 """The chessboard itself."""
 
 from Phantom.constants import *
-from Phantom.core.coord import Coord
 from Phantom.core.players import Player, Side
 from Phantom.core.exceptions import InvalidDimension, InvalidMove, LogicError, ChessError
 from Phantom.core.pieces import ChessPiece, King, Queen, Rook, Bishop, Knight, Pawn
 from Phantom.core.coord.vectored_lists import north, south, east, west, ne, se, nw, sw
+from Phantom.core.coord.point import Coord, Grid
 from Phantom.boardio.save import save
 from Phantom.boardio.load import loadgame, listgames
 from Phantom.boardio.boardcfg import Cfg, Namespace
-from Phantom.utils.debug import call_trace
+from Phantom.utils.debug import call_trace, log_msg
 from Phantom.utils.decorators import exc_catch
 from Phantom.functions import round_down, dist
 import uuid
+
+__all__ = []
 
 def load(name):
     fen = loadgame(name)
     game = Board(Player('white'), Player('black'), fen)
     game.set_name(name)
     return game
+__all__.append('load')
 
 class Tile (object):
     
@@ -31,7 +51,11 @@ class Tile (object):
         self.y = pos.y
         self.color = Side(color)
         self.coord = pos
-        self.char = d_white_space if self.color == 'white' else d_black_space
+        if use_unicode:
+            self.char = d_white_space if self.color == 'white' else d_black_space
+        else:
+            self.char = c_white_space if self.color == 'white' else c_black_space
+__all__.append('Tile')
 
 
 class Board (object):
@@ -155,7 +179,7 @@ class Board (object):
         fen += ' '
         fen += self.turn.color[0] + ' ' # player to move
         fen += self.castling_rights
-        fen += ' {} '.format('-')  # en passant field, blank for now
+        fen += ' {} '.format(self.en_passant_rights)  # en passant field, blank for now
         fen += str(self.halfmove_clock) + ' '
         fen += str(self.fullmove_clock)
         return fen
@@ -168,7 +192,8 @@ class Board (object):
     
     def _pprnt(self):
         spaces_center = (18 - (len(self.name))) / 2
-        s = '{}{}\n{}\n'.format(' '*spaces_center, self.name, '–'*19)
+        dash = '–' if self.cfg.use_unicode else '-'
+        s = '{}{}\n{}\n'.format(' '*spaces_center, self.name, dash*19)
         for y in range(grid_height, -2, -1):
             for x in range(-1, grid_width+1):
                 if y in (-1, 8) and not (x in (-1, 8)):
@@ -261,7 +286,7 @@ class Board (object):
         self.pieces.remove(piece)
     
     @call_trace(1)
-    @exc_catch(LogicError, ChessError, ret='Cannot make specified move')
+    @exc_catch(LogicError, ChessError, ret='Cannot make specified move', log=4)
     def move(self, p, p2=None):
         if p2 is None:
             p1 = Coord.from_chess(p[0:2])
@@ -281,6 +306,7 @@ class Board (object):
         player = self[p1].owner
         is_valid = player.validatemove(p1, p2)
         if is_valid:
+            log_msg('move: specified move is valid, continuing', 3)
             piece = self[p1]
             
             # update castling rights
@@ -324,7 +350,7 @@ class Board (object):
             if piece.color == 'black':
                 self.fullmove_clock += 1    
             
-            if not move_en_passant:
+            if not self.data['move_en_passant']:
                 self.kill(self[p2])
             else:
                 if self[p1].color == 'white':
@@ -336,6 +362,7 @@ class Board (object):
             self.lastmove = (p1, p2)
         else:
             self.postmove()
+            log_msg('move: specified move is invalid', 2, err=True)
             raise InvalidMove('Attempted move ({} -> {}) is invalid!'.format(p1, p2), 'Phantom.core.board.Board.move()')
         self.postmove()
         self.switch_turn()
@@ -423,6 +450,7 @@ class Board (object):
         test.move(p1, p2)
         test.cfg.do_checkmate = self.cfg.do_checkmate
         return test.is_checkmate()
+__all__.append('Board')
 
 if __name__ == '__main__':
     b = Board()

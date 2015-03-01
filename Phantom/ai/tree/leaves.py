@@ -1,12 +1,32 @@
 # -*- coding: utf-8 -*-
 
+#########################################################################
+# This file is part of PhantomChess.                                    #
+#                                                                       #
+# PhantomChess is free software: you can redistribute it and/or modify  #
+# it under the terms of the GNU General Public License as published by  # 
+# the Free Software Foundation, either version 3 of the License, or     #
+# (at your option) any later version.                                   #
+#                                                                       #
+# PhantomChess is distributed in the hope that it will be useful,       #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of        # 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
+# GNU General Public License for more details.                          #
+#                                                                       #
+# You should have received a copy of the GNU General Public License     #
+# along with PhantomChess.  If not, see <http://www.gnu.org/licenses/>. #
+#########################################################################
+
 """Tree nodes & leaves."""
 
 from Phantom.ai.pos_eval.basic import pos_eval_basic
 from Phantom.ai.pos_eval.advanced import pos_eval_advanced
+from Phantom.ai.prediction.alphabeta import alpha_beta_value
 from Phantom.ai.settings import window, maxdepth
 from Phantom.core.board import Board
 import uuid
+
+__all__ = []
 
 class Node (object):
     
@@ -51,4 +71,5 @@ class Node (object):
         ret = Board(fen=self.board.fen_str())
         self.board = Board(fen=fen)
         return ret
+__all__.append('Node')
 

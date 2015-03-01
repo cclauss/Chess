@@ -1,5 +1,22 @@
 # -*- coding: utf-8 -*-
 
+#########################################################################
+# This file is part of PhantomChess.                                    #
+#                                                                       #
+# PhantomChess is free software: you can redistribute it and/or modify  #
+# it under the terms of the GNU General Public License as published by  # 
+# the Free Software Foundation, either version 3 of the License, or     #
+# (at your option) any later version.                                   #
+#                                                                       #
+# PhantomChess is distributed in the hope that it will be useful,       #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of        # 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
+# GNU General Public License for more details.                          #
+#                                                                       #
+# You should have received a copy of the GNU General Public License     #
+# along with PhantomChess.  If not, see <http://www.gnu.org/licenses/>. #
+#########################################################################
+
 """The main screen."""
 
 from scene import *
@@ -14,11 +31,15 @@ class ChessMainScreen (Scene):
         self.game = game
         self.tmp_t = 0
         self.parent = main  # Phantom.gui_pythonista.main_scene.MultiScene object
+        if self.parent is not None:
+            self.parent.set_main_scene(self)
     
     def setup(self):
         self.highlight = self.game.board.cfg.highlight
         self.coord_disp_mode = {'onoff': self.game.board.cfg.disp_coords,
                                 'mode': self.game.board.cfg.coord_mode}
+        self.render_mode = {'sqrs': self.game.board.cfg.disp_sqrs,
+                            'pieces': self.game.board.cfg.disp_pieces}
         self.is_selected = False
         self.selected = Coord(None, None)
         self.target = self.selected
@@ -64,31 +85,25 @@ class ChessMainScreen (Scene):
     def draw(self):
         background(0, 0, 0)
         fill(1, 1, 1, 1)
-        for piece in self.game.board.pieces:
-            tint(1, 1, 1, 0.5)
-            pos = piece.coord.as_screen()
-            img = self.img_names[piece.pythonista_gui_imgname]
-            image(img, pos.x, pos.y, scale_factor, scale_factor)
-            tint(1, 1, 1, 1)
-            if piece.coord == self.selected:
-                fill(0.8, 1, 0.8, 0.3)
+        if self.render_mode['pieces']:
+            for piece in self.game.board.pieces:
+                tint(1, 1, 1, 0.5)
+                pos = piece.coord.as_screen()
+                img = self.img_names[piece.pythonista_gui_imgname]
+                image(img, pos.x, pos.y, scale_factor, scale_factor)
+                tint(1, 1, 1, 1)
+                if piece.coord == self.selected:
+                    fill(0.8, 1, 0.8, 0.3)
+                    rect(pos.x, pos.y, scale_factor, scale_factor)
+                    fill(1, 1, 1, 1)
+        if self.render_mode['sqrs']:
+            for tile in self.game.board.tiles:
+                color = tile.color.tilecolor
+                color += (0.3,)
+                pos = tile.coord.as_screen()
+                fill(*color)
                 rect(pos.x, pos.y, scale_factor, scale_factor)
                 fill(1, 1, 1, 1)
-        for tile in self.game.board.tiles:
-            
-            # this returns either (0.27462, 0.26326, 0.27367) if the piece is white
-            # or (0.86174, 0.85795, 0.85417) if the piece is black
-            color = tile.color.tilecolor
-            color += (0.3,)  # alpha value
-            
-            # get the position of the tile in screen coords
-            # this method DOES function correctly as shown by the above `for piece in pieces` loop
-            pos = tile.coord.as_screen()
-            
-            # draw
-            fill(*color)
-            rect(pos.x, pos.y, scale_factor, scale_factor)
-            fill(1, 1, 1, 1)
         
 
 if __name__ == '__main__':

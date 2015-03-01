@@ -1,9 +1,26 @@
 # -*- coding: utf-8 -*-
 
+#########################################################################
+# This file is part of PhantomChess.                                    #
+#                                                                       #
+# PhantomChess is free software: you can redistribute it and/or modify  #
+# it under the terms of the GNU General Public License as published by  # 
+# the Free Software Foundation, either version 3 of the License, or     #
+# (at your option) any later version.                                   #
+#                                                                       #
+# PhantomChess is distributed in the hope that it will be useful,       #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of        # 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
+# GNU General Public License for more details.                          #
+#                                                                       #
+# You should have received a copy of the GNU General Public License     #
+# along with PhantomChess.  If not, see <http://www.gnu.org/licenses/>. #
+#########################################################################
+
 """The core of the pieces."""
 
 from Phantom.constants import *
-from Phantom.core.coord import Coord, Grid, bounds
+from Phantom.core.coord.point import Coord, Grid, bounds
 from Phantom.core.exceptions import InvalidMove, InvalidDimension
 from Phantom.core.coord.vectored_lists import *
 from Phantom.core.coord.dirs import dirfinder
@@ -12,6 +29,8 @@ from Phantom.boardio.boardcfg import Namespace
 from Phantom.functions import dist, round_up, round_down
 from Phantom.utils.debug import call_trace, log_msg
 import uuid
+
+__all__ = []
 
 class ChessPiece (object):
     
@@ -43,6 +62,7 @@ class ChessPiece (object):
             self.set_owner(owner)
         else:
             self.owner = None
+        self.data = Namespace()
     
     def __repr__(self):
         return '<{} at {} in {}>'.format(self.ptype, self.coord, hex(id(self)))
@@ -139,6 +159,28 @@ class ChessPiece (object):
             return King
         elif chr in ('q', 'Q'):
             return Queen
+    
+    @call_trace(3)
+    def threatens(self):
+        moves = self.valid()
+        pieces = []
+        for move in moves:
+            piece = self.owner.board[move]
+            if piece is not None:
+                pieces.append(piece)
+        return pieces
+    
+    @call_trace(3)
+    def threated_by(self):
+        moves = self.owner.board.all_legal()
+        pieces = []
+        for piece in moves:
+            if piece is self:
+                continue
+            else:
+                pass
+        
+__all__.append('ChessPiece')
 
 # Individual piece subtypes
 
@@ -148,7 +190,8 @@ class Pawn (ChessPiece):
     default_origins = [Coord(x, y) for x in range(grid_width) for y in (1, 6)]
     
     @call_trace(4)
-    def apply_ruleset(self, target, skip_ep=False):
+    def apply_ruleset(self, target):
+        self.owner.board.data['move_en_passant'] = True
         
         if self.color == 'white':
             op = lambda a, b: a + b
@@ -166,14 +209,16 @@ class Pawn (ChessPiece):
             
         ret = target in allowed
         
-        if self.owner.board.en_passant_rights == '-' or skip_ep:
+        if self.owner.board.en_passant_rights == '-':
             return ret  # skip further validation if possible
         
         if Coord.from_chess(self.owner.board.en_passant_rights) in tests:
+            self.owner.board.data['move_en_passant'] = True
+            
             ret = True
         
         return ret
-
+__all__.append('Pawn')
 
 class Rook (ChessPiece):
     
@@ -188,6 +233,7 @@ class Rook (ChessPiece):
         allowed.extend(east(self))
         allowed.extend(west(self))
         return target in allowed
+__all__.append('Rook')
 
 class Bishop (ChessPiece):
     
@@ -202,6 +248,7 @@ class Bishop (ChessPiece):
         allowed.extend(se(self))
         allowed.extend(sw(self))
         return target in allowed
+__all__.append('Bishop')
 
 class Queen (ChessPiece):
     
@@ -220,6 +267,7 @@ class Queen (ChessPiece):
         allowed.extend(se(self))
         allowed.extend(sw(self))
         return target in allowed
+__all__.append('Queen')
 
 class King (ChessPiece):
     
@@ -243,12 +291,13 @@ class King (ChessPiece):
             if piece is self:
                 continue
             else:
-                other_allowed.extend(piece.valid)
+                other_allowed.extend(piece.valid())
         self.owner.board.set_checkmate_validation(True)
-        if self.coord in other_allowed:
+        if target in other_allowed:
             return False
         else:
             return empty_board
+__all__.append('King')
 
 class Knight (ChessPiece):
     
@@ -265,6 +314,9 @@ class Knight (ChessPiece):
                    self.coord - Coord(2, 1),
                    self.coord - Coord(2, -1),
                    self.coord - Coord(1, -2)]
+        for pos in allowed:
+            if not ((grid_height > pos.y >= 0) and (grid_width > pos.x >= 0)):
+                allowed.remove(pos)
         return target in allowed
     
     @call_trace(4)
@@ -274,4 +326,5 @@ class Knight (ChessPiece):
     #    and this saves having to implement special-case code in the ChessPiece.path_to method
     def path_to(self, target):
         return [0]
+__all__.append('Knight')
 

@@ -1,9 +1,28 @@
 # -*- coding: utf-8 -*-
 
+#########################################################################
+# This file is part of PhantomChess.                                    #
+#                                                                       #
+# PhantomChess is free software: you can redistribute it and/or modify  #
+# it under the terms of the GNU General Public License as published by  # 
+# the Free Software Foundation, either version 3 of the License, or     #
+# (at your option) any later version.                                   #
+#                                                                       #
+# PhantomChess is distributed in the hope that it will be useful,       #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of        # 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
+# GNU General Public License for more details.                          #
+#                                                                       #
+# You should have received a copy of the GNU General Public License     #
+# along with PhantomChess.  If not, see <http://www.gnu.org/licenses/>. #
+#########################################################################
+
 """Coordinate handling."""
 
 from Phantom.constants import (screen_height, screen_width, scale_factor, grid_height, grid_width)
 from Phantom.functions import round_down
+
+__all__ = []
 
 class Coord (object):
     
@@ -141,6 +160,7 @@ class Coord (object):
         y = round_down(scr.y / float(scale_factor))
         x = round_down((scr.x - 128) / float(scale_factor))
         return Coord(x, y)
+__all__.append('Coord')
 
 
 class Grid (object):
@@ -163,6 +183,8 @@ class Grid (object):
         x_t = self.min_x <= point.x <= self.max_x
         y_t = self.min_y <= point.y <= self.max_y
         return x_t and y_t
+__all__.append('Grid')
 
 bounds = Grid(Coord(0, 0), Coord(0, 7), Coord(7, 0), Coord(7, 7))
+__all__.append('bounds')
 

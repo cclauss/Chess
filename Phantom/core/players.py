@@ -1,5 +1,22 @@
 # -*- coding: utf-8 -*-
 
+#########################################################################
+# This file is part of PhantomChess.                                    #
+#                                                                       #
+# PhantomChess is free software: you can redistribute it and/or modify  #
+# it under the terms of the GNU General Public License as published by  # 
+# the Free Software Foundation, either version 3 of the License, or     #
+# (at your option) any later version.                                   #
+#                                                                       #
+# PhantomChess is distributed in the hope that it will be useful,       #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of        # 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
+# GNU General Public License for more details.                          #
+#                                                                       #
+# You should have received a copy of the GNU General Public License     #
+# along with PhantomChess.  If not, see <http://www.gnu.org/licenses/>. #
+#########################################################################
+
 """Player class."""
 
 from Phantom.constants import *
@@ -8,6 +25,8 @@ from Phantom.core.coord.point import Coord
 from Phantom.functions import round_down, dist
 from Phantom.utils.debug import call_trace, log_msg
 import uuid
+
+__all__ = []
 
 class Side (object):
     
@@ -44,6 +63,7 @@ class Side (object):
     
     def opposite(self):
         return 'black' if self.color == 'white' else 'white'
+__all__.append('Side')
 
 class Player (object):
     
@@ -94,7 +114,7 @@ class Player (object):
         
     def freeze(self):
         self.isFrozen = True
-        self.owned_pieces = frozenset(self.owned_pieces)
+        self.owned_pieces = list(self.owned_pieces)
     
     def unfreeze(self):
         self.isFrozen = False
@@ -145,7 +165,7 @@ class Player (object):
         else:
             check = True
         log_msg('validatemove: piece={}, turn={}, allowed={}, path={}, path_check={}, check={}'.format(
-                               piece,    turn,    allowed,    path,    path_check,    check), 0)
+                               piece,    turn,    allowed,    path,    path_check,    check), 3)
         return turn and allowed and path_check and check
     
     def make_move(self, p1, p2):
@@ -153,4 +173,5 @@ class Player (object):
         piece = self.board[p1]
         piece.coord = p2
         self.board.unfreeze()
+__all__.append('Player')
 

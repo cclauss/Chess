@@ -1,5 +1,22 @@
 # -*- coding: utf-8 -*-
 
+#########################################################################
+# This file is part of PhantomChess.                                    #
+#                                                                       #
+# PhantomChess is free software: you can redistribute it and/or modify  #
+# it under the terms of the GNU General Public License as published by  # 
+# the Free Software Foundation, either version 3 of the License, or     #
+# (at your option) any later version.                                   #
+#                                                                       #
+# PhantomChess is distributed in the hope that it will be useful,       #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of        # 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
+# GNU General Public License for more details.                          #
+#                                                                       #
+# You should have received a copy of the GNU General Public License     #
+# along with PhantomChess.  If not, see <http://www.gnu.org/licenses/>. #
+#########################################################################
+
 """A lot of rules that analyze a board.
 
 All functions in this file take one argument, a board, and analyze it
@@ -32,7 +49,7 @@ locatable on the internet.
 from Phantom.ai.phases import Phase
 from Phantom.core.coord.point import Coord
 from Phantom.constants import *
-from Phantom.utils.debug import call_trace
+from Phantom.utils.debug import call_trace, log_msg
 
 board_north_edge = [Coord(x, 7) for x in range(grid_width)]
 board_south_edge = [Coord(x, 0) for x in range(grid_width)]
@@ -61,9 +78,9 @@ def knight_on_edge(board):
         if piece.ptype == 'knight':
             if piece.coord in board_east_edge + board_west_edge:
                 if piece.color == 'white':
-                    score -= knight_on_edge_score
-                else:
                     score += knight_on_edge_score
+                else:
+                    score -= knight_on_edge_score
     return score
 # this is left out for the more advanced & precise assess_knights()
 #all_rules.append(knight_on_edge)
@@ -90,10 +107,10 @@ def advanced_pawns(board):
         if piece.ptype == 'pawn':
             if piece.color == 'white':
                 if piece.coord.y >= 4:
-                    score += p.coord.y * advanced_pawn_mul
+                    score += piece.coord.y * advanced_pawn_mul
             elif piece.color == 'black':
                 if piece.coord.y <= 3:
-                    score -= (grid_height - p.coord.y) * advanced_pawn_mul
+                    score -= (grid_height - piece.coord.y) * advanced_pawn_mul
     return score
 all_rules.append(advanced_pawns)
 
@@ -167,7 +184,8 @@ all_rules.append(has_castled)
 def pawn_structure(board):
     score = 0
     from Phantom.ai.settings import (doubled_pawn, tripled_pawn, isolated_pawn,
-                                   pawn_ram, eight_pawns, passed_pawn)
+                                     pawn_ram, eight_pawns, passed_pawn)
+    from Phantom.core.coord.point import Coord
     white_pawns = black_pawns = []
     for piece in board.pieces:
         if piece.ptype == 'pawn':
@@ -177,18 +195,23 @@ def pawn_structure(board):
                 black_pawns.append(piece)
     pawns = white_pawns + black_pawns
     
+    log_msg('pawn_structure: counting pawns...', 5)
     if len(white_pawns) == 8:
         score += eight_pawns
     if len(black_pawns) == 8:
         score -= eight_pawns
+    log_msg('pawn_structure: finished pawn count score={}'.format(score), 5)
     
+    log_msg('pawn_structure: analyzing passed pawns...', 5)
     for pawn in white_pawns:
         if pawn.coord.y >= 5:
             score += passed_pawn
     for pawn in black_pawns:
         if pawn.coord.y <= 2:
             score -= passed_pawn
+    log_msg('pawn_structure: finished passed pawns score={}'.format(score), 5)
     
+    log_msg('pawn_structure: analyzing doubled pawns...', 5)
     for pawn in white_pawns:
         xf = files[pawn.coord.as_chess()[0]]
         for c in xf:
@@ -207,6 +230,28 @@ def pawn_structure(board):
             if (p.ptype == 'pawn') and (p.color == 'black'):
                 if p.coord.y == (pawn.coord.y - 1):
                     score += doubled_pawn
+    log_msg('pawn_structure: finished doubled pawns score={}'.format(score), 5)
+
+    log_msg('pawn_structure: analyzing isolated pawns...', 5)
+    iso_white = iso_black = []
+    tests = [Coord(x, y) for x in [-1, 0, 1] for y in [-1, 0, 1]]
+    tests.remove(Coord(0, 0))
+    for pawn in pawns:
+        p_c, iso = pawn.coord, True
+        for test in tests:
+            t_c = p_c + test
+            if board[t_c] is not None:
+                iso = False
+                break
+        if iso:
+            if pawn.color == 'white':
+                iso_white.append(pawn)
+            elif pawn.color == 'black':
+                iso_black.append(pawn)
+    score += isolated_pawn * len(iso_white)
+    score -= isolated_pawn * len(iso_black)
+    log_msg('pawn_structure: finished isolated pawns score={}'.format(score), 5)
+    
     return score
 all_rules.append(pawn_structure)
 
@@ -217,10 +262,36 @@ def mobility(board):
     for piece in board.pieces:
         score += (mobility_mul * len(piece.valid())) * colors[piece.color.color]
     return score
-# Currently this is not added to the rules list due to the fact that it takes ***forever***
-# It also has a habit of causing recursion errors
 #all_rules.append(mobility)
 
+
+@call_trace(3)
+def bad_bishops(board):
+    from Phantom.ai.settings import bad_bishop_mul, colors
+    score = 0
+    white_pawns = black_pawns = []
+    white_bishops = black_bishops = []
+    for piece in board.pieces:
+        if piece.ptype == 'pawn':
+            if piece.color == 'white':
+                white_pawns.append(piece)
+            elif piece.color == 'black':
+                white_pawns.append(piece)
+        elif piece.ptype == 'bishop':
+            if piece.color == 'white':
+                white_bishops.append(piece)
+            elif piece.color == 'black':
+                black_bishops.append(piece)
+    for bishop in white_bishops:
+        tc = board.tile_at(bishop.coord).color
+        same_color = [pawn for pawn in white_pawns if board.tile_at(pawn.coord).color == tc]
+        score += (bad_bishop_mul * len(same_color)) * colors['white']
+    for bishop in black_bishops:
+        tc = board.tile_at(bishop.coord).color
+        same_color = [pawn for pawn in black_pawns if board.tile_at(pawn.coord).color == tc]
+        score += (bad_bishop_mul * len(same_color)) * colors['black']
+    return score
+all_rules.append(bad_bishops)
 
 # --------------------assess piece layout according to Phantom.ai.pos_eval.piece_tables-------------------------------------
 @call_trace(3)

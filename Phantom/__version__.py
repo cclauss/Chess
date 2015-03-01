@@ -17,22 +17,14 @@
 # along with PhantomChess.  If not, see <http://www.gnu.org/licenses/>. #
 #########################################################################
 
-"""Test the Phantom.core.board.Board.move() method"""
+"""Version information."""
 
-from Phantom.core.board import Board
-from Phantom.utils.debug import log_msg, clear_log
-
-def main(clear=True):
-    if clear: clear_log()
-    log_msg('Testing Phantom.core.board.Board.move() method', 0)
-    b = Board()  # white to move, opening layout
-    try:
-        b.move('e2e4')
-    except Exception as e:
-        log_msg('Phantom.core.board.Board.move() method test failed:\n{}'.format(e), 0, err=True)
-    finally:
-        log_msg('Test complete', 0)
-
-if __name__ == '__main__':
-    main()
+__major__ = '0'
+__minor__ = '6'
+__patch__ = '7'
+__version__ = '.'.join([__major__, __minor__, __patch__])
+__author__ = '671620616'
+__author_email__ = 'blerghhh86@gmail.com'
+__license__ = 'GNU General Public License'
+__last_update__ = '20150228T2317'
 
