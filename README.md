@@ -9,7 +9,7 @@ Phantom is a (in development) game of Chess written in Python.  It's not very gr
 4                 4
 3                 3
 2 P P P P P P P P 2
-1 R N B Q K B N R 1
+1 R N B Q K B N R 1 <
   a b c d e f g h
 ```
 and will use Unicode characters as well.  A proper GUI is underway for the iOS app [Pythonista][].  
@@ -24,9 +24,13 @@ Please note: this project is a huge learning experience for me.  This is the 3rd
 - [ ] Move search engine (work-in-progress)
 - [ ] Descriptive game notation
 - [x] Move validation
+- [x] En passant
+- [ ] Pawn promotion (expect in next update)
 - [x] Pretty printing
 - [x] Save/load boards
 - [x] Read/write FEN strings
+- [x] Read EPD strings
+- [ ] Write EPD strings
 - [x] Algebraic chess notation
 - [ ] Pythonista GUI
 - [ ] Windows GUI
@@ -40,11 +44,15 @@ How exactly does Phantom analyze a board and give it a score?  It uses a set of 
 
 - developed pieces
 - advanced pawns
-- separate scoring method for kings
+- separate scoring method for kings based on opening, midgame, endgame
 - does player have the bishop pair
 - has the player castled
 - analyze pawn structure (work-in-progress)
 - assess pawns, knights, bishops, rooks, queens & kings according to the Phantom.ai.pos_eval.piece_tables file
+- assess bad bishops
+
+### Why no mobility heuristic?
+Briefly considering how chess works, one would assume a piece that could make more moves would be more valuable.  And that would be correct, although it wouldn't make the piece as valuable as you might think because most legal moves in any given chess game *are pointless*.  Also, the main reason the function isn't put to use (it does exist in the file) is that it simply takes too long to generate the list of valid moves.
 
 as well as the much simpler material analysis.
 
