@@ -22,17 +22,23 @@
 from scene import *
 
 class MultiScene (Scene):
+    
     def __init__(self, start_scene):
+        print "MultiScene init, ss={}".format(start_scene)
         self.active_scene = start_scene
         self.tmp_t = 0
         self.invocations = 0
+        
     def switch_scene(self, new_scene):
+        print "Setting new scene to: {}".format(new_scene)
+        new_scene.setup()
         self.active_scene = new_scene
+        
     def setup(self):
-        global screen_size
-        screen_size = self.size
+        self.active_scene = self.load_scene
         self.tmp_t = self.t
         self.active_scene.setup()
+        
     def draw(self):
         self.invocations += 1
         background(0, 0, 0)
@@ -40,10 +46,13 @@ class MultiScene (Scene):
         self.active_scene.touches = self.touches
         self.active_scene.t = self.t - self.tmp_t
         self.active_scene.draw()
+        
     def touch_began(self, touch):
         self.active_scene.touch_began(touch)
+        
     def touch_moved(self, touch):
         self.active_scene.touch_moved(touch)
+        
     def touch_ended(self, touch):
         self.active_scene.touch_ended(touch)
     
@@ -58,4 +67,9 @@ class MultiScene (Scene):
     
     def did_begin(self):
         self.switch_scene(self.main_scene)
+
+if __name__ == '__main__':
+    from Phantom.core.game_class import ChessGame
+    game = ChessGame()
+    game.gui()
 

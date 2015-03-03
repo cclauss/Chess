@@ -25,6 +25,7 @@ import inspect
 
 def main(*args):
     clear_log()
+    log_msg('Phantom beginning self-test', 0, mark=True)
     testdir = inspect.getfile(main)
     testdir, dirname = os.path.split(testdir)
     
@@ -35,6 +36,7 @@ def main(*args):
             mn = f[:f.index('.')]
             m = __import__(mn)
             m.main(False)
+    log_msg('Phantom self-test complete', 0, mark=True)
 
 if __name__ == '__main__':
     main()

@@ -28,6 +28,8 @@ def main(clear=True):
     b = Board()  # white to move, opening layout
     try:
         b.move('e2e4')
+        b.move('g8f6')
+        b.move('g2g3')
     except Exception as e:
         log_msg('Phantom.core.board.Board.move() method test failed:\n{}'.format(e), 0, err=True)
     finally:

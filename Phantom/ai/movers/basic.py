@@ -17,7 +17,7 @@
 # along with PhantomChess.  If not, see <http://www.gnu.org/licenses/>. #
 #########################################################################
 
-"""The code that makes the AI do stuff."""
+"""The code that makes the AI do stuff.  Although this AI doesn't do very smart stuff."""
 
 from Phantom.core.board import Board
 from Phantom.core.coord.point import Coord
@@ -36,4 +36,3 @@ def make_random_move(board):
         board.move(piece.coord, move)
         moved = board
     return moved
-

@@ -40,38 +40,43 @@ def clear_log():
     finally:
         os.chdir(orig_dir)
 
-def log_msg(msg, level, err=False):
-    from Phantom.constants import dbgname, debug
+def log_msg(msg, level, **kwargs):
+    from Phantom.constants import dbgname, debug, phantom_dir
     import inspect, os, sys
+    
+    err = kwargs.get('err', False)
+    write = kwargs.get('write', True)
+    mark = kwargs.get('mark', False)
+    p = kwargs.get('p', '')
+    if err and mark:
+        mark = False
     
     if (level > debug) and (not err):
         return False
     ret = True
     
     if err:
-        msg = '!' + msg
+         pm = '!'
+    elif mark:
+        pm = 'x'
+    elif p:
+        pm = p[0]
     else:
-        msg = ' ' + msg
+        pm = ' '
+    msg = pm + msg
     
     if len(msg) >= 88:
         msg = msg[:88] + '\n -' + msg[88:]
     
-    orig_dir = os.getcwd()
-    util_dir = inspect.getfile(log_msg)
-    util_dir = util_dir[:util_dir.rindex('/')]
+    writeto = os.path.join(phantom_dir, 'utils', dbgname)
     
     try:
-        os.chdir(util_dir)
-        
-        with open(dbgname, 'a') as f:
-            f.write(msg + '\n')
-        
-        os.chdir(orig_dir)
+        if write:
+            with open(writeto, 'a') as f:
+                f.write(msg + '\n')
     except Exception as e:
-        log_msg("Exception {} in log_msg, couldn't write to file", level)
+        log_msg("Exception {} in log_msg, couldn't write to file", level, write=False)
         ret = False
-    finally:
-        os.chdir(orig_dir)
     
     sys.stdout.write("### {}\n".format(msg))
     

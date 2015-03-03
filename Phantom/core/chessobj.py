@@ -17,45 +17,14 @@
 # along with PhantomChess.  If not, see <http://www.gnu.org/licenses/>. #
 #########################################################################
 
-"""A loading screen."""
+"""A short & simple class for all Phantom objects to inherit from.  
 
-from scene import *
-from Phantom.constants import debug, screen_width, screen_height, version
-from Phantom.utils.lic import short
+This file is import clean."""
 
-class ChessLoadingScreen (Scene):
+class PhantomObj (object):
     
-    def __init__(self, main=None):
-        self.parent = main
-        if self.parent is not None:
-            self.parent.set_load_scene(self)
-        self.tmp_t = 0
+    name = "object"
     
-    def setup(self):
-        pass
-    
-    def set_parent(self, p):
-        self.parent = p
-        self.parent.set_load_scene(self)
-    
-    def touch_began(self, touch):
-        self.parent.did_begin()
-    
-    def draw(self):
-        background(0, 0, 0)
-        fill(1, 1, 1)
-        x = screen_width / 2
-        s_y = screen_height / 2 + 100
-        d_y = s_y - 30
-        l_y = d_y - 75
-        tint(0.32645,0.28306,0.93492)
-        text('PhantomChess version {}'.format(version), x=x, y=s_y, font_size=20.0)
-        tint(1, 1, 1)
-        if debug:
-            text('Debugger set to level {}'.format(debug), x=x, y=d_y)
-        for i, line in enumerate(short().splitlines()):
-            text(line, x=x, y=l_y - (i*20))
-
-if __name__ == '__main__':
-    run(ChessLoadingScreen())
+    def __repr__(self):
+        return "<{}.{} object at {}>".format(__name__, self.__class__.__name__, hex(id(self)))
 

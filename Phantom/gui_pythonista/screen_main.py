@@ -48,16 +48,20 @@ class ChessMainScreen (Scene):
         folder = 'imgs'
         format = 'Chess set images {} {}.jpg'
 
-        files = [os.path.join(folder, format.format(color, type))
+        files = [os.path.join(phantom_dir, folder, format.format(color, type))
                  for type in ('pawn', 'rook', 'queen', 'king', 'bishop', 'knight')
                  for color in ('black', 'white')]
 
         img_names = {}
         for file in files:
             name = os.path.split(file)[1]
-            img = scene.load_image_file(file)
+            img = load_image_file(file)
             img_names.update({name: img})
         self.img_names = img_names
+    
+    def set_parent(self, p):
+        self.parent = p
+        self.parent.set_main_scene(self)
     
     def did_err(self, e):
         self.err = sys.exc_info()

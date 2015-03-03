@@ -59,7 +59,7 @@ class exc_catch (object):
                 if (e.__class__ not in self.passes) and (e is not None):
                     if self.log:
                         log_msg('exc_catch: caught unpassed exception of type {}: {}'.format(
-                                 e.__class__, e.message), self.log)
+                                 e.__class__, e.message), self.log, err=True)
                     return retval
                 elif e is not None:
                     raise e
@@ -67,6 +67,10 @@ class exc_catch (object):
         return wrapped
 
 class default_args (object):
+    
+    """As it is possible to supply a default (optional) argument, one whos value can be specified at
+    call time by `foo = 'bar'`, but not possible to supply a default to `*args`, this decorator allows
+    that to be done."""
     
     def __init__(self, *args, **kwargs):
         self.d_args = args

@@ -17,6 +17,28 @@
 # along with PhantomChess.  If not, see <http://www.gnu.org/licenses/>. #
 #########################################################################
 
-"""A basic AI.  Analogous to a good AI set to 'easy' level.  In fact, this particular AI makes completely random moves."""
+"""Make the AI pick a good move from the scored nodes in a search tree."""
 
-pass
+from Phantom.core.board import Board
+from Phantom.ai.tree.generate import spawn_tree
+
+def make_smart_move(board):
+    tree = spawn_tree(board)
+    turn = board.turn
+    if turn == 'black':
+        best = float('inf')
+        func = min
+        cmp = lambda a, b: a < b
+    elif turn == 'white':
+        best = float('-inf')
+        func = max
+        cmp = lambda a, b: a > b
+    
+    bestnode = None
+    for child in tree.children:
+        if cmp(child.score, best):
+            bestnode = child
+    
+    move = bestnode.board.lastmove
+    board.move(move[0], move[1])
+

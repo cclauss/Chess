@@ -20,6 +20,7 @@
 try:
     import scene
     in_pythonista = True
+    del scene
 except ImportError:
     in_pythonista = False
 
@@ -32,7 +33,7 @@ from Phantom.__version__ import __version__ as version
 # Debug level
 # This can make the program slow
 # Please select from range(0, 11)
-debug = 7
+debug = 1
 
 # Use the unicode prettyprinter or an ASCII prettyprinter
 use_unicode = True
@@ -68,24 +69,7 @@ pieces_per_player = {'rook': 2,
                      'knight': 2, 
                      'pawn': 8, 
                      }                     
-layout = """
-    
-     0 1 2 3  4 5 6 7
-     a b c d  e f g h
-    
-7 8  R K B Q Ki B K R  8 7  Black
-6 7  P P P P  P P P P  7 6                 
-5 6                    6 5
-4 5                    5 4
-3 4                    4 3
-2 3                    3 2
-1 2  P P P P  P P P P  2 1
-0 1  R K B Q Ki B K R  1 0  White
 
-     a b c d  e f g h
-     0 1 2 3  4 5 6 7
-"""
-     
 # these do affect gameplay and will raise errors if edited
 grid_width = 8
 grid_height = 8
@@ -145,3 +129,7 @@ fen_rank_split = '/'
 
 default_halfmove = 0
 default_fullmove = 1
+
+import os as _os
+phantom_dir = _os.path.dirname(_os.path.realpath(__file__))
+

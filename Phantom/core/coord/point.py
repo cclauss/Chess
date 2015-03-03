@@ -21,10 +21,11 @@
 
 from Phantom.constants import (screen_height, screen_width, scale_factor, grid_height, grid_width)
 from Phantom.functions import round_down
+from Phantom.core.chessobj import PhantomObj
 
 __all__ = []
 
-class Coord (object):
+class Coord (PhantomObj):
     
     tochesskeys = {
     0: 'a',

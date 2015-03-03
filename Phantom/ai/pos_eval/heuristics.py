@@ -100,7 +100,7 @@ all_rules.append(developed_pieces)
 
 @call_trace(3)
 def advanced_pawns(board):
-    from Phantom.ai.settings import advanced_pawn_mul
+    from Phantom.ai.settings import advanced_pawn_mul, promotable_bonus
     from Phantom.constants import grid_height
     score = 0
     for piece in board.pieces:
@@ -108,9 +108,13 @@ def advanced_pawns(board):
             if piece.color == 'white':
                 if piece.coord.y >= 4:
                     score += piece.coord.y * advanced_pawn_mul
+                if piece.is_promotable:
+                    score += promotable_bonus
             elif piece.color == 'black':
                 if piece.coord.y <= 3:
                     score -= (grid_height - piece.coord.y) * advanced_pawn_mul
+                if piece.is_promotable:
+                    score -= promotable_bonus
     return score
 all_rules.append(advanced_pawns)
 
@@ -262,8 +266,8 @@ def mobility(board):
     for piece in board.pieces:
         score += (mobility_mul * len(piece.valid())) * colors[piece.color.color]
     return score
+# too slow, can take up to 5 minutes in some situations
 #all_rules.append(mobility)
-
 
 @call_trace(3)
 def bad_bishops(board):

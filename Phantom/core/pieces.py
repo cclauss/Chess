@@ -20,6 +20,7 @@
 """The core of the pieces."""
 
 from Phantom.constants import *
+from Phantom.core.chessobj import PhantomObj
 from Phantom.core.coord.point import Coord, Grid, bounds
 from Phantom.core.exceptions import InvalidMove, InvalidDimension
 from Phantom.core.coord.vectored_lists import *
@@ -32,7 +33,7 @@ import uuid
 
 __all__ = []
 
-class ChessPiece (object):
+class ChessPiece (PhantomObj):
     
     allIsFrozen = False  # all piece level freeze
     bounds = bounds
@@ -138,6 +139,8 @@ class ChessPiece (object):
     
     @call_trace(2)
     def is_move_valid(self, target):
+        if target not in bounds:
+            return False
         does_follow_rules = self.apply_ruleset(target)
         is_valid_target = self.check_target(target)
         path = self.path_to(target)
@@ -214,7 +217,6 @@ class Pawn (ChessPiece):
         
         if Coord.from_chess(self.owner.board.en_passant_rights) in tests:
             self.owner.board.data['move_en_passant'] = True
-            
             ret = True
         
         return ret

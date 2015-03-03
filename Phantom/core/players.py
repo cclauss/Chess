@@ -20,6 +20,7 @@
 """Player class."""
 
 from Phantom.constants import *
+from Phantom.core.chessobj import PhantomObj
 from Phantom.core.exceptions import InvalidMove, LogicError
 from Phantom.core.coord.point import Coord
 from Phantom.functions import round_down, dist
@@ -28,7 +29,7 @@ import uuid
 
 __all__ = []
 
-class Side (object):
+class Side (PhantomObj):
     
     def __init__(self, color):
         if isinstance(color, Side):
@@ -65,7 +66,7 @@ class Side (object):
         return 'black' if self.color == 'white' else 'white'
 __all__.append('Side')
 
-class Player (object):
+class Player (PhantomObj):
     
     isFrozen = False
     total_moves = 0

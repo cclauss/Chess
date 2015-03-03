@@ -19,19 +19,30 @@
 
 """A separate constants.py file to save some space in the main one."""
 
+from Phantom.functions import round_down
+
 maxdepth = 2
 window = 20
 
 # Points-per-piece simple
 scores = dict(
-pawn = 100.0
-,knight = 320.0
-,bishop = 330.0
-,rook = 500.0
-,queen = 900.0
+pawn = 100
+,knight = 320
+,bishop = 330
+,rook = 500
+,queen = 900
 ,king = 20000)  # use 20000 to signal the capture of a king is better than all other options
 
 king_material = 400  # use the endgame score for material worth totalling
+
+max_material = 16*scores['pawn'] + 4*scores['knight'] + 4*scores['bishop'] \
+               + 4*scores['rook'] + 2*scores['queen'] + 2*king_material
+min_material = 2*king_material
+
+opening_range = [max_material,]
+midgame_range = xrange(round_down(max_material / 4), int(max_material))
+endgame_range = xrange(0, midgame_range[0])
+opening_moves = 6
 
 colors = dict(
 white = 1
@@ -40,43 +51,46 @@ white = 1
 # Advanced heuristic scores
 
 # avoid a knight on the edge; they are bad
-knight_on_edge_score = -50.0
+knight_on_edge_score = -50
 
 # use a different set of scores for farther developed pieces
 developed_scores = dict(
-pawn = 70.0
-,knight = 350.0
-,bishop = 400.0
-,rook = 600.0
-,queen = 1000.0
+pawn = 70
+,knight = 350
+,bishop = 400
+,rook = 600
+,queen = 1000
 ,king = 0)  # king development will be tested in a different heuristic
 
 # pawns closer to promotion are much better
-advanced_pawn_mul = 40.0
+advanced_pawn_mul = 40
+
+# pawns that are promotable are *very* good
+promotable_bonus = 350
 
 # the king gets a score in the endgame but not opening/midage
-king_endgame = 400.0
+king_endgame = 400
 
 # bonus for having both bishops
-bishop_pair_bonus = 50.0
+bishop_pair_bonus = 50
 
 # castling is good in the opening, ok in the midgame, but pointless in the endgame
-castle_opening_bonus = 250.0
-castle_midgame_bonus = 100.0
-castle_endgame_bonus = -400.0
+castle_opening_bonus = 70
+castle_midgame_bonus = 30
+castle_endgame_bonus = -400
 
 # pawn structure analysis
-doubled_pawn = -50.0
-tripled_pawn = -75.0
-pawn_ram = -75.0
-isolated_pawn = -40.0
+doubled_pawn = -50
+tripled_pawn = -75
+pawn_ram = -75
+isolated_pawn = -40
 eight_pawns = -75
-passed_pawn = 250.0
+passed_pawn = 250
 
 # although move moves are better, most possible moves in chess are pointless
-mobility_mul = 10.0
+mobility_mul = 10
 
 # bishops where there are many pawns on the same color squares as the bishops
 # are less useful
-bad_bishop_mul = 30.0
+bad_bishop_mul = 30
 

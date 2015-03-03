@@ -25,7 +25,7 @@ Please note: this project is a huge learning experience for me.  This is the 3rd
 - [ ] Descriptive game notation
 - [x] Move validation
 - [x] En passant
-- [ ] Pawn promotion (expect in next update)
+- [x] Pawn promotion
 - [x] Pretty printing
 - [x] Save/load boards
 - [x] Read/write FEN strings
@@ -51,10 +51,10 @@ How exactly does Phantom analyze a board and give it a score?  It uses a set of 
 - assess pawns, knights, bishops, rooks, queens & kings according to the Phantom.ai.pos_eval.piece_tables file
 - assess bad bishops
 
+as well as the much simpler material analysis.
+
 ### Why no mobility heuristic?
 Briefly considering how chess works, one would assume a piece that could make more moves would be more valuable.  And that would be correct, although it wouldn't make the piece as valuable as you might think because most legal moves in any given chess game *are pointless*.  Also, the main reason the function isn't put to use (it does exist in the file) is that it simply takes too long to generate the list of valid moves.
-
-as well as the much simpler material analysis.
 
 ### Score system
 Scores are given in "centipawns", such that 100 cp = 1 pawn.  The values used are too many to list here, and can be found in the Phantom.ai.settings file.

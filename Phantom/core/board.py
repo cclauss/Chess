@@ -20,6 +20,7 @@
 """The chessboard itself."""
 
 from Phantom.constants import *
+from Phantom.core.chessobj import PhantomObj
 from Phantom.core.players import Player, Side
 from Phantom.core.exceptions import InvalidDimension, InvalidMove, LogicError, ChessError
 from Phantom.core.pieces import ChessPiece, King, Queen, Rook, Bishop, Knight, Pawn
@@ -42,7 +43,7 @@ def load(name):
     return game
 __all__.append('load')
 
-class Tile (object):
+class Tile (PhantomObj):
     
     isfrozen = False
     
@@ -58,7 +59,7 @@ class Tile (object):
 __all__.append('Tile')
 
 
-class Board (object):
+class Board (PhantomObj):
     
     isfrozen = False  # is the board frozen?
     movenum = 0       # how many moves have been made
@@ -277,6 +278,7 @@ class Board (object):
     def switch_turn(self):
         self.turn = Side('white') if self.turn == 'black' else Side('black')
     
+    @call_trace(2)
     def kill(self, piece):
         if piece is None:
             return
@@ -348,17 +350,19 @@ class Board (object):
             if piece.ptype == 'pawn':
                 self.halfmove_clock = 0
             if piece.color == 'black':
-                self.fullmove_clock += 1    
+                self.fullmove_clock += 1
             
             if not self.data['move_en_passant']:
-                self.kill(self[p2])
+                target = self[p2]
             else:
                 if self[p1].color == 'white':
-                    self.kill(self[p2 - Coord(0, 1)])
+                    target = self[p2 - Coord(0, 1)]
                 elif self[p1].color == 'black':
-                    self.kill(self[p2 + Coord(0, 1)])
+                    target = self[p2 + Coord(0, 1)]
+                self.data['move_en_passant'] = False
 
             player.make_move(p1, p2)
+            self.kill(target)
             self.lastmove = (p1, p2)
         else:
             self.postmove()
@@ -432,6 +436,43 @@ class Board (object):
                                       'Phantom.core.board.Board.castle()')
         if self.castling_rights == '':
             self.castling_rights = '-'
+    
+    @call_trace(3)
+    @exc_catch(ChessError, LogicError, ret='Cannot promote', log=2)
+    def promote(self, pos, to):
+        if isinstance(pos, str):
+            pos = Coord.from_chess(pos)
+        elif isinstance(pos, Coord):
+            pos = pos
+        pawn = self[pos]
+        if pawn.ptype != 'pawn':
+            raise ChessError('Piece {} is not a pawn'.format(pawn), 'Phantom.core.board.Board.promote()')
+        if to not in 'RNBQ':
+            raise LogicError('Cannot promote pawn to piece type "{}"'.format(to), 'Phantom.core.board.Board.promote()')
+        if pawn.color == 'black':
+            if pawn.coord.y != 1:
+                raise ChessError('Cannot promote {}'.format(pawn), 'Phantom.core.board.Board.promote()')
+            x = pawn.coord.x
+            newcls = ChessPiece.type_from_chr(to)
+            color = pawn.color
+            newpos = Coord(x, 0)
+            new = newcls(newpos, color, pawn.owner)
+            self.freeze()
+            self.pieces.append(new)
+            self.unfreeze()
+            self.kill(pawn)
+        elif pawn.color == 'white':
+            if pawn.coord.y != 6:
+                raise ChessError('Cannot promote {}'.format(pawn), 'Phantom.core.board.Board.promote()')
+            x = pawn.coord.x
+            newcls = ChessPiece.type_from_chr(to)
+            color = pawn.color
+            newpos = Coord(x, 7)
+            new = newcls(newpos, color, pawn.owner)
+            self.freeze()
+            self.pieces.append(new)
+            self.unfreeze()
+            self.kill(pawn)
                        
     def set_checkmate_validation(self, val):
         self.cfg.do_checkmate = val

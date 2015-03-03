@@ -20,20 +20,15 @@
 """Get a FEN string for a given board save-name."""
 
 from Phantom.core.exceptions import ChessError, LogicError
-from Phantom.constants import save_fen
+from Phantom.constants import save_fen, phantom_dir
 import os
 import inspect
 
 def loadgame(name):
     
-    orig_dir = os.getcwd()
-    save_dir = os.path.split(inspect.getfile(loadgame))[0]
-    os.chdir(save_dir)
-    
-    with open(save_fen, 'r') as file_read:
-        lines = file_read.readlines()
-    
-    os.chdir(orig_dir)
+    read = os.path.join(phantom_dir, 'boardio', save_fen)
+    with open(read, 'r') as f:
+        lines = f.readlines()
     
     for line in lines:
         line = line.strip()
@@ -47,14 +42,9 @@ def loadgame(name):
 
 def listgames():
     
-    orig_dir = os.getcwd()
-    save_dir = os.path.split(inspect.getfile(listgames))[0]
-    os.chdir(save_dir)
-    
-    with open(save_fen, 'r') as file_read:
-        lines = file_read.readlines()
-    
-    os.chdir(orig_dir)
+    read = os.path.join(phantom_dir, 'boardio', save_fen)
+    with open(read, 'r') as f:
+        lines = f.readlines()
     
     ret = []
     for line in lines:

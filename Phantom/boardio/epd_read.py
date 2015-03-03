@@ -95,7 +95,7 @@ from Phantom.core.coord.point import Coord
 from Phantom.core.pieces import ChessPiece
 from Phantom.core.board import Board
 from Phantom.core.players import Side
-from Phantom.constants import default_halfmove, default_fullmove, save_epd
+from Phantom.constants import default_halfmove, default_fullmove, save_epd, phantom_dir
 import re
 
 opcodes = {
@@ -125,10 +125,9 @@ opcodes = {
 'tcsi'        : 'telecommunication sender identification',}
 
 def _load_name(name):
-    import os, inspect
-    workdir = os.path.split(inspect.getfile(_load_name))[0]
-    read = os.path.join(workdir, save_epd)
-    with open('Phantom_test_suite.txt', 'r') as f:
+    import os
+    read = os.path.join(phantom_dir, 'boardio', save_epd)
+    with open(read, 'r') as f:
         lines = f.readlines()
     ret = None
     for line in lines:
@@ -145,9 +144,8 @@ def _load_name(name):
     return ret
 
 def listgames():
-    import os, inspect
-    workdir = os.path.split(inspect.getfile(listgames))[0]
-    read = os.path.join(workdir, save_epd)
+    import os
+    read = os.path.join(phantom_dir, 'boardio', save_epd)
     with open(read, 'r') as f:
         lines = f.readlines()
     ret = []
@@ -190,9 +188,8 @@ def load_epd(string):
 
 def load_test_string(name):
     from Phantom.constants import test_suite
-    import os, inspect
-    fdir = os.path.split(inspect.getfile(load_test))[0]
-    read = os.path.join(fdir, test_suite)
+    import os
+    read = os.path.join(phantom_dir, 'boardio', test_suite)
     with open(read, 'r') as f:
         lines = f.readlines()
     ret = None
@@ -216,9 +213,8 @@ def load_test(name):
 
 def list_tests():
     from Phantom.constants import test_suite
-    import os, inspect
-    fdir = os.path.split(inspect.getfile(load_test))[0]
-    read = os.path.join(fdir, test_suite)
+    import os
+    read = os.path.join(phantom_dir, 'boardio', test_suite)
     with open(read, 'r') as f:
         lines = f.readlines()
     ret = []

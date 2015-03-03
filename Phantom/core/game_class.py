@@ -22,6 +22,7 @@
 Generally, use this class rather than Phantom.core.board.Board, because this class
 keeps track of history, which Board doesn't."""
 
+from Phantom.core.chessobj import PhantomObj
 from Phantom.core.board import Board, Tile, load as _loadboard
 from Phantom.core.players import Player, Side
 from Phantom.core.pieces import ChessPiece, Pawn, Rook, Knight, Bishop, King, Queen
@@ -29,6 +30,7 @@ from Phantom.core.exceptions import ChessError, LogicError, InvalidMove, Invalid
 from Phantom.core.coord import *
 from Phantom.boardio.boardcfg import Cfg, Namespace
 from Phantom.boardio.load import listgames
+from Phantom.utils.debug import log_msg, call_trace
 
 __all__ = []
 
@@ -36,7 +38,7 @@ def loadgame(name):
     board = _loadboard(name)
     return CessGame(board)
 
-class ChessGame (object):
+class ChessGame (PhantomObj):
     
     def __init__(self, *args, **kwargs):
         self.board = Board()
@@ -54,6 +56,7 @@ class ChessGame (object):
             if isinstance(arg, Player):
                 self.player1 = arg
                 self.player2 = args[args.index(arg)+1]
+                del args[args.index(arg)+1]
         
         self.board.set_game(self)
         self.history = []
@@ -77,6 +80,21 @@ class ChessGame (object):
         self.history.append(self.board.fen_str())
         self.board.castle(*args)
     
+    def clone(self):
+        fen = self.board.fen_str()
+        history = self.history
+        cfg = self.board.cfg
+        data = self.board.data
+        sdata = self.data
+        moves = self.moves
+        clone = ChessGame(self.player1, self.player2, Board(self.player1, self.player2, fen))
+        clone.history = history
+        clone.board.cfg = cfg
+        clone.board.data = data
+        clone.data = sdata
+        clone.moves = moves
+        return clone
+    
     def rollback(self):
         fen = self.history[-1]
         data = self.board.data
@@ -88,11 +106,32 @@ class ChessGame (object):
         self.board.cfg = cfg
     
     def ai_easy(self):
-        from Phantom.ai.basic.mover import make_random_move
+        self.data['calls'] = self.data['calls'] or 0
+        from Phantom.ai.mover.basic import make_random_move
         try:
-            return make_random_move(self.board)
+            ret = make_random_move(self.board)
         except:
-            return self.ai_easy()  # keep trying until a move can be made
+            self.data['calls'] += 1
+            if self.data['calls'] >= self.cfg.recur_limit - 8:
+                ret = "Unable to make a move"
+                self.data['calls'] = None
+            ret = self.ai_easy()  # keep trying until a move can be made
+        self.data['calls'] = None or self.data['calls']
+        return ret
+    
+    def ai_hard(self):
+        self.data['calls'] = self.data['calls'] or 0
+        from Phantom.ai.movers.advanced import make_smart_move
+        try:
+            ret = make_smart_move(self.board)
+        except:
+            self.data['calls'] += 1
+            if self.data['calls'] >= self.cfg.recur_limit - 8:
+                ret = "Unable to make a move"
+                self.data['calls'] = None
+            ret = self.ai_hard()
+        self.data['calls'] = None or self.data['calls']
+        return ret
         
     def gui(self):
         from Phantom.constants import in_pythonista
@@ -102,11 +141,10 @@ class ChessGame (object):
             from Phantom.gui_pythonista.screen_loading import ChessLoadingScreen
             self.data['screen_main'] = ChessMainScreen(self)
             self.data['screen_load'] = ChessLoadingScreen()
-            self.data['main_scene'] = MultiScene(self.data['scene_load'])
-            self.data['main_scene'].set_load_scene(self.data['scene_load'])
-            self.data['main_scene'].set_main_scene(self.data['scene_main'])
-            self.data['screen_main'].parent = self.data['main_scene']
-            self.data['screen_load'].parent = self.data['main_scene']
+            self.data['main_scene'] = MultiScene(self.data['screen_load'])
+            self.data['screen_main'].set_parent(self.data['main_scene'])
+            self.data['screen_load'].set_parent(self.data['main_scene'])
+            self.data['main_scene'].switch_scene(self.data['screen_load'])
             import scene
             scene.run(self.data['main_scene'])
 __all__.append('ChessGame')

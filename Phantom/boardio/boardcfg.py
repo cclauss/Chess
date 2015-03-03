@@ -23,6 +23,7 @@ This file is 1-level import clean.
 """
 
 from Phantom.constants import use_unicode
+import sys
 
 class Cfg (object):
     
@@ -36,6 +37,7 @@ class Cfg (object):
         self.disp_pieces = kwargs.get('disp_pieces', True)
         self.do_checkmate = kwargs.get('do_checkmate', False)
         self.use_unicode = kwargs.get('use_unicode', use_unicode)
+        self.recur_limit = kwargs.get('recur_limit', sys.getrecursionlimit())
         self.board = None
         self.game = None
     
