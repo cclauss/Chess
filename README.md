@@ -16,6 +16,8 @@ and will use Unicode characters as well.  A proper GUI is underway for the iOS a
 
 Please note: this project is a huge learning experience for me.  This is the 3rd revision (I've restarted from scratch twice) of my ongoing chess project, each one getting better.  Hopefully there is no 4th revision.  If you find a bug, *please* don't hesitate to let me know so I can fix it.
 
+There's a large update on the way - but I'm developing on an iPad in a Pythonista beta build which has expired.  Until the update comes through I cannot access the files to push to GitHub. :(
+
 ## Features
 
 - [x] Human vs. human play
