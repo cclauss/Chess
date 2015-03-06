@@ -81,14 +81,14 @@ To create and play a new game, simply do this:
 >>> game.move('e2e4')  # move the piece at e2 to e4
 >>> game
   a b c d e f g h
-8 r n b q k b n r 8
+8 r n b q k b n r 8 <
 7 p p p p p p p p 7
 6                 6
 5                 5
 4         P       4
 3                 3
 2 P P P P   P P P 2
-1 R N B Q K B N R 1 <
+1 R N B Q K B N R 1
   a b c d e f g h
 ```
 In the Pythonista app, it is possible to activate a GUI for that game by `game.gui()`.  This feature is planned for Windows as well, but will most likely require the [Pygame][] package.
