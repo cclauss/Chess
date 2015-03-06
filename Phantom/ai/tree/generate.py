@@ -33,7 +33,6 @@ def _spawn_children(node):
     for piece in legal:
         for move in legal[piece]:
             new = node.variate(piece.coord, move)
-            print new.fen_str()
             newnode = Node(node.depth - 1, False, new)
             newnode.set_parent(node)
     log_msg('_spawn_children({}) ending'.format(node), 4)

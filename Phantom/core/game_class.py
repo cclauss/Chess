@@ -36,7 +36,7 @@ __all__ = []
 
 def loadgame(name):
     board = _loadboard(name)
-    return CessGame(board)
+    return ChessGame(board)
 
 class ChessGame (PhantomObj):
     
@@ -98,7 +98,7 @@ class ChessGame (PhantomObj):
     def rollback(self):
         fen = self.history[-1]
         data = self.board.data
-        cfg = self.data.cfg
+        cfg = self.board.cfg
         self.player1 = self.board.player1
         self.player2 = self.board.player2
         self.board = Board(self.player1, self.player2, fen)
@@ -107,12 +107,12 @@ class ChessGame (PhantomObj):
     
     def ai_easy(self):
         self.data['calls'] = self.data['calls'] or 0
-        from Phantom.ai.mover.basic import make_random_move
+        from Phantom.ai.movers.basic import make_random_move
         try:
             ret = make_random_move(self.board)
         except:
             self.data['calls'] += 1
-            if self.data['calls'] >= self.cfg.recur_limit - 8:
+            if self.data['calls'] >= self.board.cfg.recur_limit - 8:
                 ret = "Unable to make a move"
                 self.data['calls'] = None
             ret = self.ai_easy()  # keep trying until a move can be made
@@ -120,17 +120,17 @@ class ChessGame (PhantomObj):
         return ret
     
     def ai_hard(self):
-        self.data['calls'] = self.data['calls'] or 0
+        #self.data['calls'] = self.data['calls'] or 0
         from Phantom.ai.movers.advanced import make_smart_move
-        try:
-            ret = make_smart_move(self.board)
-        except:
-            self.data['calls'] += 1
-            if self.data['calls'] >= self.cfg.recur_limit - 8:
-                ret = "Unable to make a move"
-                self.data['calls'] = None
-            ret = self.ai_hard()
-        self.data['calls'] = None or self.data['calls']
+        #try:
+        ret = make_smart_move(self.board)
+        #except:
+        #    self.data['calls'] += 1
+        #    if self.data['calls'] >= self.board.cfg.recur_limit - 8:
+        #        ret = "Unable to make a move"
+        #        self.data['calls'] = None
+        #    ret = self.ai_hard()
+        #self.data['calls'] = None or self.data['calls']
         return ret
         
     def gui(self):

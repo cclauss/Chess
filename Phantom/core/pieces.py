@@ -64,6 +64,11 @@ class ChessPiece (PhantomObj):
         else:
             self.owner = None
         self.data = Namespace()
+        
+        # this cache holds moves that are allowed by the .apply_ruleset() method
+        # it will be updated after a move and is used to speed up the .valid() method
+        # by shortening the list it must iterate through
+        self.subvalidcache = []
     
     def __repr__(self):
         return '<{} at {} in {}>'.format(self.ptype, self.coord, hex(id(self)))
@@ -132,7 +137,7 @@ class ChessPiece (PhantomObj):
         start = self.coord
         end = target
         dir = dirfinder(self, target)
-        dist_to = round_down(dist(self.coord, target))
+        dist_to = int(round_down(dist(self.coord, target)))
         path = dir[1](self)
         squares = path[:dist_to]
         return squares
@@ -181,7 +186,24 @@ class ChessPiece (PhantomObj):
             if piece is self:
                 continue
             else:
-                pass
+                if self.coord in piece.valid():
+                    pieces.append(piece)
+        return pieces
+    
+    @call_trace(2)
+    def move(self, target):
+        self.owner.board.kill(self.owner.board[target])
+        self.coord = target
+        self.subvalidcache = self.update_cache()
+        self.firstmove = False
+    
+    @call_trace(4)
+    def update_cache(self):
+        ret = []
+        for tile in self.owner.board.tiles:
+            if self.apply_ruleset(tile.coord):
+                ret.append(tile.coord)
+        return ret
         
 __all__.append('ChessPiece')
 
@@ -194,8 +216,6 @@ class Pawn (ChessPiece):
     
     @call_trace(4)
     def apply_ruleset(self, target):
-        self.owner.board.data['move_en_passant'] = True
-        
         if self.color == 'white':
             op = lambda a, b: a + b
         elif self.color == 'black':
@@ -213,11 +233,12 @@ class Pawn (ChessPiece):
         ret = target in allowed
         
         if self.owner.board.en_passant_rights == '-':
-            return ret  # skip further validation if possible
-        
-        if Coord.from_chess(self.owner.board.en_passant_rights) in tests:
+            self.owner.board.data['move_en_passant'] = False
+        elif Coord.from_chess(self.owner.board.en_passant_rights) in tests:
             self.owner.board.data['move_en_passant'] = True
             ret = True
+        else:
+            self.owner.board.data['move_en_passant'] = False
         
         return ret
 __all__.append('Pawn')

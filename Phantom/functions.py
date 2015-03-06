@@ -29,8 +29,12 @@ def dist(p1, p2):
         dy = abs(p2.y - p1.y)
         return math.sqrt(dx**2 + dy**2)
 
-def round_down(x):
-    return math.trunc(x)
+def round_down(x, place=1):
+    val = math.trunc(x*place) / float(place)
+    if int(val) == val:
+        return int(val)
+    else:
+        return val
 
 def round_up(x):
     return round_down(x) + 1

@@ -24,14 +24,14 @@ from Phantom.docs.documentation import program_use
 from Phantom.utils.lic import license
 
 game = ChessGame()
-print "Your game can be accessed through the variable 'game'."
-print "To make a move, type `game.move('e2e4')` or similar."
-print "For additional help, type `print program_use()`"
-
 print "PhantomChess Copyright (C) 2015 671620616"
 print "This program comes with ABSOLUTELY NO WARRANTY; for details enter license()"
 print "This is free software, and you are welcome to redistribute it"
 print "under certain conditions; type license() for details."
+
+print "Your game can be accessed through the variable 'game'."
+print "To make a move, type `game.move('e2e4')` or similar."
+print "For additional help, type `print program_use()`"
 
 print game
 

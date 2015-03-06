@@ -19,39 +19,52 @@
 
 """Welcome to Phantom! For help, see Phantom/docs/.
 
-The module is NOT import * safe.
-"""
+The module IS `import *` safe.  (It's still not a good habit though.)"""
 
-# For some reason the code below was raising ImportErrors all over the place, so until
-# I can figure out why and fix the problem, it's commented out.
+from Phantom.core.coord.point import Coord, Grid, bounds
+from Phantom.core.coord.dirs import dirfinder
+from Phantom.core.coord.vectored_lists import north, south, east, west, ne, se, sw, nw
+import core.coord.point as point
+import core.coord.dirs as dirs
+import core.coord.vectored_lists as vectored_lists
+import core.coord as coord
 
-#from Phantom.core.board import Tile, Board
-#from Phantom.core.pieces import ChessPiece, Pawn, Knight, Bishop, Rook, Queen, King
-#from Phantom.core.players import Side, Player
-#from Phantom.core.exceptions import ChessError, LogicError, InvalidMove, InvalidDimension
-#from Phantom.core.game_class import ChessGame
-#from Phantom.core.coord.point import Coord, Grid
-#from Phantom.core.coord.vectored_lists import north, south, east, west, ne, se, nw, sw
-#from Phantom.core.coord.dirs import dirfinder
-#import Phantom.core.coord as coord
-#import Phantom.core as core
-#
-#from Phantom.boardio.save import save
-#from Phantom.boardio.load import loadgame, listgames
-#from Phantom.boardio.boardcfg import Cfg, Namespace
-#import Phantom.boardio as boardio
-#
-#from Phantom.ai.pos_eval.advanced import pos_eval_advanced
-#from Phantom.ai.pos_eval.basic import pos_eval_basic
-#from Phantom.ai.phases import Phase
-#from Phantom.ai.tree.leaves import Node
-#from Phantom.ai.prediction.alphabeta import alpha_beta_value
-#from Phantom.ai.prediction.minimax import minimax_value
-##from Phanotm.ai.tree.generate import spawn_tree  # not yet implemented
-#import Phantom.ai as ai
-#
-#from Phantom.functions import dist, round_down, round_up
-#import Phantom.functions as functions
-#
-#import Phantom.constants as constants
+from Phantom.core.board import load, Tile, Board
+from Phantom.core.game_class import loadgame, ChessGame
+from Phantom.core.pieces import ChessPiece, Pawn, Bishop, Knight, Rook, Queen, King
+from Phantom.core.chessobj import PhantomObj
+from Phantom.core.exceptions import ChessError, LogicError, InvalidMove, InvalidDimension
+from Phantom.core.players import Side, Player
+import core.board as board
+import core.game_class as game_class
+import core.pieces as pieces
+import core.chessobj as chessobj
+import core.exceptions as exceptions
+import core.players as players
+import core as core
+
+from Phantom.boardio.load import listgames, loadgame
+from Phantom.boardio.save import save
+from Phantom.boardio.boardcfg import Cfg, Namespace 
+from Phantom.boardio.epd_read import load_epd, load_test, load_test_string
+import boardio.load as load
+import boardio.save as save
+import boardio.boardcfg as boardcfg
+import boardio.epd_read as epd_read
+
+from Phantom.utils.debug import log_msg, call_trace, clear_log
+from Phantom.utils.decorators import named, exc_catch, integer_args, default_args
+from Phantom.utils.lic import short, license
+import utils.debug as debug
+import utils.decorators as decorators
+import utils.lic as lic
+
+#from Phantom.constants import *
+import Phantom.constants as constants
+
+from Phantom.functions import dist, round_down, round_up
+import Phantom.functions as functions
+
+from Phantom.__version__ import (__major__, __minor__, __patch__, __version__, __author__,
+                                 __author_email__, __license__, __last_update__)
 

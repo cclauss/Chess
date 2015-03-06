@@ -79,6 +79,7 @@ class Board (PhantomObj):
         self.lastmove = (None, None)
         self._uuid = uuid.uuid4()
         self.data = Namespace()
+        self.start_pos = fen
         
         tile_color = 'black'
         op_color = lambda c: 'white' if c == 'black' else 'black'
@@ -198,19 +199,20 @@ class Board (PhantomObj):
         for y in range(grid_height, -2, -1):
             for x in range(-1, grid_width+1):
                 if y in (-1, 8) and not (x in (-1, 8)):
-                    char = Coord.tochesskeys[x]
+                    char = Coord.tochesskeys[x+1]
                 elif y in range(0, 8) and x in (-1, 8):
                     char = str(y+1)
-                    if y == 0 and self.turn == 'white' and x == 8:
-                        if self.cfg.use_unicode:
-                            char += ' {}'.format(d_turn_indicator)
-                        else:
-                            char += ' {}'.format(c_turn_indicator)
-                    elif y == 7 and self.turn == 'black' and x == 8:
-                        if self.cfg.use_unicode:
-                            char += ' {}'.format(d_turn_indicator)
-                        else:
-                            char += ' {}'.format(c_turn_indicator)
+                    if self.cfg.disp_turn:
+                        if y == 0 and self.turn == 'white' and x == 8:
+                            if self.cfg.use_unicode:
+                                char += ' {}'.format(d_turn_indicator)
+                            else:
+                                char += ' {}'.format(c_turn_indicator)
+                        elif y == 7 and self.turn == 'black' and x == 8:
+                            if self.cfg.use_unicode:
+                                char += ' {}'.format(d_turn_indicator)
+                            else:
+                                char += ' {}'.format(c_turn_indicator)
                 elif x in (-1, 8):
                     char = ' '
                 else:
@@ -236,9 +238,6 @@ class Board (PhantomObj):
         else:
             print self._pprnt()
     
-    def __repr__(self):
-        return "<{}.Board at {}>".format(__name__, hex(id(self)))
-    
     def __str__(self):
         return self.fen_str()
     
@@ -257,11 +256,15 @@ class Board (PhantomObj):
         """Lock the board in place."""
         self.isfrozen = True
         self.pieces = list(self.pieces)
+        self.player1.freeze()
+        self.player2.freeze()
     
     def unfreeze(self):
         """Unlock the board."""
         self.isfrozen = False
         self.pieces = set(self.pieces)
+        self.player1.unfreeze()
+        self.player2.unfreeze()
         
     def premove(self):
         """Freeze everything and send a signal to players that a move will be made."""
@@ -352,28 +355,28 @@ class Board (PhantomObj):
             if piece.color == 'black':
                 self.fullmove_clock += 1
             
-            if not self.data['move_en_passant']:
-                target = self[p2]
-            else:
+            target = self[p2]
+            if self.data['move_en_passant']:
                 if self[p1].color == 'white':
-                    target = self[p2 - Coord(0, 1)]
+                    target = self[p1 - Coord(0, 1)]
                 elif self[p1].color == 'black':
-                    target = self[p2 + Coord(0, 1)]
+                    target = self[p1 + Coord(0, 1)]
                 self.data['move_en_passant'] = False
 
             player.make_move(p1, p2)
             self.kill(target)
             self.lastmove = (p1, p2)
+            self.switch_turn()
+            self.postmove()
         else:
             self.postmove()
             log_msg('move: specified move is invalid', 2, err=True)
             raise InvalidMove('Attempted move ({} -> {}) is invalid!'.format(p1, p2), 'Phantom.core.board.Board.move()')
-        self.postmove()
-        self.switch_turn()
+        self.unfreeze()
     
     def castle(self, pos):
         """Castle a king.  
-        :param str pos: must be in ('K', 'Q', 'k', 'q') - the side&color to castle on
+        :param str pos: must be in ('K', 'Q', 'k', 'q') - the side & color to castle on
         """
         if pos not in self.castling_rights:
             raise InvalidMove("Cannot castle {}".format(pos))

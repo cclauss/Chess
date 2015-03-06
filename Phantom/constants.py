@@ -33,7 +33,7 @@ from Phantom.__version__ import __version__ as version
 # Debug level
 # This can make the program slow
 # Please select from range(0, 11)
-debug = 1
+debug = 0
 
 # Use the unicode prettyprinter or an ASCII prettyprinter
 use_unicode = True
@@ -74,7 +74,7 @@ pieces_per_player = {'rook': 2,
 grid_width = 8
 grid_height = 8
 grid_colors = {'black': (0.27462, 0.26326, 0.27367), 
-               'white': (0.86174, 0.85795, 0.85417), 
+               'white': (0.86674, 0.86674, 0.88017), 
                }
 scale_factor = screen_height//grid_height  # Get the height, in pixels, of each square
                

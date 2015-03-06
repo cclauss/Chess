@@ -92,3 +92,37 @@ class default_args (object):
         
         return wrapped
 
+def integer_args(f):
+    """Convert any float arguments given to a function to be integers.
+    This decorator does NOT convert values such as 1.5.
+    The test to see if an argument will be converted is 
+    
+    `int(arg) == arg`
+    
+    If that is True, then the argument is converted to an integer."""
+    
+    @named(f.__name__)
+    def wrapped(*args, **kwargs):
+        fixed_args = ()
+        for arg in args:
+            try:
+                if int(arg) == arg:
+                    fixed_args += (int(arg),)
+                else:
+                    fixed_args += (arg,)
+            except (ValueError, TypeError):
+                fixed_args += (arg,)
+        fixed_kwargs = {}
+        for key in kwargs:
+            try:
+                if int(kwargs[key]) == kwargs[key]:
+                    fixed_kwargs.update({key: int(kwargs[key])})
+                else:
+                    fixed_kwargs.update({key: kwargs[key]})
+            except (ValueError, TypeError):
+                fixed_kwargs.update({key: kwargs[key]})
+            
+        return f(*fixed_args, **fixed_kwargs)
+    
+    return wrapped
+

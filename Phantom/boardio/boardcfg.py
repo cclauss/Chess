@@ -23,14 +23,15 @@ This file is 1-level import clean.
 """
 
 from Phantom.constants import use_unicode
+from Phantom.core.chessobj import PhantomObj
 import sys
 
-class Cfg (object):
+class Cfg (PhantomObj):
     
     def __init__(self, **kwargs):
         self.highlight = kwargs.get('highlight', True)
         self.force_moves = kwargs.get('force_moves', False)
-        self.disp_coords = kwargs.get('disp_coords', False)
+        self.disp_coords = kwargs.get('disp_coords', True)
         self.coord_mode = kwargs.get('coord_mode', 'chess')
         self.move_limit = kwargs.get('move_limit', 50)
         self.disp_sqrs = kwargs.get('disp_sqrs', True)
@@ -38,6 +39,7 @@ class Cfg (object):
         self.do_checkmate = kwargs.get('do_checkmate', False)
         self.use_unicode = kwargs.get('use_unicode', use_unicode)
         self.recur_limit = kwargs.get('recur_limit', sys.getrecursionlimit())
+        self.disp_turn = kwargs.get('disp_turn', True)
         self.board = None
         self.game = None
     
@@ -54,7 +56,9 @@ class Cfg (object):
 # self.data = Namespace()
 # then to set/get variables:
 # self.data.x = 5; print self.data.x
-class Namespace (object): 
+# 99% of use for this class is a dictionary that doesnt
+# raise errors when it doesn't contain an object, but returns None instead
+class Namespace (PhantomObj): 
     
     def __getitem__(self, i):
         if hasattr(self, i):
@@ -64,4 +68,7 @@ class Namespace (object):
     
     def __setitem__(self, i, val):
         setattr(self, i, val)
+    
+    def __repr__(self):
+        return self.__dict__.__repr__()
 

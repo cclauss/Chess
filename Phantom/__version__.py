@@ -20,11 +20,11 @@
 """Version information."""
 
 __major__ = '0'
-__minor__ = '6'
-__patch__ = '8'
+__minor__ = '7'  # Yay! 0.7.0! Have a functional GUI. (for Pythonista.)
+__patch__ = '0'
 __version__ = '.'.join([__major__, __minor__, __patch__])
 __author__ = '671620616'
 __author_email__ = 'blerghhh86@gmail.com'
 __license__ = 'GNU General Public License'
-__last_update__ = '20150302T1849'
+__last_update__ = '20150305T2115'
 

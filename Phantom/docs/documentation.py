@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License     #
 # along with PhantomChess.  If not, see <http://www.gnu.org/licenses/>. #
 #########################################################################
+
 # R0 20150215T2048
 def top(): pass
 #                                                   CHESS
@@ -56,7 +57,7 @@ def class_interface(): return """
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
  A problem arises in level 1.2 of the move validation.  This problem is because
  level 1.2 checks the color of the piece at a target.  However, since the pieces are
- held in sets in an instance of the Chess.core.board.Board class, the individual
+ held in sets in an instance of the Phantom.core.board.Board class, the individual
  pieces do not have access to the list they are contained in.  This means the piece
  cannot get the piece at it's target and therefore cannot check it's color.
 
@@ -112,12 +113,12 @@ def use_of_eval(): return """
  makes things slow.  If they're used often enough in a program, they make it REALLY slow.
  As such I have attempted to avoid using these.  There are 2 occasions of use so far:
 
- eval(): Chess.core.pieces.ChessPiece.__init__
-         eval() is used to determine display character name from the Chess.constants file
+ eval(): Phantom.core.pieces.ChessPiece.__init__
+         eval() is used to determine display character name from the Phantom.constants file
   exact use: `self.disp_char = eval('d_{}_{}'.format(self.color.color, self.ptype))`
 
- eval(): Chess.core.pieces.ChessPiece.__init__
-         eval() is used to determine FEN notation character name from the Chess.constants file
+ eval(): Phantom.core.pieces.ChessPiece.__init__
+         eval() is used to determine FEN notation character name from the Phantom.constants file
   exact use: `self.fen_char = eval('c_{}_{}'.format(self.color.color, self.ptype))`
 
  Both of these are only called once at piece instantiation time when the board is generated.  Because of
@@ -128,8 +129,8 @@ def import_cleanness(): return """
             WHAT IS A CLEAN IMPORT AND WHY IS IT IMPORTANT
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
  A clean import is a module within a package that doesn't import anything from the package.
- It may import standard library modules, such as `os` or `sys`, but with Chess as an example
- it cannot import anything that would begin with `Chess.` (such as `Chess.core.board`).
+ It may import standard library modules, such as `os` or `sys`, but with Phantom as an example
+ it cannot import anything that would begin with `Phantom.` (such as `Phantom.core.board`).
  
  Sometimes you may see a file saying it is a 1-level clean import -- what I meant by saying this
  is that the file only imports clean-import files.
@@ -140,17 +141,17 @@ def import_cleanness(): return """
     Traceback (most recent call last):
       File "<string>", line 1, in <module>
       File "game_class.py", line 5, in <module>
-        from Chess.core.board import Board, Tile, load
-      File "/var/.../Chess/core/board.py", line 12, in <module>
-        from Chess.boardio.load import loadgame, listgames
-      File "/var/.../Chess/boardio/load.py", line 6, in <module>
-        from Chess.core.board import Board
+        from Phantom.core.board import Board, Tile, load
+      File "/var/.../Phantom/core/board.py", line 12, in <module>
+        from Phantom.boardio.load import loadgame, listgames
+      File "/var/.../Phantom/boardio/load.py", line 6, in <module>
+        from Phantom.core.board import Board
     ImportError: cannot import name Board
 
- As you can see from this traceback, in the Chess.core.game_class file I import Board from Chess.core.board.
- In Chess.core.board, I import Chess.boardio.load.
- In Chess.boardio.load, I import Chess.core.board.
- In Chess.core.board, I import Chess.boardio.load.
+ As you can see from this traceback, in the Phantom.core.game_class file I import Board from Phantom.core.board.
+ In Phantom.core.board, I import Phantom.boardio.load.
+ In Phantom.boardio.load, I import Phantom.core.board.
+ In Phantom.core.board, I import Phantom.boardio.load.
  And the loop of imports never ends.
  
  This is why clean imports are important -- importing something that isn't clean can often lead to errors.
@@ -179,7 +180,7 @@ def links(): return """
 def why_freeze(): return '''
             WHY FREEZE THE BOARD?
 –––––––––––––––––––––––––––––––––
- The Chess.core.board.Board.freeze method is exactly as follows:
+ The Phantom.core.board.Board.freeze method is exactly as follows:
      
         ```
         def freeze(self):
@@ -190,7 +191,7 @@ def why_freeze(): return '''
  
  The most inportant thing that happens is the `self.pieces = list(self.pieces)`.
  The reason:
-     For the Chess.ai.basic.mover.make_random_move function to work, it needs to select a random
+     For the Phantom.ai.basic.mover.make_random_move function to work, it needs to select a random
      element from the board's pieces.  From the `random` module sourcecode, the choice method does this:
          
          `return seq[int(self.random() * len(seq))]`
@@ -206,7 +207,7 @@ def program_use(): return """
  
  To simply play chess against another human, you can do this: 
      ```
-     >>> from Phantom.core.game_class import ChessGame
+     >>> from Phantom.core.game_class import PhantomGame
      >>> g = ChessGame()
      >>> g
           New Game 1
@@ -241,7 +242,7 @@ def program_use(): return """
  and you can continue to play from here.
  If you wish to load a previously saved game:
      ```
-     >>> from Phantom.core.game_class import ChessGame
+     >>> from Phantom.core.game_class import PhantomGame
      >>> g = ChessGame('Game 1')  # load one of the default games
      >>> g=
             Game 1

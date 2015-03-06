@@ -22,20 +22,21 @@
 from Phantom.constants import (screen_height, screen_width, scale_factor, grid_height, grid_width)
 from Phantom.functions import round_down
 from Phantom.core.chessobj import PhantomObj
+from Phantom.utils.decorators import integer_args
 
 __all__ = []
 
 class Coord (PhantomObj):
     
     tochesskeys = {
-    0: 'a',
-    1: 'b',
-    2: 'c',
-    3: 'd',
-    4: 'e',
-    5: 'f',
-    6: 'g',
-    7: 'h',}
+    1: 'a',
+    2: 'b',
+    3: 'c',
+    4: 'd',
+    5: 'e',
+    6: 'f',
+    7: 'g',
+    8: 'h',}
 
     fromchesskeys = {
     'a': 0,
@@ -47,6 +48,7 @@ class Coord (PhantomObj):
     'g': 6,
     'h': 7,}
     
+    @integer_args
     def __init__(self, *args):
         if len(args) == 1:
             c = Coord.from_chess(args[0])
@@ -130,11 +132,11 @@ class Coord (PhantomObj):
         return self.__tuple__()
     
     def as_chess(self):
-        if not ((0 < self.x < grid_width) or (0 < self.y < grid_height)):
+        if not ((0 <= self.x < grid_width) or (0 <= self.y < grid_height)):
             raise ValueError('{} is outside of grid and cannot be converted to chess notation'.format(repr(self)))
-        x = self.tochesskeys[self.x]
-        y = self.y
-        return x + str(self.y)
+        x = self.tochesskeys[self.x+1]
+        y = self.y + 1
+        return x + str(y)
     
     def as_coord(self):
         # return a coordinate that starts counting at 1 instead

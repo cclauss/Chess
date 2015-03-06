@@ -22,6 +22,7 @@
 __all__ = []
 
 class ChessError (Exception): 
+    name = 'ChessError'
     def __init__(self, msg='No error message supplied', caller=None):
         self.msg = msg
         self.caller = caller
@@ -36,12 +37,15 @@ class ChessError (Exception):
         return self.__str__()
 __all__.append('ChessError')
 
-class InvalidMove (ChessError): pass
+class InvalidMove (ChessError):
+    name = 'InvalidMove'
 __all__.append('InvalidMove')
 
-class InvalidDimension (ChessError): pass
+class InvalidDimension (ChessError):
+    name = 'InvalidDimension'
 __all__.append('InvalidDimension')
 
-class LogicError (ChessError): pass
+class LogicError (ChessError):
+    name = 'LogicError'
 __all__.append('LogicError')
 

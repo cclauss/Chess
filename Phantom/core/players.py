@@ -154,7 +154,7 @@ class Player (PhantomObj):
         self._update()
         self.unfreeze()
     
-    @call_trace(2)
+    @call_trace(3)
     def validatemove(self, p1, p2):
         piece = self.board[p1]
         turn = self.is_turn()
@@ -169,10 +169,11 @@ class Player (PhantomObj):
                                piece,    turn,    allowed,    path,    path_check,    check), 3)
         return turn and allowed and path_check and check
     
+    @call_trace(2)
     def make_move(self, p1, p2):
         self.board.freeze()
         piece = self.board[p1]
-        piece.coord = p2
+        piece.move(p2)
         self.board.unfreeze()
 __all__.append('Player')
 

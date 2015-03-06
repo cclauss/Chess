@@ -19,9 +19,8 @@
 
 """Save a game."""
 
-from Phantom.constants import save_fen
+from Phantom.constants import save_fen, phantom_dir
 import os
-import inspect
 
 # implementation detail 4
 
@@ -29,11 +28,9 @@ format = '{name}: {fen}\n'
 
 def save(board):
     
-    origdir = os.getcwd()
-    savedir = os.path.split(inspect.getfile(save))[0]
-
+    write = os.path.join(phantom_dir, 'boardio', save_fen)
     newline = '{}: {}\n'.format(board.name, board.fen_str())
     
-    with open(os.path.join(savedir, save_fen), 'a') as f:
+    with open(write, 'a') as f:
         f.write(newline)
 

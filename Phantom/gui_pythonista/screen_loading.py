@@ -22,8 +22,9 @@
 from scene import *
 from Phantom.constants import debug, screen_width, screen_height, version
 from Phantom.utils.lic import short
+from Phantom.core.chessobj import PhantomObj
 
-class ChessLoadingScreen (Scene):
+class ChessLoadingScreen (Scene, PhantomObj):
     
     def __init__(self, main=None):
         self.parent = main
