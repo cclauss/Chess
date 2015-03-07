@@ -131,6 +131,7 @@ class Board (PhantomObj):
                     if newpiece.coord not in klass.default_origins:
                         newpiece.firstmove = False
                     self.pieces.add(newpiece)
+                    newpiece.update_cache()
                 elif is_file_split(char):
                     fileind += int(char)
                     continue
@@ -385,8 +386,8 @@ class Board (PhantomObj):
             if pos == 'K':
                 if (self[Coord(5, 0)] is None) and (self[Coord(6, 0)] is None):
                     self.premove()
-                    self[Coord(4, 0)].coord = Coord(6, 0)
-                    self[Coord(7, 0)].coord = Coord(5, 0)
+                    self[Coord(4, 0)].move(Coord(6, 0))
+                    self[Coord(7, 0)].move(Coord(5, 0))
                     self.castling_rights = self.castling_rights.replace('K', '')
                     self.castling_rights = self.castling_rights.replace('Q', '')
                     self.postmove()
@@ -400,8 +401,8 @@ class Board (PhantomObj):
                    self[Coord(2, 0)] is None) and (
                    self[Coord(1, 0)] is None):
                     self.premove()
-                    self[Coord(4, 0)].coord = Coord(2, 0)
-                    self[Coord(0, 0)].coord = Coord(3, 0)
+                    self[Coord(4, 0)].move(Coord(2, 0))
+                    self[Coord(0, 0)].move(Coord(3, 0))
                     self.castling_rights = self.castling_rights.replace('K', '')
                     self.castling_rights = self.castling_rights.replace('Q', '')
                     self.postmove()
@@ -413,8 +414,8 @@ class Board (PhantomObj):
             if pos == 'k':
                 if (self[Coord(5, 7)] is None) and (self[Coord(6, 7)] is None):
                     self.premove()
-                    self[Coord(4, 7)].coord = Coord(6, 7)
-                    self[Coord(7, 7)].coord = Coord(5, 7)
+                    self[Coord(4, 7)].move(Coord(6, 7))
+                    self[Coord(7, 7)].move(Coord(5, 7))
                     self.castling_rights = self.castling_rights.replace('k', '')
                     self.castling_rights = self.castling_rights.replace('q', '')
                     self.postmove()
@@ -428,8 +429,8 @@ class Board (PhantomObj):
                    self[Coord(2, 7)] is None) and (
                    self[Coord(1, 7)] is None):
                     self.premove()
-                    self[Coord(4, 7)].coord = Coord(2, 7)
-                    self[Coord(0, 7)].coord = Coord(3, 7)
+                    self[Coord(4, 7)].move(Coord(2, 7))
+                    self[Coord(0, 7)].move(Coord(3, 7))
                     self.castling_rights = self.castling_rights.replace('k', '')
                     self.castling_rights = self.castling_rights.replace('q', '')
                     self.postmove()

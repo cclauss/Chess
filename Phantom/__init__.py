@@ -47,7 +47,7 @@ from Phantom.boardio.load import listgames, loadgame
 from Phantom.boardio.save import save
 from Phantom.boardio.boardcfg import Cfg, Namespace 
 from Phantom.boardio.epd_read import load_epd, load_test, load_test_string
-import boardio.load as load
+#import boardio.load as load  # conflicts with Phantom.core.board.load
 import boardio.save as save
 import boardio.boardcfg as boardcfg
 import boardio.epd_read as epd_read
@@ -67,4 +67,7 @@ import Phantom.functions as functions
 
 from Phantom.__version__ import (__major__, __minor__, __patch__, __version__, __author__,
                                  __author_email__, __license__, __last_update__)
+
+if __name__ == '__main__':
+    ChessGame().gui()
 

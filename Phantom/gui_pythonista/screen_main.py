@@ -69,6 +69,7 @@ class ChessMainScreen (Scene, PhantomObj):
         min = Coord(0, 0).as_screen()
         max = Coord(8, 8).as_screen()
         self.bounds = Rect(min.x, min.y, max.x-min.x, max.y-min.y)
+        self.size = screen_size
     
     def set_parent(self, p):
         self.parent = p
@@ -103,6 +104,18 @@ class ChessMainScreen (Scene, PhantomObj):
             else:
                 self.target = cpos
                 try:
+                    if self.game.board[self.selected].ptype == 'king':
+                        piece = self.game.board[self.selected]
+                        if piece.color == 'white':
+                            if self.target == Coord(6, 0):
+                                self.game.castle('K')
+                            elif self.target == Coord(2, 0):
+                                self.game.castle('Q')
+                        elif piece.color == 'black':
+                            if self.target == Coord(6, 7):
+                                self.game.castle('k')
+                            elif self.target == Coord(2, 7):
+                                self.game.castle('q')
                     self.game.move(self.selected, self.target)
                     self.disp_score = False
                 except Exception as e:
@@ -111,6 +124,8 @@ class ChessMainScreen (Scene, PhantomObj):
                 self.target = Coord(None, None)
                 self.is_selected = False
         else:
+            if 0 < touch.location.x <= scale_factor and 6*scale_factor < touch.location.y <= 7*scale_factor:
+                self.parent.switch_scene(self.game.data['screen_options'])
             if 0 < touch.location.x <= scale_factor and 5*scale_factor < touch.location.y <= 6*scale_factor:
                 self.game.ai_easy()
             if 0 < touch.location.x <= scale_factor and 4*scale_factor < touch.location.y <= 5*scale_factor:
@@ -181,10 +196,11 @@ class ChessMainScreen (Scene, PhantomObj):
             text(str(self.pos_score), x=scale_factor/2, y=scale_factor*4 - scale_factor/1.5)
         text('Undo', x=scale_factor/2, y=scale_factor*3 - scale_factor/2)
         text('Deselect', x=scale_factor/2, y=scale_factor*2 - scale_factor/2)
+        text('Options', x=scale_factor/2, y=scale_factor*7 - scale_factor/2)
 
 if __name__ == '__main__':
     from Phantom.core.game_class import ChessGame, loadgame
-    game = loadgame('Long Endgame 1')
+    game = ChessGame() #loadgame('Long Endgame 1')
     game.board.cfg.disp_sqrs = True
     s = ChessMainScreen(game)
     run(s)

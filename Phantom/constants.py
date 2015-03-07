@@ -132,4 +132,9 @@ default_fullmove = 1
 
 import os as _os
 phantom_dir = _os.path.dirname(_os.path.realpath(__file__))
+del _os
+
+import scene
+screen_size = scene.Rect(0, 0, screen_width, screen_height)
+del scene
 

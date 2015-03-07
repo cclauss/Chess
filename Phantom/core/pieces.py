@@ -98,9 +98,9 @@ class ChessPiece (PhantomObj):
     @call_trace(3)
     def valid(self):
         ret = []
-        for tile in self.owner.board.tiles:
-            if self.owner.validatemove(self.coord, tile.coord):
-                ret.append(tile.coord)
+        for pos in self.subvalidcache:
+            if self.owner.validatemove(self.coord, pos):
+                ret.append(pos)
         return ret
     
     @property
@@ -146,7 +146,7 @@ class ChessPiece (PhantomObj):
     def is_move_valid(self, target):
         if target not in bounds:
             return False
-        does_follow_rules = self.apply_ruleset(target)
+        does_follow_rules = self.apply_ruleset()
         is_valid_target = self.check_target(target)
         path = self.path_to(target)
         is_clear_path = self.check_path(path)

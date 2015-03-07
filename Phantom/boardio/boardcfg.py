@@ -26,7 +26,37 @@ from Phantom.constants import use_unicode
 from Phantom.core.chessobj import PhantomObj
 import sys
 
-class Cfg (PhantomObj):
+# A quick & dirty class to prevent polluting the globals
+# Usage would be as a 'data' or similar attribute:
+# self.data = Namespace()
+# then to set/get variables:
+# self.data.x = 5; print self.data.x
+# 99% of use for this class is a dictionary that doesnt
+# raise errors when it doesn't contain an object, but returns None instead
+class Namespace (PhantomObj): 
+    
+    def __getitem__(self, i):
+        if hasattr(self, i):
+            return getattr(self, i)
+        else:
+            return None
+    
+    def __setitem__(self, i, val):
+        setattr(self, i, val)
+    
+    def __repr__(self):
+        return self.__dict__.__repr__()
+    
+    def copy_data_from(self, other):
+        if not isinstance(other, self.__class__):
+            raise TypeError('Argument to copy_data_from must be {} instance, got {}'.format(
+                                                self.__class__.__name__,      type(other)))
+        
+        d = other.__dict__  # kinda dirty...oops...
+        for key in d:
+            self[key] = d[key]
+
+class Cfg (Namespace, PhantomObj):
     
     def __init__(self, **kwargs):
         self.highlight = kwargs.get('highlight', True)
@@ -50,25 +80,4 @@ class Cfg (PhantomObj):
 
     def set_game(self, g):
         self.game = g
-
-# A quick & dirty class to prevent polluting the globals
-# Usage would be as a 'data' or similar attribute:
-# self.data = Namespace()
-# then to set/get variables:
-# self.data.x = 5; print self.data.x
-# 99% of use for this class is a dictionary that doesnt
-# raise errors when it doesn't contain an object, but returns None instead
-class Namespace (PhantomObj): 
-    
-    def __getitem__(self, i):
-        if hasattr(self, i):
-            return getattr(self, i)
-        else:
-            return None
-    
-    def __setitem__(self, i, val):
-        setattr(self, i, val)
-    
-    def __repr__(self):
-        return self.__dict__.__repr__()
 
