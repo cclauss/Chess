@@ -1,5 +1,5 @@
 # Changelog
-*Please not*: this log has only been updated since version 0.7.0, as this was effectively the first 'working' release.
+*Please note*: this log has only been updated since version 0.7.0, as this was effectively the first 'working' release.
 This log is **only** for major features in each update.  I will not be listing every single character I change here, considering GitHub can do that for me.
 
 ### 0.7.1
