@@ -12,7 +12,7 @@ Phantom is a (in development) game of Chess written in Python.  It's not very gr
 1 R N B Q K B N R 1 <
   a b c d e f g h
 ```
-and will use Unicode characters as well.  A proper GUI is underway for the iOS app [Pythonista][].  
+and will use Unicode characters as well.  A proper GUI is underway for the iOS app [Pythonista][0].  
 
 Please note: this project is a huge learning experience for me.  This is the 3rd revision (I've restarted from scratch twice) of my ongoing chess project, each one getting better.  Hopefully there is no 4th revision.  If you find a bug, *please* don't hesitate to let me know so I can fix it.
 
@@ -41,6 +41,9 @@ Please note: this project is a huge learning experience for me.  This is the 3rd
 
 ## Installation
 To download & extract PhantomChess, the first thing to do is download the `Phantom_installer.py` file in the master branch.  Place it in the directory to extract to and run.
+
+### Easy method
+Although it is more error-prone and not quite as user friendly as I'd like, a single executable is available (`Simple.exe`).  All you have to do is download this.  You don't even have to have Python installed to run it! (built with [PyInstaller][1])
 
 ## Static board analysis
 How exactly does Phantom analyze a board and give it a score?  It uses a set of heuristics coded into the Phantom.ai.pos_eval.heuristics file.  This is a list of the currently active heuristics that are used to analyze a board:
@@ -92,7 +95,8 @@ To create and play a new game, simply do this:
 1 R N B Q K B N R 1
   a b c d e f g h
 ```
-In the Pythonista app, it is possible to activate a GUI for that game by `game.gui()`.  This feature is planned for Windows as well, but will most likely require the [Pygame][] package.
+In the Pythonista app, it is possible to activate a GUI for that game by `game.gui()`.  This feature is planned for Windows as well, but will most likely require the [Pygame][2] package.
 
-[Pythonista]: http://omz-software.com/pythonista
-[Pygame]: http://pygame.org/news.html
+[0]: http://omz-software.com/pythonista
+[1]: https://github.com/pyinstaller/pyinstaller/wiki
+[2]: http://pygame.org/news.html

@@ -57,8 +57,10 @@ target/
 .spyderproject
 .spyderworkspace
 
-# Phantom debug log
+# Phantom
 debug.txt
+*.dev.*
+dev/
 
 # =========================
 # Operating System Files
