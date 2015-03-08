@@ -69,6 +69,7 @@ class ChessPiece (PhantomObj):
         # it will be updated after a move and is used to speed up the .valid() method
         # by shortening the list it must iterate through
         self.subvalidcache = []
+        self.subvalidcache = self.update_cache()
     
     def __repr__(self):
         return '<{} at {} in {}>'.format(self.ptype, self.coord, hex(id(self)))
@@ -311,7 +312,7 @@ class King (ChessPiece):
         other_allowed = []
         self.owner.board.set_checkmate_validation(False)  # avoid recursion
         for piece in self.owner.board.pieces:
-            if piece is self:
+            if piece is self or piece.color == self.color:
                 continue
             else:
                 other_allowed.extend(piece.valid())

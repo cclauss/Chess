@@ -37,7 +37,7 @@ class exc_catch (object):
     specified `passes` list, return the specified value.  If it is in the `passes` list, return
     the function (which will reraise the exception)"""
     def __init__(self, *passes, **kwargs):
-        self.passes = [c.__class__ for c in passes]
+        self.passes = [c.__class__.__name__ for c in passes]
         self.name = kwargs.get('name', None)
         self.ret = kwargs.get('ret', None)
         self.log = kwargs.get('log', 0)
@@ -53,7 +53,7 @@ class exc_catch (object):
             try:
                 f(*args, **kwargs)
             except Exception as e:
-                if e.__class__ in self.passes:
+                if e.__class__.__name__ in self.passes:
                     return f(*args, **kwargs)
             finally:
                 if (e.__class__ not in self.passes) and (e is not None):

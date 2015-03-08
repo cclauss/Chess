@@ -22,30 +22,27 @@
 __all__ = []
 
 class ChessError (Exception): 
-    name = 'ChessError'
     def __init__(self, msg='No error message supplied', caller=None):
-        self.msg = msg
+        self.msg = self.message = msg
+        self.name = self.__class__.__name__
         self.caller = caller
-    
+
     def __str__(self):
         if self.caller is not None:
             return repr(self.msg) + " sourced at {}".format(repr(self.caller))
         else:
             return repr(self.msg) + " with no source"
-    
+
     def __repr__(self):
         return self.__str__()
 __all__.append('ChessError')
 
-class InvalidMove (ChessError):
-    name = 'InvalidMove'
+class InvalidMove (ChessError): pass
 __all__.append('InvalidMove')
 
-class InvalidDimension (ChessError):
-    name = 'InvalidDimension'
+class InvalidDimension (ChessError):pass
 __all__.append('InvalidDimension')
 
-class LogicError (ChessError):
-    name = 'LogicError'
+class LogicError (ChessError): pass
 __all__.append('LogicError')
 

@@ -46,7 +46,10 @@ class ChessOptionsScreen (Scene, PhantomObj):
                         ('',             'Save & exit',       'NA',     Coord(930, 576),     self.return_to_game),
                         ('force_moves',  'Force moves',       True,     Coord(0, 576),       self.tog_force_moves),
                         ('disp_turn',    'Show turn',         True,     Coord(0, 480),       self.tog_disp_turn),
-                        ('highlight',    'Show valid',        True,     Coord(0, 384),       self.tog_highlight),]
+                        ('highlight',    'Show valid',        True,     Coord(0, 384),       self.tog_highlight),
+                        ('disp_pieces',  'Show pieces',       True,     Coord(0, 288),       self.tog_disp_pieces),
+                        ('disp_sqrs',    'Show grid',         True,     Coord(0, 192),       self.tog_disp_sqrs),
+                        ('',             'Copy FEN',          'NA',     Coord(0, 96),        self.copy_fen),]
         self.button_size = Coord(scale_factor, scale_factor)
         self.size = screen_size
     
@@ -65,6 +68,17 @@ class ChessOptionsScreen (Scene, PhantomObj):
     
     def tog_highlight(self):
         self.data['highlight'] = not self.data['highlight']
+    
+    def tog_disp_pieces(self):
+        self.data['disp_pieces'] = not self.data['disp_pieces']
+    
+    def tog_disp_sqrs(self):
+        self.data['disp_sqrs'] = not self.data['disp_sqrs']
+    
+    def copy_fen(self):
+        import clipboard
+        fen = self.game.board.fen_str()
+        clipboard.set(fen)
     # ------------------ End button actions ------------------
     
     def set_parent(self, p):
@@ -72,7 +86,7 @@ class ChessOptionsScreen (Scene, PhantomObj):
     
     def sync_data(self):
         # update game data first to push any changes
-        self.game.data.copy_data_from(self.data)
+        self.game.board.cfg.copy_data_from(self.data)
         
         # update our data as well in case any new variables have
         # been set
@@ -102,6 +116,7 @@ class ChessOptionsScreen (Scene, PhantomObj):
             if touch.location in hit_test:
                 button[4]()
                 self.sync_data()
+                break
     
     def draw(self):
         background(0, 0, 0)

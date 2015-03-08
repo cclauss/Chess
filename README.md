@@ -32,11 +32,12 @@ Please note: this project is a huge learning experience for me.  This is the 3rd
 - [x] Read EPD strings
 - [ ] Write EPD strings
 - [x] Algebraic chess notation
-- [ ] Pythonista GUI +see below
+- [ ] Pythonista GUI *see below
 - [ ] Windows GUI
 - [x] Self-test suite
+- [ ] Timers
 
-+ The basics of a GUI exist and work, however, at this time there is no support for promotion in the GUI, so it is considered incomplete for now.
+*The basics of a GUI exist and work, however, at this time there is no support for promotion in the GUI, so it is considered incomplete for now.
 
 ## Installation
 To download & extract PhantomChess, the first thing to do is download the `Phantom_installer.py` file in the master branch.  Place it in the directory to extract to and run.

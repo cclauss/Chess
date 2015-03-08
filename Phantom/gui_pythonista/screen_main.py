@@ -25,6 +25,7 @@ from Phantom.core.chessobj import PhantomObj
 from Phantom.utils.debug import log_msg, call_trace
 from Phantom.constants import *
 from Phantom.ai.pos_eval.advanced import pos_eval_advanced
+from Phantom.core.exceptions import InvalidMove
 import sys
 
 class ChessMainScreen (Scene, PhantomObj):
@@ -43,11 +44,13 @@ class ChessMainScreen (Scene, PhantomObj):
                             'pieces': self.game.board.cfg.disp_pieces,
                             'valid': self.game.board.cfg.highlight,
                             'coords': self.game.board.cfg.disp_coords,
-                            'turn': self.game.board.cfg.disp_turn}
+                            'turn': self.game.board.cfg.disp_turn,
+                            'timers': self.game.board.cfg.disp_timers}
         self.is_selected = False
         self.selected = Coord(None, None)
         self.target = self.selected
         self.err = None
+        self.err_pos = Coord(None, None)
         self.valid_cache = []
         import os
         folder = 'imgs'
@@ -70,6 +73,7 @@ class ChessMainScreen (Scene, PhantomObj):
         max = Coord(8, 8).as_screen()
         self.bounds = Rect(min.x, min.y, max.x-min.x, max.y-min.y)
         self.size = screen_size
+        self.won = self.game.is_won()
     
     def set_parent(self, p):
         self.parent = p
@@ -118,6 +122,9 @@ class ChessMainScreen (Scene, PhantomObj):
                                 self.game.castle('q')
                     self.game.move(self.selected, self.target)
                     self.disp_score = False
+                    self.won = self.game.is_won()
+                except InvalidMove as e:
+                    self.err_pos = self.target
                 except Exception as e:
                     self.did_err(e)
                 self.selected = Coord(None, None)
@@ -154,6 +161,15 @@ class ChessMainScreen (Scene, PhantomObj):
                     fill(0.23347,0.3564,0.59917, 0.6)
                     rect(pos.x, pos.y, scale_factor, scale_factor)
                     fill(1, 1, 1, 1)
+            if self.render_mode['timers']:
+                white = str(self.game.board.player1.timer.get_run())
+                black = str(self.game.board.player2.timer.get_run())
+                bpos = Coord(992, 672)
+                wpos = Coord(992, 96)
+                tint(1, 1, 1, 1)
+                text(black, x=bpos.x, y=bpos.y)
+                text(white, x=wpos.x, y=wpos.y)
+                tint(1, 1, 1, 1)
         if self.render_mode['sqrs']:
             for tile in self.game.board.tiles:
                 color = tile.color.tilecolor
@@ -170,6 +186,14 @@ class ChessMainScreen (Scene, PhantomObj):
                     coord = str(tile.coord.as_tup())
                     text(chess, x=chess_pos.x, y=chess_pos.y)
                     text(coord, x=coord_pos.x, y=coord_pos.y)
+            if self.err_pos != Coord(None, None):
+                sc = self.err_pos.as_screen()
+                fill(1, 0, 0, 0.3)
+                rect(sc.x, sc.y, scale_factor, scale_factor)
+                fill(1, 1, 1, 1)
+                tint(0, 0, 1, 1)
+                text('Move\nInvalid', x=(sc.x + scale_factor/2), y=(sc.y + scale_factor/2))
+                tint(1, 1, 1, 1)
         if self.render_mode['valid']:
             for tile in self.game.board.tiles:
                 if tile.coord in self.valid_cache:
@@ -186,6 +210,11 @@ class ChessMainScreen (Scene, PhantomObj):
             size = Coord(scale_factor / 2, scale_factor / 2)
             tint(1, 1, 1, 1)
             image(self.turn_indicator_img, pos.x, pos.y, size.x, size.y)
+            tint(1, 1, 1, 1)
+        if self.won:
+            pos = Coord(self.size.w/2, self.size.h/2)
+            tint(0.32645,0.28306,0.93492)
+            text('{} wins'.format(self.won), x=pos.x, y=pos.y, font_size=20.0)
             tint(1, 1, 1, 1)
         
         # Buttons

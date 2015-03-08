@@ -2,6 +2,16 @@
 *Please note*: this log has only been updated since version 0.7.0, as this was effectively the first 'working' release.
 This log is **only** for major features in each update.  I will not be listing every single character I change here, considering GitHub can do that for me.
 
+### 0.7.2
+ - Added experimental `Timer` class (doesn't work properly yet)
+ - Made the "Force Moves" option actually do stuff (completely disables move validation)
+ - Installer also now functions as an updater
+ - Installer will add Phantom to the user's site-packages folder
+ - Fixed bug in which a capture didn't switch turn
+ - Added option (Pythonista only) to copy FEN to clipboard
+ - Added experimental checkmate detection (***very*** experimental)
+ - New bug: the game thinks the player whose turn it is has won the game
+
 ### 0.7.1
  - Added castling ability to GUI
  - Added (*very* experimental) options screen

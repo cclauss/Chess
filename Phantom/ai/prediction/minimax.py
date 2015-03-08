@@ -45,7 +45,7 @@ By chance, this happens to be a clean import.  Nothing is needed.
 # minimax(origin, depth, TRUE)
 
 def minimax_value(node, depth, maximizing):
-    if depth == 0 or node.is_terminal:
+    if depth <= 0 or node.is_terminal:
         return node.score
     if maximizing:
         f = max

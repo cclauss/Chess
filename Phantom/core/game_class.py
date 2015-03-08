@@ -106,34 +106,15 @@ class ChessGame (PhantomObj):
         self.board.cfg = cfg
     
     def ai_easy(self):
-        self.data['calls'] = self.data['calls'] or 0
         from Phantom.ai.movers.basic import make_random_move
-        try:
-            ret = make_random_move(self.board)
-        except:
-            self.data['calls'] += 1
-            if self.data['calls'] >= self.board.cfg.recur_limit - 8:
-                ret = "Unable to make a move"
-                self.data['calls'] = None
-            ret = self.ai_easy()  # keep trying until a move can be made
-        self.data['calls'] = None or self.data['calls']
-        return ret
+        return make_random_move(self.board)
     
     def ai_hard(self):
-        #self.data['calls'] = self.data['calls'] or 0
         from Phantom.ai.movers.advanced import make_smart_move
-        #try:
-        ret = make_smart_move(self.board)
-        #except:
-        #    self.data['calls'] += 1
-        #    if self.data['calls'] >= self.board.cfg.recur_limit - 8:
-        #        ret = "Unable to make a move"
-        #        self.data['calls'] = None
-        #    ret = self.ai_hard()
-        #self.data['calls'] = None or self.data['calls']
-        return ret
+        return make_smart_move(self.board)
         
     def gui(self):
+        """Spawn a GUI for the game.  **Only works in Pythonista, on other platforms does nothing."""
         from Phantom.constants import in_pythonista
         if in_pythonista:
             from Phantom.gui_pythonista.main_scene import MultiScene
@@ -150,9 +131,34 @@ class ChessGame (PhantomObj):
             self.data['main_scene'].switch_scene(self.data['screen_load'])
             import scene
             scene.run(self.data['main_scene'])
+    
+    @call_trace(3)
+    def is_won(self):
+        """Tell if the game is won.  Returns one of [False, 'white', 'black']."""
+        if self.board.player1.kings <= 0:
+            ret = 'black'
+        elif self.board.player2.kings <= 0:
+            ret = 'white'
+        else:
+            ret = False
+        
+        kings = [p for p in self.board.pieces if p.ptype == 'king']
+        if len(kings) == 1:
+            # at this point we don't need to do checkmate/stalemate tests, because
+            # one side has already lost a king so the game is over
+            return ret
+        else:
+            white_king = [k for k in kings if k.color == 'white'][0]
+            black_king = [k for k in kings if k.color == 'black'][0]
+            if len(white_king.valid()) == 0:
+                ret = 'black'
+            elif len(black_king.valid()) == 0:
+                ret = 'white'
+        return ret
+        
 __all__.append('ChessGame')
 
 if __name__ == '__main__':
-    g = ChessGame()
+    g = ChessGame('Long Endgame 1')
     g.board.cfg.disp_sqrs = False
 

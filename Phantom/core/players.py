@@ -25,6 +25,7 @@ from Phantom.core.exceptions import InvalidMove, LogicError
 from Phantom.core.coord.point import Coord
 from Phantom.functions import round_down, dist
 from Phantom.utils.debug import call_trace, log_msg
+from Phantom.utils.timer import Timer
 import uuid
 
 __all__ = []
@@ -57,7 +58,7 @@ class Side (PhantomObj):
         return not self.__eq__(other)
     
     def __repr__(self):
-        return "Side({})".format(self.color)
+        return "Side('{}')".format(self.color)
     
     def __hash__(self):
         return 1 if self.color == 'white' else 0
@@ -85,7 +86,7 @@ class Player (PhantomObj):
         self.board = None  # will be changed later
         self.moves = 0
         self.owned_pieces = set()
-        
+        self.timer = Timer(self.color == 'white')  # start the clock if player is white
         self._uuid = uuid.uuid4()
         
     def __repr__(self):

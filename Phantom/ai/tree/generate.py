@@ -27,32 +27,34 @@ from Phantom.utils.debug import call_trace, log_msg
 
 __all__ = []
 
-def _spawn_children(node):
+def _spawn_children(node, tree=None):
     log_msg('_spawn_children({}) starting'.format(node), 4)
     legal = node.board.all_legal()
     for piece in legal:
         for move in legal[piece]:
             new = node.variate(piece.coord, move)
-            newnode = Node(node.depth - 1, False, new)
+            newnode = Node(node.depth + 1, (depth+1) > maxdepth, new)
             newnode.set_parent(node)
+            if tree:
+                newnode.set_tree(tree)
     log_msg('_spawn_children({}) ending'.format(node), 4)
 
-def _recursive_spawn(node):
+def _recursive_spawn(node, tree=None):
     log_msg('_recursive_spawn({}) starting'.format(node), 4)
     depth = node.depth
     if depth > maxdepth:
         log_msg('_recursive_spawn({}) reached depth cutoff'.format(node), 4)
         return False
     for child in node.children:
-        _spawn_children(child)
-        _recursive_spawn(child)
+        _spawn_children(child, tree)
+        _recursive_spawn(child, tree)
     log_msg('_recursive_spawn({}) ending'.format(node), 4)
 
 @call_trace(4)
 def spawn_tree(board):
     root = Node(0, False, board)
-    _spawn_children(root)
-    _recursive_spawn(root)
+    _spawn_children(root, root)
+    _recursive_spawn(root, root)
     for child in root.children:
         child.alphabeta = alpha_beta_value(child)
     return root

@@ -131,7 +131,6 @@ class Board (PhantomObj):
                     if newpiece.coord not in klass.default_origins:
                         newpiece.firstmove = False
                     self.pieces.add(newpiece)
-                    newpiece.update_cache()
                 elif is_file_split(char):
                     fileind += int(char)
                     continue
@@ -280,9 +279,17 @@ class Board (PhantomObj):
         self.player2.postmove()
     
     def switch_turn(self):
-        self.turn = Side('white') if self.turn == 'black' else Side('black')
+        if self.turn == 'white':
+            self.turn = Side('black')
+            self.player1.timer.pause()
+            self.player2.timer.resume()
+        elif self.turn == 'black':
+            self.turn = Side('white')
+            self.player1.timer.resume()
+            self.player2.timer.resume()
     
     @call_trace(2)
+    @exc_catch(KeyError, ret='Could not kill specified piece', log=3)
     def kill(self, piece):
         if piece is None:
             return
@@ -292,7 +299,7 @@ class Board (PhantomObj):
         self.pieces.remove(piece)
     
     @call_trace(1)
-    @exc_catch(LogicError, ChessError, ret='Cannot make specified move', log=4)
+    @exc_catch(LogicError, ChessError, KeyError, ret='Cannot make specified move', log=4)
     def move(self, p, p2=None):
         if p2 is None:
             p1 = Coord.from_chess(p[0:2])
@@ -311,7 +318,7 @@ class Board (PhantomObj):
         self.premove()
         player = self[p1].owner
         is_valid = player.validatemove(p1, p2)
-        if is_valid:
+        if is_valid or self.cfg.force_moves:
             log_msg('move: specified move is valid, continuing', 3)
             piece = self[p1]
             
@@ -477,6 +484,7 @@ class Board (PhantomObj):
             self.pieces.append(new)
             self.unfreeze()
             self.kill(pawn)
+        self.switch_turn()
                        
     def set_checkmate_validation(self, val):
         self.cfg.do_checkmate = val

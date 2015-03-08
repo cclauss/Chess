@@ -22,7 +22,7 @@
 from Phantom.functions import round_down
 
 maxdepth = 2
-window = 20
+window = 5
 
 # Points-per-piece simple
 scores = dict(

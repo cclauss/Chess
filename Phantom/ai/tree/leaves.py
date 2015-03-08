@@ -46,6 +46,7 @@ class Node (object):
         self._uuid = uuid.uuid4()
         self.parent = None
         self.children = []
+        self.numchildren = window**self.depth if self.depth > 1 else window
         self.tree = None
     
     def __hash__(self):
@@ -66,10 +67,9 @@ class Node (object):
         self.children.append(c)
     
     def variate(self, *args):
-        fen = self.board.fen_str()
-        self.board.move(*args)
         ret = Board(fen=self.board.fen_str())
-        self.board = Board(fen=fen)
+        ret.move(*args)
         return ret
+            
 __all__.append('Node')
 

@@ -70,6 +70,7 @@ class Cfg (Namespace, PhantomObj):
         self.use_unicode = kwargs.get('use_unicode', use_unicode)
         self.recur_limit = kwargs.get('recur_limit', sys.getrecursionlimit())
         self.disp_turn = kwargs.get('disp_turn', True)
+        self.disp_timers = kwargs.get('disp_timers', True)
         self.board = None
         self.game = None
     
