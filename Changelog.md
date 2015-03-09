@@ -2,6 +2,13 @@
 *Please note*: this log has only been updated since version 0.7.0, as this was effectively the first 'working' release.
 This log is **only** for major features in each update.  I will not be listing every single character I change here, considering GitHub can do that for me.
 
+### 0.7.3
+ - Altered default settings to work better on computer
+ - Much improved `Simple.exe` 
+ - Fixed bug in which the game always thought the current player had won
+ - Imroved checkmate detection
+ - Attempted to fix the AI tree generation (and probably failed)
+
 ### 0.7.2
  - Added experimental `Timer` class (doesn't work properly yet)
  - Made the "Force Moves" option actually do stuff (completely disables move validation)

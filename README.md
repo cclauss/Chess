@@ -54,7 +54,7 @@ How exactly does Phantom analyze a board and give it a score?  It uses a set of 
 - does player have the bishop pair
 - has the player castled
 - analyze pawn structure (work-in-progress)
-- assess pawns, knights, bishops, rooks, queens & kings according to the Phantom.ai.pos_eval.piece_tables file
+- assess pawns, knights, bishops, rooks, queens & kings according to the Phantom.ai.pos_eval.piece_tables file (which came from [here][3])
 - assess bad bishops
 
 as well as the much simpler material analysis.
@@ -97,6 +97,12 @@ To create and play a new game, simply do this:
 ```
 In the Pythonista app, it is possible to activate a GUI for that game by `game.gui()`.  This feature is planned for Windows as well, but will most likely require the [Pygame][2] package.
 
+# Contributing
+Are you a programmer?  Know Python?  Interested in Phantom?  Feel free to help! I've never actually been taught Python, just learned it from trial & error, so I'm sure there's plenty of things that could be done much better.
+Not a programmer but still interested in chess? Good, I need help there too! (I stink at chess).  Mainly the evaluation function - I don't have a good idea of what makes a board good or bad.
+If you have any ideas, ***please*** open an issue or make a pull request so I can make things better.
+
 [0]: http://omz-software.com/pythonista
 [1]: https://github.com/pyinstaller/pyinstaller/wiki
 [2]: http://pygame.org/news.html
+[3]: https://chessprogramming.wikispaces.com/Simplified+evaluation+function

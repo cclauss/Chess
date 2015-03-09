@@ -150,10 +150,12 @@ class ChessGame (PhantomObj):
         else:
             white_king = [k for k in kings if k.color == 'white'][0]
             black_king = [k for k in kings if k.color == 'black'][0]
-            if len(white_king.valid()) == 0:
-                ret = 'black'
-            elif len(black_king.valid()) == 0:
-                ret = 'white'
+            if self.board.turn == 'white':
+                if len(white_king.valid()) == 0:
+                    ret = 'black'
+            elif self.board.turn == 'black':
+                if len(black_king.valid()) == 0:
+                    ret = 'white'
         return ret
         
 __all__.append('ChessGame')

@@ -49,7 +49,8 @@ class ChessOptionsScreen (Scene, PhantomObj):
                         ('highlight',    'Show valid',        True,     Coord(0, 384),       self.tog_highlight),
                         ('disp_pieces',  'Show pieces',       True,     Coord(0, 288),       self.tog_disp_pieces),
                         ('disp_sqrs',    'Show grid',         True,     Coord(0, 192),       self.tog_disp_sqrs),
-                        ('',             'Copy FEN',          'NA',     Coord(0, 96),        self.copy_fen),]
+                        ('',             'Copy FEN',          'NA',     Coord(0, 96),        self.copy_fen),
+                        ('disp_timers',  'Show timers',       True,     Coord(0, 0),         self.tog_show_timers),]
         self.button_size = Coord(scale_factor, scale_factor)
         self.size = screen_size
     
@@ -79,6 +80,9 @@ class ChessOptionsScreen (Scene, PhantomObj):
         import clipboard
         fen = self.game.board.fen_str()
         clipboard.set(fen)
+    
+    def tog_show_timers(self):
+        self.data['disp_timers'] = not self.data['disp_timers']
     # ------------------ End button actions ------------------
     
     def set_parent(self, p):

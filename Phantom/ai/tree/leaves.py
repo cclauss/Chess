@@ -34,7 +34,7 @@ class Node (object):
     spawndepth = 0
     used_layouts = set()
     
-    def __init__(self, depth, terminal, board):
+    def __init__(self, depth, terminal, board, parent=None):
         self.depth = depth
         self.is_terminal = terminal or (self.depth >= maxdepth)
         self.board = Board(fen=board.fen_str())  # deepcopy the board
@@ -44,7 +44,9 @@ class Node (object):
             self.spawndepth += 1
         self.cnum = self.nid
         self._uuid = uuid.uuid4()
-        self.parent = None
+        self.parent = parent
+        if self.parent is not None:
+            self.parent.set_child(self)
         self.children = []
         self.numchildren = window**self.depth if self.depth > 1 else window
         self.tree = None
@@ -57,7 +59,7 @@ class Node (object):
     
     def set_tree(self, t):
         self.tree = t
-        self.tree.used_layouts.append(self.board.fen_str())
+        self.tree.used_layouts.add(self.board.fen_str())
     
     def set_parent(self, p):
         self.parent = p

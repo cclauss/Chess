@@ -21,29 +21,21 @@
 This is a base file and therefore needs to be import-clean, or at least 1-level import clean
 """
 
+from Phantom.constants import dbgname, phantom_dir, debug
+import os
+import sys
+
 def clear_log():
-    from Phantom.constants import dbgname
-    import inspect, os
-    orig_dir = os.getcwd()
-    util_dir = os.path.split(inspect.getfile(clear_log))[0]
-    
     try:
-        os.chdir(util_dir)
-        
-        with open(dbgname, 'w') as f:
+        writeto = os.path.join(phantom_dir, 'utils', dbgname)
+        with open(writeto, 'w') as f:
             f.write('')
-        
-        os.chdir(orig_dir)
     except Exception as e:
-        from Chess.utils.debug import log_msg
-        log_msg('Excepion {} in clear_log, unable to clear'.format(e), 1)
+        log_msg('Excepion {} in clear_log, unable to clear'.format(e), 1, err=True)
     finally:
         os.chdir(orig_dir)
 
 def log_msg(msg, level, **kwargs):
-    from Phantom.constants import dbgname, debug, phantom_dir
-    import inspect, os, sys
-    
     err = kwargs.get('err', False)
     write = kwargs.get('write', True)
     mark = kwargs.get('mark', False)
@@ -93,9 +85,9 @@ class call_trace (object):
         from Phantom.utils.debug import log_msg
         
         def wrapped(*args, **kwargs):
-            log_msg('{} called with args ({}, {})'.format(f.__name__, args, kwargs), self.level)
+            log_msg('{} called with args ({}, {})'.format(f.__name__, args, kwargs), self.level, p='{')
             returned = f(*args, **kwargs)
-            log_msg('{} returned {}'.format(f.__name__, returned), self.level)
+            log_msg('{} returned {}'.format(f.__name__, returned), self.level, p='}')
             return returned
         
         # keep the same function name to make life easier

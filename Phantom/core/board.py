@@ -185,11 +185,14 @@ class Board (PhantomObj):
         fen += str(self.halfmove_clock) + ' '
         fen += str(self.fullmove_clock)
         return fen
-    
+
     def all_legal(self):
         ret = {}
         for piece in self.pieces:
-            ret.update({piece: piece.valid()})
+            try:
+                ret.update({piece: piece.valid()})
+            except AttributeError as e:
+                continue
         return ret
     
     def _pprnt(self):
@@ -286,7 +289,7 @@ class Board (PhantomObj):
         elif self.turn == 'black':
             self.turn = Side('white')
             self.player1.timer.resume()
-            self.player2.timer.resume()
+            self.player2.timer.pause()
     
     @call_trace(2)
     @exc_catch(KeyError, ret='Could not kill specified piece', log=3)

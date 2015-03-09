@@ -61,7 +61,7 @@ class Cfg (Namespace, PhantomObj):
     def __init__(self, **kwargs):
         self.highlight = kwargs.get('highlight', True)
         self.force_moves = kwargs.get('force_moves', False)
-        self.disp_coords = kwargs.get('disp_coords', True)
+        self.disp_coords = kwargs.get('disp_coords', False)
         self.coord_mode = kwargs.get('coord_mode', 'chess')
         self.move_limit = kwargs.get('move_limit', 50)
         self.disp_sqrs = kwargs.get('disp_sqrs', True)
@@ -70,7 +70,7 @@ class Cfg (Namespace, PhantomObj):
         self.use_unicode = kwargs.get('use_unicode', use_unicode)
         self.recur_limit = kwargs.get('recur_limit', sys.getrecursionlimit())
         self.disp_turn = kwargs.get('disp_turn', True)
-        self.disp_timers = kwargs.get('disp_timers', True)
+        self.disp_timers = kwargs.get('disp_timers', False)
         self.board = None
         self.game = None
     

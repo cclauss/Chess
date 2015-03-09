@@ -125,6 +125,7 @@ class ChessMainScreen (Scene, PhantomObj):
                     self.won = self.game.is_won()
                 except InvalidMove as e:
                     self.err_pos = self.target
+                    self.did_err(e)
                 except Exception as e:
                     self.did_err(e)
                 self.selected = Coord(None, None)
@@ -186,7 +187,7 @@ class ChessMainScreen (Scene, PhantomObj):
                     coord = str(tile.coord.as_tup())
                     text(chess, x=chess_pos.x, y=chess_pos.y)
                     text(coord, x=coord_pos.x, y=coord_pos.y)
-            if self.err_pos != Coord(None, None):
+            if self.err_pos.x is not None:
                 sc = self.err_pos.as_screen()
                 fill(1, 0, 0, 0.3)
                 rect(sc.x, sc.y, scale_factor, scale_factor)
@@ -214,7 +215,9 @@ class ChessMainScreen (Scene, PhantomObj):
         if self.won:
             pos = Coord(self.size.w/2, self.size.h/2)
             tint(0.32645,0.28306,0.93492)
-            text('{} wins'.format(self.won), x=pos.x, y=pos.y, font_size=20.0)
+            # commented out until the bug in ChessGame.is_won() is fixed to be 
+            # less annoying
+            #text('{} wins'.format(self.won), x=pos.x, y=pos.y, font_size=40.0)
             tint(1, 1, 1, 1)
         
         # Buttons

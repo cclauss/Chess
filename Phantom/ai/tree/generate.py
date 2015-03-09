@@ -31,12 +31,15 @@ def _spawn_children(node, tree=None):
     log_msg('_spawn_children({}) starting'.format(node), 4)
     legal = node.board.all_legal()
     for piece in legal:
-        for move in legal[piece]:
-            new = node.variate(piece.coord, move)
-            newnode = Node(node.depth + 1, (depth+1) > maxdepth, new)
-            newnode.set_parent(node)
-            if tree:
-                newnode.set_tree(tree)
+        try:
+            for move in legal[piece]:
+                new = node.variate(piece.coord, move)
+                newnode = Node(node.depth + 1, (node.depth+1) > maxdepth, new, parent=node)
+                newnode.set_parent(node)
+                if tree:
+                    newnode.set_tree(tree)
+        except KeyError:
+            continue
     log_msg('_spawn_children({}) ending'.format(node), 4)
 
 def _recursive_spawn(node, tree=None):

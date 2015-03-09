@@ -55,9 +55,11 @@ import boardio.epd_read as epd_read
 from Phantom.utils.debug import log_msg, call_trace, clear_log
 from Phantom.utils.decorators import named, exc_catch, integer_args, default_args
 from Phantom.utils.lic import short, license
+from Phantom.utils.timer import Timer
 import utils.debug as debug
 import utils.decorators as decorators
 import utils.lic as lic
+import utils.timer as timer
 
 #from Phantom.constants import *
 import Phantom.constants as constants

@@ -36,7 +36,7 @@ from Phantom.__version__ import __version__ as version
 debug = 0
 
 # Use the unicode prettyprinter or an ASCII prettyprinter
-use_unicode = True
+use_unicode = False
 
 # Adjusts the scale of the board in the GUI
 screen_height = 768  # pixels
@@ -134,7 +134,10 @@ import os as _os
 phantom_dir = _os.path.dirname(_os.path.realpath(__file__))
 del _os
 
-import scene
-screen_size = scene.Rect(0, 0, screen_width, screen_height)
-del scene
+if in_pythonista:
+    import scene
+    screen_size = scene.Rect(0, 0, screen_width, screen_height)
+    del scene
+else:
+    screen_size = (0, 0, screen_width, screen_height)
 
