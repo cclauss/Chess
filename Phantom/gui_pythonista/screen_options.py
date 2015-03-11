@@ -24,6 +24,7 @@ from Phantom.boardio.boardcfg import Namespace, Cfg
 from Phantom.core.chessobj import PhantomObj
 from Phantom.constants import scale_factor, screen_size
 from Phantom.core.coord.point import Coord
+from Phantom.core.game_class import ChessGame
 
 class ChessOptionsScreen (Scene, PhantomObj):
     
@@ -51,6 +52,8 @@ class ChessOptionsScreen (Scene, PhantomObj):
                         ('disp_sqrs',    'Show grid',         True,     Coord(0, 192),       self.tog_disp_sqrs),
                         ('',             'Copy FEN',          'NA',     Coord(0, 96),        self.copy_fen),
                         ('disp_timers',  'Show timers',       True,     Coord(0, 0),         self.tog_show_timers),]
+                        # commented out until I can figure out how to make self.rst_game() work properly
+                        #('',             'Reset game',        'NA',     Coord(96, 672),      self.rst_game),]
         self.button_size = Coord(scale_factor, scale_factor)
         self.size = screen_size
     
@@ -83,6 +86,16 @@ class ChessOptionsScreen (Scene, PhantomObj):
     
     def tog_show_timers(self):
         self.data['disp_timers'] = not self.data['disp_timers']
+    
+    def rst_game(self):
+        scdata = self.data
+        newgame = ChessGame()
+        newgame.board.cfg = scdata
+        self.game = newgame
+        # The reason this doesnt work is that after setting
+        # self.game, the (new) game does NOT have the attributes
+        # nessecary to have a GUI (missing g.data.main_scene etc)
+        # This makes the options class' `self.return_to_game()` raise AttributeError
     # ------------------ End button actions ------------------
     
     def set_parent(self, p):

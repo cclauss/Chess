@@ -58,6 +58,11 @@ class ChessGame (PhantomObj):
                 self.player2 = args[args.index(arg)+1]
                 del args[args.index(arg)+1]
         
+        self.board.player1 = self.player1
+        self.board.player2 = self.player2
+        self.player1.board = self.board
+        self.player2.board = self.board
+        
         self.board.set_game(self)
         self.history = []
         self.moves = []
@@ -151,10 +156,10 @@ class ChessGame (PhantomObj):
             white_king = [k for k in kings if k.color == 'white'][0]
             black_king = [k for k in kings if k.color == 'black'][0]
             if self.board.turn == 'white':
-                if len(white_king.valid()) == 0:
+                if len(white_king.valid()) == 0 and white_king.threatened_by():
                     ret = 'black'
             elif self.board.turn == 'black':
-                if len(black_king.valid()) == 0:
+                if len(black_king.valid()) == 0 and black_king.threatened_by():
                     ret = 'white'
         return ret
         

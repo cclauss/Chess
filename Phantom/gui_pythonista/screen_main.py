@@ -112,14 +112,18 @@ class ChessMainScreen (Scene, PhantomObj):
                         piece = self.game.board[self.selected]
                         if piece.color == 'white':
                             if self.target == Coord(6, 0):
-                                self.game.castle('K')
+                                if 'K' in self.game.board.castling_rights:
+                                    self.game.castle('K')
                             elif self.target == Coord(2, 0):
-                                self.game.castle('Q')
+                                if 'Q' in self.game.board.castling_rights:
+                                    self.game.castle('Q')
                         elif piece.color == 'black':
                             if self.target == Coord(6, 7):
-                                self.game.castle('k')
+                                if 'k' in self.game.board.castling_rights:
+                                    self.game.castle('k')
                             elif self.target == Coord(2, 7):
-                                self.game.castle('q')
+                                if 'q' in self.game.board.castling_rights:
+                                    self.game.castle('q')
                     self.game.move(self.selected, self.target)
                     self.disp_score = False
                     self.won = self.game.is_won()
@@ -217,7 +221,7 @@ class ChessMainScreen (Scene, PhantomObj):
             tint(0.32645,0.28306,0.93492)
             # commented out until the bug in ChessGame.is_won() is fixed to be 
             # less annoying
-            #text('{} wins'.format(self.won), x=pos.x, y=pos.y, font_size=40.0)
+            text('{} wins'.format(self.won), x=pos.x, y=pos.y, font_size=40.0)
             tint(1, 1, 1, 1)
         
         # Buttons

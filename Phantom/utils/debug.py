@@ -32,8 +32,6 @@ def clear_log():
             f.write('')
     except Exception as e:
         log_msg('Excepion {} in clear_log, unable to clear'.format(e), 1, err=True)
-    finally:
-        os.chdir(orig_dir)
 
 def log_msg(msg, level, **kwargs):
     err = kwargs.get('err', False)

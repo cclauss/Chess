@@ -19,12 +19,17 @@
 
 """Version information."""
 
+# ====== CONTRIBUTORS =====
+#  I-wish-to-remain-anon: came up with the name PhantomChess
+#  671620616: programming
+#  The entire Pythonista forum: answering numerous questions about implememtation
+
 __major__ = '0'
 __minor__ = '7'
-__patch__ = '3'
+__patch__ = '4'
 __version__ = '.'.join([__major__, __minor__, __patch__])
 __author__ = '671620616'
 __author_email__ = 'blerghhh86@gmail.com'
 __license__ = 'GNU General Public License'
-__last_update__ = '20150309T1653'
+__last_update__ = '20150310T1945'
 

@@ -178,12 +178,9 @@ class Board (PhantomObj):
                 if file_gap > 0:
                     fen += str(file_gap)
                 fen += rank_split
-        fen += ' '
-        fen += self.turn.color[0] + ' ' # player to move
-        fen += self.castling_rights
-        fen += ' {} '.format(self.en_passant_rights)  # en passant field, blank for now
-        fen += str(self.halfmove_clock) + ' '
-        fen += str(self.fullmove_clock)
+        fen += ' {turn} {castle} {ep} {half} {full}'.format(
+                turn=self.turn, castle=self.castling_rights, ep=self.en_passant_rights,
+                half=str(self.halfmove_clock), full=str(self.fullmove_clock))
         return fen
 
     def all_legal(self):
@@ -290,6 +287,16 @@ class Board (PhantomObj):
             self.turn = Side('white')
             self.player1.timer.resume()
             self.player2.timer.pause()
+    
+    def upd_rights(self):
+        """This method soely exists so that if an exception occurs during a 
+        method that should have reset either en passant rights or castling rights
+        and wasnt able to because of the error.  This method will find any '' strings
+        and correct them to '-'."""
+        if self.castling_rights == '':
+            self.castling_rights = '-'
+        if self.en_passant_rights == '':
+            self.en_passant_rigths = '-'
     
     @call_trace(2)
     @exc_catch(KeyError, ret='Could not kill specified piece', log=3)

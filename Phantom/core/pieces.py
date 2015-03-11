@@ -119,11 +119,15 @@ class ChessPiece (PhantomObj):
     def check_target(self, target):
         piece = self.owner.board[target]
         if (piece == []) or (piece is None):
-            return True
+            log_msg('check_target: target is None, True', 5)
+            ret = True
         elif piece.color == self.color:
-            return False
+            log_msg('check_target: target is same color, False', 5)
+            ret = False
         else:
-            return True
+            log_msg('check_target: unknown, True', 5)
+            ret = True
+        return ret
     
     @call_trace(3)
     def check_path(self, path):
@@ -147,7 +151,7 @@ class ChessPiece (PhantomObj):
     def is_move_valid(self, target):
         if target not in bounds:
             return False
-        does_follow_rules = self.apply_ruleset()
+        does_follow_rules = self.apply_ruleset(target)
         is_valid_target = self.check_target(target)
         path = self.path_to(target)
         is_clear_path = self.check_path(path)
@@ -180,11 +184,11 @@ class ChessPiece (PhantomObj):
         return pieces
     
     @call_trace(3)
-    def threated_by(self):
+    def threatened_by(self):
         moves = self.owner.board.all_legal()
         pieces = []
         for piece in moves:
-            if piece is self:
+            if piece is self or piece.color == self.color:
                 continue
             else:
                 if self.coord in piece.valid():
@@ -214,8 +218,9 @@ class Pawn (ChessPiece):
     
     ptype = 'pawn'
     default_origins = [Coord(x, y) for x in range(grid_width) for y in (1, 6)]
+    tests = [Coord(1, 1), Coord(-1, 1)]
     
-    @call_trace(4)
+    @call_trace(40)
     def apply_ruleset(self, target):
         if self.color == 'white':
             op = lambda a, b: a + b
@@ -225,8 +230,7 @@ class Pawn (ChessPiece):
         allowed = [Coord(self.coord.x, op(self.coord.y, 1))]
         if self.firstmove:
             allowed.append(Coord(self.coord.x, op(self.coord.y, 2)))
-        tests = [Coord(self.coord.x+1, op(self.coord.y, 1)),
-                 Coord(self.coord.x-1, op(self.coord.y, 1))]
+        tests = [op(self.coord, self.tests[0]), op(self.coord, self.tests[1])]
         for test in tests:
             if self.owner.board[test] is not None:
                 allowed.append(test)
@@ -242,6 +246,19 @@ class Pawn (ChessPiece):
             self.owner.board.data['move_en_passant'] = False
         
         return ret
+    
+    # The reason for overriding this method is that the pawns, after moving,
+    # may *not* have en passant rights or other weird things that pawns can do
+    # These would not be included in the .subvalidcache list and therefore not 
+    # displayed on the GUI as valid moves
+    def valid(self):
+        self.subvalidcache = self.update_cache()
+        ret = []
+        for p in self.subvalidcache:
+            if self.owner.validatemove(self.coord, p):
+                ret.append(p)
+        return ret
+
 __all__.append('Pawn')
 
 class Rook (ChessPiece):
@@ -249,7 +266,7 @@ class Rook (ChessPiece):
     ptype = 'rook'
     default_origins = [Coord(x, y) for x in (0, 7) for y in (0, 7)]
     
-    @call_trace(4)
+    @call_trace(40)
     def apply_ruleset(self, target):
         allowed = []
         allowed.extend(north(self))
@@ -264,7 +281,7 @@ class Bishop (ChessPiece):
     ptype = 'bishop'
     default_origins = [Coord(x, y) for x in (2, 5) for y in (0, 7)]
     
-    @call_trace(4)
+    @call_trace(40)
     def apply_ruleset(self, target):
         allowed = []
         allowed.extend(ne(self))
@@ -279,7 +296,7 @@ class Queen (ChessPiece):
     ptype = 'queen'
     default_origins = [Coord(3, y) for y in (0, 7)]
     
-    @call_trace(4)
+    @call_trace(40)
     def apply_ruleset(self, target):
         allowed = []
         allowed.extend(north(self))
@@ -298,13 +315,13 @@ class King (ChessPiece):
     ptype = 'king'
     default_origins = [Coord(4, y) for y in (0, 7)]
     
-    @call_trace(4)
+    @call_trace(40)
     def _apply_ruleset(self, target):
         if round_down(dist(self.coord, target)) == 1:
             return True
         return False
 
-    @call_trace(4)
+    @call_trace(40)
     def apply_ruleset(self, target):
         if not self.owner.board.cfg.do_checkmate:
             return self._apply_ruleset(target)
@@ -328,7 +345,7 @@ class Knight (ChessPiece):
     ptype = 'knight'
     default_origins = [Coord(x, y) for x in (1, 6) for y in (0, 7)]
     
-    @call_trace(4)
+    @call_trace(40)
     def apply_ruleset(self, target):
         allowed = [self.coord + Coord(1, 2),
                    self.coord + Coord(2, 1),
@@ -343,7 +360,7 @@ class Knight (ChessPiece):
                 allowed.remove(pos)
         return target in allowed
     
-    @call_trace(4)
+    @call_trace(40)
     # override this method for two reasons:
     # A. knights can jump over pieces so this is irrevelent
     # B. the path generator doesn't work properly for the knight's direction of movement

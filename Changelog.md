@@ -2,6 +2,14 @@
 *Please note*: this log has only been updated since version 0.7.0, as this was effectively the first 'working' release.
 This log is **only** for major features in each update.  I will not be listing every single character I change here, considering GitHub can do that for me.
 
+### 0.7.4
+ - Bug noticed & fixed: Pythonista GUI didn't allow moving kings to any of the points that would normally be castling positions
+ - AI easy works! YAY! (It's not particularly smart though...its very first move killed it's own king...)
+ - Added some contributor info to __version__.py
+ - Fixed `NameError` in `Phantom.utils.debug.clear_log()`
+ - Fixed (I think) the `Phantom.core.game_class.ChessGame.is_won()` method
+ - Added a much more user-friendly and functional almost-shell to the Run_this.py and Simple.exe (the only things they don't yet support are castling & promotion - planned for v0.7.5)
+
 ### 0.7.3
  - Altered default settings to work better on computer
  - Much improved `Simple.exe` 
