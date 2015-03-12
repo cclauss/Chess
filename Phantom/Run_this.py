@@ -22,6 +22,7 @@
 from Phantom.core.game_class import ChessGame
 from Phantom.docs.documentation import program_use
 from Phantom.utils.lic import license
+from Phantom.core.coord.point import Coord
 
 game = ChessGame()
 print "PhantomChess Copyright (C) 2015 671620616"
@@ -41,6 +42,7 @@ if __name__ == '__main__':
     import re
     help_str = """
     e2e4                  Move a piece from e2 to e4
+    e2                    Get information about the piece at e2
     game                  Show the current layout of the game
     save xxxxxxx          Save the game under the name xxxxxxx
     load xxxxxxx          Load the game named xxxxxxx
@@ -60,6 +62,7 @@ if __name__ == '__main__':
         rate              Get an integer representing the positional score of the board
     """
     move_re = re.compile(r'[a-h][1-8][a-h][1-8]')
+    coord_re = re.compile(r'[a-h][1-8]')
     save_re = re.compile(r'save [a-zA-Z0-9\x20]+')
     load_re = re.compile(r'load [a-zA-Z0-9\x20]+')
     game_re = re.compile(r'game')
@@ -80,6 +83,7 @@ if __name__ == '__main__':
     running = True
     while running:
         user_in = raw_input(':> ')
+        user_in = user_in.strip()
         try:
             if '(' in user_in or ')' in user_in:
                 # assume a function was called
@@ -115,6 +119,22 @@ if __name__ == '__main__':
                 print pos_eval_advanced(game.board)
             elif is_cmd(license_re, user_in):
                 print license()
+            elif is_cmd(coord_re, user_in):
+                print "\tGetting information for {}...".format(user_in)
+                pos = Coord.from_chess(user_in)
+                piece = game.board[pos]
+                valid = [c.as_chess() for c in piece.valid()]
+                promo = piece.is_promotable
+                threatens = piece.threatens()
+                threatened = piece.threatened_by()
+                s = """    Piece at {}: {}
+    Color: {}
+    Valid moves: {}
+    Is promotable: {}
+    This piece threatens: {}
+    This piece is threatened by: {}
+    """.format(pos.as_chess(), piece, piece.color.color, valid, promo, threatens, threatened)
+                print s
             else:
                 # assume a move, like "e2e4"
                 if is_cmd(move_re, user_in):

@@ -230,6 +230,10 @@ class Pawn (ChessPiece):
         allowed = [Coord(self.coord.x, op(self.coord.y, 1))]
         if self.firstmove:
             allowed.append(Coord(self.coord.x, op(self.coord.y, 2)))
+        for move in allowed:
+            if self.owner.board[move] is not None:
+                print "{} removing position {}".format(self, move)
+                allowed.remove(move)
         tests = [op(self.coord, self.tests[0]), op(self.coord, self.tests[1])]
         for test in tests:
             if self.owner.board[test] is not None:
