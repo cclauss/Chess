@@ -55,9 +55,9 @@ class ChessMainScreen (scene.Scene, PhantomObj):
         self.err_pos = Coord(None, None)
         self.valid_cache = []
         folder = 'imgs'
-        format = 'Chess set images {} {}.jpg'
 
-        files = [os.path.join(phantom_dir, 'gui_pythonista', folder, format.format(color, type))
+        fmt = 'Chess set images {} {}.jpg'
+        files = [os.path.join(phantom_dir, 'gui_pythonista', folder, fmt.format(color, type))
                  for type in ('pawn', 'rook', 'queen', 'king', 'bishop', 'knight')
                  for color in ('black', 'white')]
 
