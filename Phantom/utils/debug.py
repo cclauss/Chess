@@ -25,13 +25,16 @@ from Phantom.constants import dbgname, phantom_dir, debug
 import os
 import sys
 
+def exception_str(exception):
+    return '{}: {}'.format(exception.__class__.__name__, exception)
+
 def clear_log():
     try:
         writeto = os.path.join(phantom_dir, 'utils', dbgname)
         with open(writeto, 'w') as f:
             f.write('')
     except Exception as e:
-        log_msg('Excepion {} in clear_log, unable to clear'.format(e), 1, err=True)
+        log_msg('Exception {} in clear_log, unable to clear'.format(exception_str(e)), 1, err=True)
 
 def log_msg(msg, level, **kwargs):
     err = kwargs.get('err', False)
@@ -91,10 +94,6 @@ class call_trace (object):
         # keep the same function name to make life easier
         # *Should* use the Phantom.utils.decorators.named() decorator - but this file
         # has to be import clean, so we can't import it
-        if self.name:
-            wrapped.__name__ = self.name
-        else:
-            wrapped.__name__ = f.__name__
+        wrapped.__name__ = self.name or f.__name__
         
         return wrapped
-
