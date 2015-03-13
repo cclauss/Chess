@@ -38,15 +38,7 @@ class Coord (PhantomObj):
     7: 'g',
     8: 'h',}
 
-    fromchesskeys = {
-    'a': 0,
-    'b': 1,
-    'c': 2,
-    'd': 3,
-    'e': 4,
-    'f': 5,
-    'g': 6,
-    'h': 7,}
+    fromchesskeys = dict(zip(tochesskeys.values(), tochesskeys.keys()))
     
     @integer_args
     def __init__(self, *args):

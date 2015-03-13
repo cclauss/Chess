@@ -23,8 +23,10 @@ from Phantom.core.game_class import ChessGame
 from Phantom.docs.documentation import program_use
 from Phantom.utils.lic import license
 from Phantom.core.coord.point import Coord
+from Phantom.boardio.epd_read import load_test
+import Phantom
 
-game = ChessGame()
+game = ChessGame(load_test('promote test 1'))
 print "PhantomChess Copyright (C) 2015 671620616"
 print "This program comes with ABSOLUTELY NO WARRANTY; for details enter license"
 print "This is free software, and you are welcome to redistribute it"

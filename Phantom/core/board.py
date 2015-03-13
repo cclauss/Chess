@@ -178,6 +178,7 @@ class Board (PhantomObj):
                 if file_gap > 0:
                     fen += str(file_gap)
                 fen += rank_split
+        self.upd_rights()  # make sure the castling rights aren't ''
         fen += ' {turn} {castle} {ep} {half} {full}'.format(
                 turn=self.turn.color[0], castle=self.castling_rights, ep=self.en_passant_rights,
                 half=str(self.halfmove_clock), full=str(self.fullmove_clock))

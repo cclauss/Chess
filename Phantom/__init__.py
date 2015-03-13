@@ -70,6 +70,10 @@ import Phantom.functions as functions
 from Phantom.__version__ import (__major__, __minor__, __patch__, __version__, __author__,
                                  __author_email__, __license__, __last_update__)
 
+def main():
+    import os
+    execfile(os.path.join(constants.phantom_dir, 'Run_this.py'))
+
 if __name__ == '__main__':
     ChessGame().gui()
 

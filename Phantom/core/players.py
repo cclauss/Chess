@@ -158,15 +158,14 @@ class Player (PhantomObj):
     @call_trace(3)
     def validatemove(self, p1, p2):
         piece = self.board[p1]
-        turn = self.is_turn()
         canmove = piece.is_move_valid(p2)
         if self.board.cfg.do_checkmate:
             check = not self.board.will_checkmate(p1, p2)
         else:
             check = True
-        log_msg('validatemove: piece={}, turn={}, canmove={}'.format(
-                               piece,    turn,    canmove), 3)
-        return turn and canmove
+        log_msg('validatemove: piece={}, check={}, canmove={}'.format(
+                               piece,    check,    canmove), 3)
+        return check and canmove
     
     @call_trace(2)
     def make_move(self, p1, p2):

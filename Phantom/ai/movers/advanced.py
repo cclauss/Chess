@@ -44,4 +44,5 @@ def make_smart_move(board):
     
     move = bestnode.board.lastmove
     board.move(move[0], move[1])
+    return True
 

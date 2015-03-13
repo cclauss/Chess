@@ -2,6 +2,11 @@
 *Please note*: this log has only been updated since version 0.7.0, as this was effectively the first 'working' release.
 This log is **only** for major features in each update.  I will not be listing every single character I change here, considering GitHub can do that for me.
 
+### 0.7.6
+ - Actually added the pawn promotion mechanism this time (oops)
+ - Bug noticed: the `Phantom.core.pieces.ChessPiece.path_to()` method; it seems to give paths that are longer than they should be
+ - Added call tracing to several functions
+
 ### 0.7.5
  - Bug fixed: Pieces could take their own color (this actually was fixed in v0.7.4 but I forgot to put it in the log)
  - Bug noticed & fixed (I think): Pawns could take pieces that were directly infront of them

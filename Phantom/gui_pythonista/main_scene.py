@@ -69,6 +69,9 @@ class MultiScene (Scene, PhantomObj):
     def set_options_scene(self, s):
         self.options_scene = s
     
+    def set_promote_scene(self, s):
+        self.promote_scene = s
+    
     def did_begin(self):
         self.switch_scene(self.main_scene)
 

@@ -25,7 +25,6 @@ from Phantom.core.exceptions import InvalidMove, InvalidDimension, ChessError, L
 import random
 
 def make_random_move(board):
-    moved = board
     board.freeze()
     piece = random.choice(board.pieces)
     board.unfreeze()
@@ -33,6 +32,5 @@ def make_random_move(board):
         return make_random_move(board)
     else:
         move = random.choice(piece.valid())
-        board.move(piece.coord, move)
-        moved = board
-    return moved
+        board.game.move(piece.coord, move)
+    return True

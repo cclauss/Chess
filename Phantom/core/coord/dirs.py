@@ -19,10 +19,12 @@
 
 """Helpers for working with directions."""
 
-from Phantom.core.coord.vectored_lists import *
+from Phantom.core.coord.vectored_lists import (north, south, east, west, ne, se, nw, sw)
+from Phantom.utils.debug import call_trace
 
 __all__ = []
 
+@call_trace(6)
 def dirfinder(piece, target):
     """Locate the direction in which the target lies and return a 2-tuple of:
         (the string of the direction,

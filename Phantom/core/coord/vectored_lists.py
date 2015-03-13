@@ -22,11 +22,13 @@
 from Phantom.core.coord.point import Coord, Grid
 from Phantom.constants import grid_height, grid_width
 from Phantom.utils.decorators import integer_args
+from Phantom.utils.debug import call_trace
 
 __all__ = []
 
 # implementation detail 2, 3
 
+@call_trace(9)
 @integer_args
 def north(piece):
     x = piece.coord.x
@@ -37,6 +39,7 @@ def north(piece):
     return ret
 __all__.append('north')
 
+@call_trace(9)
 @integer_args
 def south(piece):
     x = piece.coord.x
@@ -47,6 +50,7 @@ def south(piece):
     return ret
 __all__.append('south')
 
+@call_trace(9)
 @integer_args
 def east(piece):
     x = piece.coord.x
@@ -57,6 +61,7 @@ def east(piece):
     return ret
 __all__.append('east')
 
+@call_trace(9)
 @integer_args
 def west(piece):
     x = piece.coord.x
@@ -67,6 +72,7 @@ def west(piece):
     return ret
 __all__.append('west')
 
+@call_trace(9)
 @integer_args
 def ne(piece):
     x = piece.coord.x
@@ -78,6 +84,7 @@ def ne(piece):
     return ret
 __all__.append('ne')
 
+@call_trace(9)
 @integer_args
 def se(piece):
     x = piece.coord.x
@@ -89,6 +96,7 @@ def se(piece):
     return ret
 __all__.append('se')
 
+@call_trace(9)
 @integer_args
 def nw(piece):
     x = piece.coord.x
@@ -100,6 +108,7 @@ def nw(piece):
     return ret
 __all__.append('nw')
 
+@call_trace(9)
 @integer_args
 def sw(piece):
     x = piece.coord.x
@@ -111,6 +120,7 @@ def sw(piece):
     return ret
 __all__.append('sw')
 
+@call_trace(9)
 @integer_args
 def unknown(piece):
     def join(*args):

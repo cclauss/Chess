@@ -144,7 +144,9 @@ class ChessPiece (PhantomObj):
         dir = dirfinder(self, target)
         dist_to = int(round_down(dist(self.coord, target)))
         path = dir[1](self)
-        squares = path[:dist_to]
+        squares = path
+        while len(squares) > dist_to:
+            squares = squares[:-1]
         return squares
     
     @call_trace(2)
@@ -220,7 +222,7 @@ class Pawn (ChessPiece):
     default_origins = [Coord(x, y) for x in range(grid_width) for y in (1, 6)]
     tests = [Coord(1, 1), Coord(-1, 1)]
     
-    @call_trace(40)
+    @call_trace(4)
     def apply_ruleset(self, target):
         if self.color == 'white':
             op = lambda a, b: a + b
@@ -232,7 +234,6 @@ class Pawn (ChessPiece):
             allowed.append(Coord(self.coord.x, op(self.coord.y, 2)))
         for move in allowed:
             if self.owner.board[move] is not None:
-                print "{} removing position {}".format(self, move)
                 allowed.remove(move)
         tests = [op(self.coord, self.tests[0]), op(self.coord, self.tests[1])]
         for test in tests:
@@ -270,7 +271,7 @@ class Rook (ChessPiece):
     ptype = 'rook'
     default_origins = [Coord(x, y) for x in (0, 7) for y in (0, 7)]
     
-    @call_trace(40)
+    @call_trace(4)
     def apply_ruleset(self, target):
         allowed = []
         allowed.extend(north(self))
@@ -285,7 +286,7 @@ class Bishop (ChessPiece):
     ptype = 'bishop'
     default_origins = [Coord(x, y) for x in (2, 5) for y in (0, 7)]
     
-    @call_trace(40)
+    @call_trace(4)
     def apply_ruleset(self, target):
         allowed = []
         allowed.extend(ne(self))
@@ -300,7 +301,7 @@ class Queen (ChessPiece):
     ptype = 'queen'
     default_origins = [Coord(3, y) for y in (0, 7)]
     
-    @call_trace(40)
+    @call_trace(4)
     def apply_ruleset(self, target):
         allowed = []
         allowed.extend(north(self))
@@ -319,13 +320,13 @@ class King (ChessPiece):
     ptype = 'king'
     default_origins = [Coord(4, y) for y in (0, 7)]
     
-    @call_trace(40)
+    @call_trace(4)
     def _apply_ruleset(self, target):
         if round_down(dist(self.coord, target)) == 1:
             return True
         return False
 
-    @call_trace(40)
+    @call_trace(4)
     def apply_ruleset(self, target):
         if not self.owner.board.cfg.do_checkmate:
             return self._apply_ruleset(target)
@@ -349,7 +350,7 @@ class Knight (ChessPiece):
     ptype = 'knight'
     default_origins = [Coord(x, y) for x in (1, 6) for y in (0, 7)]
     
-    @call_trace(40)
+    @call_trace(4)
     def apply_ruleset(self, target):
         allowed = [self.coord + Coord(1, 2),
                    self.coord + Coord(2, 1),
@@ -364,7 +365,7 @@ class Knight (ChessPiece):
                 allowed.remove(pos)
         return target in allowed
     
-    @call_trace(40)
+    @call_trace(4)
     # override this method for two reasons:
     # A. knights can jump over pieces so this is irrevelent
     # B. the path generator doesn't work properly for the knight's direction of movement
