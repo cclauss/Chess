@@ -179,7 +179,7 @@ class Board (PhantomObj):
                     fen += str(file_gap)
                 fen += rank_split
         fen += ' {turn} {castle} {ep} {half} {full}'.format(
-                turn=self.turn, castle=self.castling_rights, ep=self.en_passant_rights,
+                turn=self.turn.color[0], castle=self.castling_rights, ep=self.en_passant_rights,
                 half=str(self.halfmove_clock), full=str(self.fullmove_clock))
         return fen
 
