@@ -19,20 +19,20 @@
 
 """The screen that allows users to select a piece to promote a pawn to."""
 
-from scene import *
+import scene
+import os
 from Phantom.core.game_class import ChessGame
 from Phantom.core.pieces import Rook, Bishop, Knight, Queen
 from Phantom.core.coord.point import Coord
 from Phantom.core.chessobj import PhantomObj
 from Phantom.constants import phantom_dir, scale_factor, screen_width, screen_height
-import os
 
-class ChessPromoteScreen (Scene, PhantomObj):
+class ChessPromoteScreen (scene.Scene, PhantomObj):
     
     def __init__(self, game, parent=None):
         self.game = game
         self.parent = parent
-        if self.parent is not None:
+        if self.parent:
             self.parent.set_promote_scene(self)
     
     def setup(self):
@@ -101,13 +101,12 @@ class ChessPromoteScreen (Scene, PhantomObj):
             img = self.img_names[piece.pythonista_gui_imgname]
             x = i*scale_factor + (screen_width/2 - 2*scale_factor)  # center the images
             y = screen_height/2
-            image(img, x, y, scale_factor, scale_factor)
+            scene.image(img, x, y, scale_factor, scale_factor)
         tpos = Coord(screen_width/2, screen_height/2 + 2*scale_factor)
-        text('Select a piece to promote to', x=tpos.x, y=tpos.y)
+        scene.text('Select a piece to promote to', x=tpos.x, y=tpos.y)
 
 if __name__ == '__main__':
     import Phantom as P
     g = ChessGame('Long Endgame 1')
     g.board.pieces.add(P.Pawn(P.Coord(0, 1), 'black', g.board.player2))
     g.gui()
-
