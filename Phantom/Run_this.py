@@ -24,9 +24,8 @@ from Phantom.docs.documentation import program_use
 from Phantom.utils.lic import license
 from Phantom.core.coord.point import Coord
 from Phantom.boardio.epd_read import load_test
-import Phantom
 
-game = ChessGame(load_test('promote test 1'))
+game = ChessGame()
 print "PhantomChess Copyright (C) 2015 671620616"
 print "This program comes with ABSOLUTELY NO WARRANTY; for details enter license"
 print "This is free software, and you are welcome to redistribute it"
@@ -54,6 +53,16 @@ if __name__ == '__main__':
     help                  Show this help text
     reset                 Reset the game to the opening position
     license               Show license information (it's a long read)
+    castle x              Castle on the side 'x' - x can be:
+                            K – white kingside
+                            Q – white queenside
+                            k – black kingside
+                            q – black queenside
+    promote aa b          Promote the pawn at aa to type b - b can be:
+                            Q – queen
+                            R – rook
+                            N – knight
+                            B – bishop
     
     ===== AI commands =====
         Prefix all commands listed below with "ai "
@@ -77,6 +86,8 @@ if __name__ == '__main__':
     aihard_re = re.compile(r'ai hard')
     airate_re = re.compile(r'ai rate')
     license_re = re.compile(r'license')
+    castle_re = re.compile(r'castle [KQkq]')
+    promote_re = re.compile(r'promote [QRBN]')
     def is_cmd(pattern, user):
         finds = pattern.findall(user)
         if finds == []: return False
@@ -125,6 +136,9 @@ if __name__ == '__main__':
                 print "\tGetting information for {}...".format(user_in)
                 pos = Coord.from_chess(user_in)
                 piece = game.board[pos]
+                if piece is None:
+                    print "\tNo piece at {}".format(user_in)
+                    continue
                 valid = [c.as_chess() for c in piece.valid()]
                 promo = piece.is_promotable
                 threatens = piece.threatens()
@@ -137,6 +151,12 @@ if __name__ == '__main__':
     This piece is threatened by: {}
     """.format(pos.as_chess(), piece, piece.color.color, valid, promo, threatens, threatened)
                 print s
+            elif is_cmd(castle_re, user_in):
+                fields = user_in.split(' ')
+                game.castle(fields[1])
+            elif is_cmd(promote_re, user_in):
+                fields = user_in.split(' ')
+                game.promote(fields[1], fields[2])
             else:
                 # assume a move, like "e2e4"
                 if is_cmd(move_re, user_in):

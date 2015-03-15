@@ -19,11 +19,12 @@
 
 """The main scene object for the GUI.  Allowes use of multiple scene classes with one GUI."""
 
-from scene import *
+import scene
+
 from Phantom.core.chessobj import PhantomObj
 from Phantom.boardio.boardcfg import Namespace
 
-class MultiScene (Scene, PhantomObj):
+class MultiScene (scene.Scene, PhantomObj):
     
     def __init__(self, start_scene):
         self.active_scene = start_scene
@@ -42,8 +43,8 @@ class MultiScene (Scene, PhantomObj):
         
     def draw(self):
         self.invocations += 1
-        background(0, 0, 0)
-        fill(1, 0, 0)
+        scene.background(0, 0, 0)
+        scene.fill(1, 0, 0)
         self.active_scene.touches = self.touches
         self.active_scene.t = self.t - self.tmp_t
         self.active_scene.draw()

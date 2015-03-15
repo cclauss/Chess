@@ -52,11 +52,17 @@ class ChessPiece (PhantomObj):
         self.promotable = False
         self.firstmove = True
         self._uuid = uuid.uuid4()
+        
+        # idea to prevent use of eval: implement the piece display characters
+        # in a dictionary in a way that the current eval('c_{}_{}'...) would 
+        # give the same result as piecechars['c_{}_{}'...]
+        # honestly the only reason i havent done it yet is because i'm lazy
         self.fen_char = eval('c_{}_{}'.format(self.color.color, self.ptype))
         if use_unicode:
             self.disp_char = eval('d_{}_{}'.format(self.color.color, self.ptype))
         else:
             self.disp_char = self.fen_char
+        
         self.pythonista_gui_imgname = 'Chess set images {} {}.jpg'.format(self.color.color, self.ptype)
         if owner:
             self.owner = None  # Set the attribute before it can be checked in set_owner()
@@ -68,7 +74,6 @@ class ChessPiece (PhantomObj):
         # this cache holds moves that are allowed by the .apply_ruleset() method
         # it will be updated after a move and is used to speed up the .valid() method
         # by shortening the list it must iterate through
-        self.subvalidcache = []
         self.subvalidcache = self.update_cache()
     
     def __repr__(self):

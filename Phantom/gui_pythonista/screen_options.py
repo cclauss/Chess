@@ -19,14 +19,15 @@
 
 """Options screen."""
 
-from scene import *
+import scene
+
 from Phantom.boardio.boardcfg import Namespace, Cfg
 from Phantom.core.chessobj import PhantomObj
 from Phantom.constants import scale_factor, screen_size
 from Phantom.core.coord.point import Coord
 from Phantom.core.game_class import ChessGame
 
-class ChessOptionsScreen (Scene, PhantomObj):
+class ChessOptionsScreen (scene.Scene, PhantomObj):
     
     def __init__(self, game, main=None):
         self.tmp_t = 0
@@ -117,26 +118,26 @@ class ChessOptionsScreen (Scene, PhantomObj):
         mid = Coord(x + (w / 2), y + (h / 2))
         label = Coord(mid.x, mid.y + 10)
         state = Coord(mid.x, mid.y - 10)
-        text(name, x=label.x, y=label.y)
-        text(val, x=state.x, y=state.y)
+        scene.text(name, x=label.x, y=label.y)
+        scene.text(val, x=state.x, y=state.y)
     
     def draw_button(self, name, pos):
         name = str(name)
         x, y = pos.x, pos.y
         w = h = scale_factor
         mid = Coord(x + (w / 2), y + (h / 2))
-        text(name, x=mid.x, y=mid.y)
+        scene.text(name, x=mid.x, y=mid.y)
     
     def touch_began(self, touch):
         for button in self.buttons:
-            hit_test = Rect(button[3].x, button[3].y, self.button_size.x, self.button_size.y)
+            hit_test = scene.Rect(button[3].x, button[3].y, self.button_size.x, self.button_size.y)
             if touch.location in hit_test:
                 button[4]()
                 self.sync_data()
                 break
     
     def draw(self):
-        background(0, 0, 0)
+        scene.background(0, 0, 0)
         
         for b in self.buttons:
             # use '== True' here to avoid catching values like "NA"
@@ -150,5 +151,5 @@ if __name__ == '__main__':
     from Phantom.core.game_class import ChessGame
     g = ChessGame()
     s = ChessOptionsScreen(g)
-    run(s)
+    scene.run(s)
 

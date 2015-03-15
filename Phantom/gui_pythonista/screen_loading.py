@@ -19,12 +19,13 @@
 
 """A loading screen."""
 
-from scene import *
+import scene
+
 from Phantom.constants import debug, screen_width, screen_height, version
 from Phantom.utils.lic import short
 from Phantom.core.chessobj import PhantomObj
 
-class ChessLoadingScreen (Scene, PhantomObj):
+class ChessLoadingScreen (scene.Scene, PhantomObj):
     
     def __init__(self, main=None):
         self.parent = main
@@ -43,20 +44,20 @@ class ChessLoadingScreen (Scene, PhantomObj):
         self.parent.did_begin()
     
     def draw(self):
-        background(0, 0, 0)
-        fill(1, 1, 1)
+        scene.background(0, 0, 0)
+        scene.fill(1, 1, 1)
         x = screen_width / 2
         s_y = screen_height / 2 + 100
         d_y = s_y - 30
         l_y = d_y - 75
-        tint(0.32645,0.28306,0.93492)
-        text('PhantomChess version {}'.format(version), x=x, y=s_y, font_size=20.0)
-        tint(1, 1, 1)
+        scene.tint(0.32645,0.28306,0.93492)
+        scene.text('PhantomChess version {}'.format(version), x=x, y=s_y, font_size=20.0)
+        scene.tint(1, 1, 1)
         if debug:
-            text('Debugger set to level {}'.format(debug), x=x, y=d_y)
+            scene.text('Debugger set to level {}'.format(debug), x=x, y=d_y)
         for i, line in enumerate(short().splitlines()):
-            text(line, x=x, y=l_y - (i*20))
+            scene.text(line, x=x, y=l_y - (i*20))
 
 if __name__ == '__main__':
-    run(ChessLoadingScreen())
+    scene.run(ChessLoadingScreen())
 

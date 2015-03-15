@@ -85,6 +85,10 @@ class ChessGame (PhantomObj):
         self.history.append(self.board.fen_str())
         self.board.castle(*args)
     
+    def promote(self, *args):
+        self.history.append(self.board.fen_str())
+        self.board.promote(*args)
+    
     def clone(self):
         fen = self.board.fen_str()
         history = self.history
