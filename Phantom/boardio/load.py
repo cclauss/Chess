@@ -22,7 +22,7 @@
 from Phantom.core.exceptions import ChessError, LogicError
 from Phantom.constants import save_fen, phantom_dir
 import os
-import inspect
+#import inspect
 
 def loadgame(name):
     
@@ -32,11 +32,9 @@ def loadgame(name):
     
     for line in lines:
         line = line.strip()
-        if (line == '') or (line[0] == '#'):
+        if not line or line[0] == '#':
             continue
-        split = line.index(':')
-        bname = line[:split]
-        fen = line[split+1:]
+        bname, _, fen = line.partition(':')
         if bname == name:
             return fen
 
@@ -49,11 +47,9 @@ def listgames():
     ret = []
     for line in lines:
         line = line.strip()
-        if (line == '') or (line[0] == '#'):
+        if not line or line[0] == '#':
             continue
-        split = line.index(':')
-        name = line[:split]
+        name = line.partition(':')[0]
         ret.append(name)
     
     return ret
-
