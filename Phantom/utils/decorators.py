@@ -45,7 +45,7 @@ class exc_catch (object):
     def __call__(self, f):
         retval = self.ret
         from Phantom.utils.debug import log_msg
-        name = self.name if self.name is not None else f.__name__
+        name = self.name or f.__name__
         
         @named(name)
         def wrapped(*args, **kwargs):
@@ -56,13 +56,14 @@ class exc_catch (object):
                 if e.__class__.__name__ in self.passes:
                     return f(*args, **kwargs)
             finally:
-                if (e.__class__ not in self.passes) and (e is not None):
-                    if self.log:
-                        log_msg('exc_catch: caught unpassed exception of type {}: {}'.format(
-                                 e.__class__, e.message), self.log, err=True)
-                    return retval
-                elif e is not None:
-                    raise e
+                if e:
+                    if e.__class__ in self.passes:
+                        raise e
+                    else:
+                        if self.log:
+                            fmt = 'exc_catch: caught unpassed exception of type {}: {}'
+                            log_msg(fmt.format(e.__class__, e.message), self.log, err=True)
+                        return retval
         
         return wrapped
 
@@ -80,14 +81,8 @@ class default_args (object):
         
         @named(f.__name__)
         def wrapped(*args, **kwargs):
-            if args == ():
-                fargs = self.d_args
-            else:
-                fargs = args
-            if kwargs == {}:
-                fkwargs = self.d_kwargs
-            else:
-                fkwargs = kwargs
+            fargs = args or self.d_args
+            fkwargs = kwargs or self.d_kwargs
             return f(*fargs, **fkwargs)
         
         return wrapped
@@ -125,4 +120,3 @@ def integer_args(f):
         return f(*fixed_args, **fixed_kwargs)
     
     return wrapped
-
