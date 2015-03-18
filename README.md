@@ -12,7 +12,7 @@ Phantom is a (in development) game of Chess written in Python.  On Windows, the 
 1 R N B Q K B N R 1 <
   a b c d e f g h
 ```
-and will use Unicode characters as well.  A proper GUI is *almost* working for the iOS app [Pythonista][pythonista].  
+and will use Unicode characters as well.  A proper GUI is *almost* working for the iOS app [Pythonista][pythonista].  It is a completely standalone package and at this time has no support for UCI.
 
 Please note: this project is a huge learning experience for me.  This is the 3rd revision (I've restarted from scratch twice) of my ongoing chess project, each one getting better.  Hopefully there is no 4th revision.  If you find a bug, **please** don't hesitate to let me know so I can fix it.
 
@@ -43,7 +43,7 @@ Please note: this project is a huge learning experience for me.  This is the 3rd
 To download & extract PhantomChess, the first thing to do is download the `Phantom_installer.py` file in the master branch.  Place it in the directory to extract to and run.  The same file is available as a `.exe` for Windows users, and both of them will also work just file to update the package once installed.  Occasionally there may be an update to the installer, but all the old versions should work fine if for some reason you don't wish to update.
 
 ### Easy method
-Although it is more error-prone and not quite as user friendly as I'd like, a single executable is available (`Simple.exe`).  All you have to do is download this.  You don't even have to have Python installed to run it! (built with [PyInstaller][pyinstall])
+Although it is more error-prone and not quite as user friendly as I'd like, a single executable is available (`Simple.exe`).  All you have to do is download this.  You don't even have to have Python installed to run it! (built with [PyInstaller][pyinstall])  Please note it does not have the ability to save/load boards.
 
 ## Static board analysis
 How exactly does Phantom analyze a board and give it a score?  It uses a set of heuristics coded into the Phantom.ai.pos_eval.heuristics file.  This is a list of the currently active heuristics that are used to analyze a board:
