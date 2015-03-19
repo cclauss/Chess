@@ -12,7 +12,7 @@ Phantom is a (in development) game of Chess written in Python.  On Windows, the 
 1 R N B Q K B N R 1 <
   a b c d e f g h
 ```
-and will use Unicode characters as well.  A proper GUI is *almost* working for the iOS app [Pythonista][pythonista].  It is a completely standalone package and at this time has no support for UCI.
+and will use Unicode characters as well.  A proper GUI is *almost* working for the iOS app [Pythonista][pythonista].  It is a completely standalone package and at this time has no support for [Universal Chess Interface] (UCI).
 
 Please note: this project is a huge learning experience for me.  This is the 3rd revision (I've restarted from scratch twice) of my ongoing chess project, each one getting better.  Hopefully there is no 4th revision.  If you find a bug, **please** don't hesitate to let me know so I can fix it.
 
@@ -37,13 +37,13 @@ Please note: this project is a huge learning experience for me.  This is the 3rd
 - [x] Self-test suite
 - [ ] Timers
 
-*The basics of a GUI exist and work, however, at this time support for pawn promotion does not work correctly.  Until this is fixed, the GUI is considered incomplete.
+*The basics of a GUI exist and work, however, at this time pawn promotion does not work correctly.  Until this is fixed, the GUI is considered incomplete.
 
 ## Installation
-To download & extract PhantomChess, the first thing to do is download the `Phantom_installer.py` file in the master branch.  Place it in the directory to extract to and run.  The same file is available as a `.exe` for Windows users, and both of them will also work just file to update the package once installed.  Occasionally there may be an update to the installer, but all the old versions should work fine if for some reason you don't wish to update.
+To download & extract PhantomChess, the first thing to do is download the [`Phantom_installer.py`](https://github.com/671620616/PhantomChess/blob/master/Phantom_installer.py) file in the master branch.  Place it in the directory that you want to extract to and run.  The same file is available as a `.exe` for Windows users, and both of them will also work to update the package once it has been installed.  Occasionally there may be an update to the installer, but all the old versions should work fine if for some reason you don't wish to update.
 
 ### Easy method
-Although it is more error-prone and not quite as user friendly as I'd like, a single executable is available (`Simple.exe`).  All you have to do is download this.  You don't even have to have Python installed to run it! (built with [PyInstaller][pyinstall])  Please note it does not have the ability to save/load boards.
+Although it is more error-prone and not quite as user friendly as I'd like, a single executable is available (`Simple.exe`).  All you have to do is download this.  You don't even have to have Python installed to run it! (built with [PyInstaller][pyinstall])  Please note, Simple.exe does not have the ability to save/load boards.
 
 ## Static board analysis
 How exactly does Phantom analyze a board and give it a score?  It uses a set of heuristics coded into the Phantom.ai.pos_eval.heuristics file.  This is a list of the currently active heuristics that are used to analyze a board:
@@ -96,8 +96,7 @@ To create and play a new game, simply do this:
   a b c d e f g h
 ```
 
-In the Pythonista app, it is possible to activate a GUI for that game by `game.gui()`.  This feature is planned for Windows as well, but will most likely require the [Pygame
-][pygame] package.
+In the Pythonista app, it is possible to activate a GUI for that game by `game.gui()`.  This feature is planned for Windows as well, but will most likely require the [Pygame][pygame] package.
 
 # Contributing
 Are you a programmer?  Know Python?  Interested in Phantom?  Feel free to help! I've never actually been taught Python, just learned it from trial & error, so I'm sure there's plenty of things that could be done much better.
@@ -105,6 +104,7 @@ Not a programmer but still interested in chess? Good, I need help there too! (I 
 If you have any ideas, ***please*** open an issue or make a pull request so I can make things better.
 
 [pythonista]: http://omz-software.com/pythonista
+[Universal Chess Interface]: http://en.wikipedia.org/wiki/Universal_Chess_Interface
 [pyinstall]: https://github.com/pyinstaller/pyinstaller/wiki
 [pygame]: http://pygame.org/news.html
 [piece_tables]: https://chessprogramming.wikispaces.com/Simplified+evaluation+function
