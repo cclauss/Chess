@@ -36,7 +36,7 @@ __all__ = []
 class ChessPiece (PhantomObj):
     
     allIsFrozen = False  # all piece level freeze
-    bounds = bounds
+    bounds = bounds  # ccc: this line does nothing!  Is it supposed to be: self.bounds = bounds
     
     # overwritten by subclasses
     ptype = None
@@ -45,7 +45,7 @@ class ChessPiece (PhantomObj):
     def __init__(self, pos, color, owner=None):
         self.color = Side(color)
         if not pos in self.bounds:
-            raise InvalidDimension('Piece spawned out of bounds: {}'.format(str(pos)), 
+            raise InvalidDimension('Piece spawned out of bounds: {}'.format(pos), 
                                    'Phantom.core.pieces.ChessPiece.__init__()')
         self.coord = pos
         self.isFrozen = False  # piece level freeze
@@ -64,11 +64,9 @@ class ChessPiece (PhantomObj):
             self.disp_char = self.fen_char
         
         self.pythonista_gui_imgname = 'Chess set images {} {}.jpg'.format(self.color.color, self.ptype)
+        self.owner = None  # Set the attribute before it can be checked in set_owner()
         if owner:
-            self.owner = None  # Set the attribute before it can be checked in set_owner()
             self.set_owner(owner)
-        else:
-            self.owner = None
         self.data = Namespace()
         
         # this cache holds moves that are allowed by the .apply_ruleset() method
@@ -83,10 +81,9 @@ class ChessPiece (PhantomObj):
         return int(self._uuid) % (self.owner.moves + 1)
     
     def set_owner(self, owner):
-        if self.owner is not None:
-            return
-        self.owner = owner
-        self.owner.add_owned_piece(self)
+        if not self.owner:
+            self.owner = owner
+            self.owner.add_owned_piece(self)
     
     # This applies the piece's ruleset as described in level 1.1
     def apply_ruleset(self, target):
@@ -103,27 +100,19 @@ class ChessPiece (PhantomObj):
     # implementation detail 5
     @call_trace(3)
     def valid(self):
-        ret = []
-        for pos in self.subvalidcache:
-            if self.owner.validatemove(self.coord, pos):
-                ret.append(pos)
-        return ret
+        return [pos for pos in self.subvalidcache if self.owner.validatemove(self.coord, pos)]
     
     @property
     def is_promotable(self):
-        if self.ptype == 'pawn':
-            if self.color == 'white':
-                if self.coord.y == 7:
-                    return True
-            if self.color == 'black':
-                if self.coord.y == 0:
-                    return True
-        return False
+        if self.ptype != 'pawn':
+            return False 
+        return ((self.color == 'white' and self.coord.y == 7)
+             or (self.color == 'black' and self.coord.y == 0))
     
     @call_trace(3)
     def check_target(self, target):
         piece = self.owner.board[target]
-        if (piece == []) or (piece is None):
+        if not piece:
             log_msg('check_target: target is None, True', 5)
             ret = True
         elif piece.color == self.color:
@@ -138,7 +127,7 @@ class ChessPiece (PhantomObj):
     def check_path(self, path):
         for pos in path[:-1]:
             piece = self.owner.board[pos]
-            if not ((piece == []) or (piece is None)):
+            if piece:
                 return False
         return True
 
@@ -151,7 +140,7 @@ class ChessPiece (PhantomObj):
         path = dir[1](self)
         squares = path
         while len(squares) > dist_to:
-            squares = squares[:-1]
+            squares.pop()
         return squares
     
     @call_trace(2)
@@ -167,40 +156,17 @@ class ChessPiece (PhantomObj):
     
     @staticmethod
     def type_from_chr(chr):
-        if chr in ('p', 'P'):
-            return Pawn
-        elif chr in ('r', 'R'):
-            return Rook
-        elif chr in ('n', 'N'):
-            return Knight
-        elif chr in ('b', 'B'):
-            return Bishop
-        elif chr in ('k', 'K'):
-            return King
-        elif chr in ('q', 'Q'):
-            return Queen
-    
+        piece_dict = {'p' : Pawn, 'r' : Rook, 'n' : Knight, 'q' : Queen, 'k' : King}
+        return piece_dict.get(chr.lower(), None)
+        
     @call_trace(3)
     def threatens(self):
-        moves = self.valid()
-        pieces = []
-        for move in moves:
-            piece = self.owner.board[move]
-            if piece is not None:
-                pieces.append(piece)
-        return pieces
+        return [self.owner.board[move] for move in self.valid() if self.owner.board[move]]
     
     @call_trace(3)
     def threatened_by(self):
-        moves = self.owner.board.all_legal()
-        pieces = []
-        for piece in moves:
-            if piece is self or piece.color == self.color:
-                continue
-            else:
-                if self.coord in piece.valid():
-                    pieces.append(piece)
-        return pieces
+        return [piece for piece in self.owner.board.all_legal()
+                if piece.color != self.color and self.coord in piece.valid()]
     
     @call_trace(2)
     def move(self, target):
@@ -211,11 +177,7 @@ class ChessPiece (PhantomObj):
     
     @call_trace(4)
     def update_cache(self):
-        ret = []
-        for tile in self.owner.board.tiles:
-            if self.apply_ruleset(tile.coord):
-                ret.append(tile.coord)
-        return ret
+        return [tile for tile in self.owner.board.tiles if self.apply_ruleset(tile.coord)]
         
 __all__.append('ChessPiece')
 
@@ -238,11 +200,11 @@ class Pawn (ChessPiece):
         if self.firstmove:
             allowed.append(Coord(self.coord.x, op(self.coord.y, 2)))
         for move in allowed:
-            if self.owner.board[move] is not None:
+            if self.owner.board[move]:
                 allowed.remove(move)
         tests = [op(self.coord, self.tests[0]), op(self.coord, self.tests[1])]
         for test in tests:
-            if self.owner.board[test] is not None:
+            if self.owner.board[test]:
                 allowed.append(test)
             
         ret = target in allowed
@@ -263,11 +225,7 @@ class Pawn (ChessPiece):
     # displayed on the GUI as valid moves
     def valid(self):
         self.subvalidcache = self.update_cache()
-        ret = []
-        for p in self.subvalidcache:
-            if self.owner.validatemove(self.coord, p):
-                ret.append(p)
-        return ret
+        return [p for p in self.subvalidcache if self.owner.validatemove(self.coord, p)]
 
 __all__.append('Pawn')
 
@@ -327,9 +285,7 @@ class King (ChessPiece):
     
     @call_trace(4)
     def _apply_ruleset(self, target):
-        if round_down(dist(self.coord, target)) == 1:
-            return True
-        return False
+        return round_down(dist(self.coord, target)) == 1
 
     @call_trace(4)
     def apply_ruleset(self, target):
@@ -339,15 +295,10 @@ class King (ChessPiece):
         other_allowed = []
         self.owner.board.set_checkmate_validation(False)  # avoid recursion
         for piece in self.owner.board.pieces:
-            if piece is self or piece.color == self.color:
-                continue
-            else:
+            if piece.color != self.color:
                 other_allowed.extend(piece.valid())
         self.owner.board.set_checkmate_validation(True)
-        if target in other_allowed:
-            return False
-        else:
-            return empty_board
+        return False if target in other_allowed else empty_board
 __all__.append('King')
 
 class Knight (ChessPiece):
@@ -366,7 +317,7 @@ class Knight (ChessPiece):
                    self.coord - Coord(2, -1),
                    self.coord - Coord(1, -2)]
         for pos in allowed:
-            if not ((grid_height > pos.y >= 0) and (grid_width > pos.x >= 0)):
+            if not (grid_height > pos.y >= 0 and grid_width > pos.x >= 0):
                 allowed.remove(pos)
         return target in allowed
     
@@ -378,4 +329,3 @@ class Knight (ChessPiece):
     def path_to(self, target):
         return [0]
 __all__.append('Knight')
-
