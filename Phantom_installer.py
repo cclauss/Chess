@@ -12,9 +12,8 @@ print "Downloading..."
 url = 'https://github.com/671620616/PhantomChess/archive/master.zip'
 urllib.urlretrieve(url, 'Phantom.zip')
 print "Unzipping..."
-zipped = zipfile.ZipFile('Phantom.zip', 'r')
-zipped.extractall()
-zipped.close()
+with zipfile.ZipFile('Phantom.zip', 'r') as zipped:
+    zipped.extractall()
 print "Adding to importable location..."
 for p in sys.path:
     if os.path.split(p)[1] == 'site-packages':
