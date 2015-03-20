@@ -30,7 +30,7 @@ def main(*args):
     testdir, dirname = os.path.split(testdir)
     
     for f in os.listdir(testdir):
-        if (f == dirname) or (f == '__init__.py'):
+        if f in (dirname, '__init__.py'):
             continue
         else:
             mn = f[:f.index('.')]
