@@ -19,37 +19,23 @@
 
 """Get a FEN string for a given board save-name."""
 
-from Phantom.core.exceptions import ChessError, LogicError
+#from Phantom.core.exceptions import ChessError, LogicError
 from Phantom.constants import save_fen, phantom_dir
 import os
 #import inspect
 
+def valid_lines_from_file(file_path):
+    with open(file_path) as in_file:
+        return [line.strip() for line in in_file.readlines()
+                if line.strip() and line.strip()[0] != '#']
+
 def loadgame(name):
-    
-    read = os.path.join(phantom_dir, 'boardio', save_fen)
-    with open(read, 'r') as f:
-        lines = f.readlines()
-    
-    for line in lines:
-        line = line.strip()
-        if not line or line[0] == '#':
-            continue
+    file_path = os.path.join(phantom_dir, 'boardio', save_fen)
+    for line in valid_lines_from_file(file_path):
         bname, _, fen = line.partition(':')
-        if bname == name:
-            return fen
+        if bname.strip() == name:
+            return fen.strip() 
 
 def listgames():
-    
-    read = os.path.join(phantom_dir, 'boardio', save_fen)
-    with open(read, 'r') as f:
-        lines = f.readlines()
-    
-    ret = []
-    for line in lines:
-        line = line.strip()
-        if not line or line[0] == '#':
-            continue
-        name = line.partition(':')[0]
-        ret.append(name)
-    
-    return ret
+    file_path = os.path.join(phantom_dir, 'boardio', save_fen)
+    return [line.partition(':')[0].strip() for line in valid_lines_from_file(file_path)]
