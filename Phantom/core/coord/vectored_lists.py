@@ -31,47 +31,26 @@ __all__ = []
 @call_trace(9)
 @integer_args
 def north(piece):
-    x = piece.coord.x
-    y = piece.coord.y
-    ret = []
-    for i in range(y+1, grid_height):
-        ret.append(Coord(x, i))
-    return ret
-__all__.append('north')
+    return [Coord(piece.coord.x, i) for i in xrange(piece.coord.y+1, grid_height)]
 
 @call_trace(9)
 @integer_args
 def south(piece):
-    x = piece.coord.x
-    y = piece.coord.y
-    ret = []
-    for i in range(y-1, -1, -1):
-        ret.append(Coord(x, i))
-    return ret
-__all__.append('south')
+    return [Coord(piece.coord.x, i) for i in xrange(piece.coord.y-1, -1, -1)]
 
 @call_trace(9)
 @integer_args
 def east(piece):
-    x = piece.coord.x
-    y = piece.coord.y
-    ret = []
-    for i in range(x+1, grid_width):
-        ret.append(Coord(i, y))
-    return ret
-__all__.append('east')
+    return [Coord(i, piece.coord.y) for i in xrange(piece.coord.x+1, grid_width)]
 
 @call_trace(9)
 @integer_args
 def west(piece):
-    x = piece.coord.x
-    y = piece.coord.y
-    ret = []
-    for i in range(x-1, -1, -1):
-        ret.append(Coord(i, y))
-    return ret
-__all__.append('west')
+    return [Coord(i, piece.coord.y) for i in xrange(piece.coord.x-1, -1, -1)]
 
+for func in (north, south, east, west):
+    __all__.append(func.__name__)
+    
 @call_trace(9)
 @integer_args
 def ne(piece):
