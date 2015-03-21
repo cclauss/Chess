@@ -25,11 +25,5 @@ from Phantom.utils.debug import call_trace
 def pos_eval_advanced(board):
     from Phantom.ai.pos_eval.heuristics import all_rules
     from Phantom.ai.pos_eval.basic import pos_eval_basic
-    
-    score = pos_eval_basic(board)
-    
-    for rule in all_rules:
-        score += rule(board)
-    
-    return score
 
+    return pos_eval_basic(board) + sum(rule(board) for rule in all_rules)
