@@ -68,7 +68,7 @@ f = [Coord(5, y) for y in xrange(grid_height)],
 g = [Coord(6, y) for y in xrange(grid_height)],
 h = [Coord(7, y) for y in xrange(grid_height)],
 )
-#the following is equivelent and faster but not as easy to understand
+#the following dict comprehension is equivalent and faster but not as easy to understand
 #filez = {string.lowercase[i]:[Coord(i, y) for y in xrange(grid_height)]
 #         for i in xrange(grid_width)}
 #assert files == filez, '{}\n{}'.format(files, filez)
