@@ -90,13 +90,10 @@ if __name__ == '__main__':
     promote_re = re.compile(r'promote [QRBN]')
     def is_cmd(pattern, user):
         finds = pattern.findall(user)
-        if finds == []: return False
-        if finds[0] == user: return True
-        return False
+        return finds and finds[0] == user
     running = True
     while running:
-        user_in = raw_input(':> ')
-        user_in = user_in.strip()
+        user_in = raw_input(':> ').strip()
         try:
             if '(' in user_in or ')' in user_in:
                 # assume a function was called
@@ -165,4 +162,3 @@ if __name__ == '__main__':
                     print game
         except Exception as e:
             print "exception: {}".format(e)
-
