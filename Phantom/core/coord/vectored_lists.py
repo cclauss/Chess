@@ -31,94 +31,46 @@ __all__ = []
 @call_trace(9)
 @integer_args
 def north(piece):
-    x = piece.coord.x
-    y = piece.coord.y
-    ret = []
-    for i in range(y+1, grid_height):
-        ret.append(Coord(x, i))
-    return ret
-__all__.append('north')
+    return [Coord(piece.coord.x, i) for i in xrange(piece.coord.y+1, grid_height)]
 
 @call_trace(9)
 @integer_args
 def south(piece):
-    x = piece.coord.x
-    y = piece.coord.y
-    ret = []
-    for i in range(y-1, -1, -1):
-        ret.append(Coord(x, i))
-    return ret
-__all__.append('south')
+    return [Coord(piece.coord.x, i) for i in xrange(piece.coord.y-1, -1, -1)]
 
 @call_trace(9)
 @integer_args
 def east(piece):
-    x = piece.coord.x
-    y = piece.coord.y
-    ret = []
-    for i in range(x+1, grid_width):
-        ret.append(Coord(i, y))
-    return ret
-__all__.append('east')
+    return [Coord(i, piece.coord.y) for i in xrange(piece.coord.x+1, grid_width)]
 
 @call_trace(9)
 @integer_args
 def west(piece):
-    x = piece.coord.x
-    y = piece.coord.y
-    ret = []
-    for i in range(x-1, -1, -1):
-        ret.append(Coord(i, y))
-    return ret
-__all__.append('west')
-
+    return [Coord(i, piece.coord.y) for i in xrange(piece.coord.x-1, -1, -1)]
+    
 @call_trace(9)
 @integer_args
 def ne(piece):
-    x = piece.coord.x
-    y = piece.coord.y
-    ret = []
     iterto = min(grid_width-x, grid_height-y)
-    for i in range(1, iterto):
-        ret.append(Coord(x+i, y+i))
-    return ret
-__all__.append('ne')
+    return [Coord(piece.coord.x+i, piece.coord.y+i) for i in xrange(1, iterto)]
 
 @call_trace(9)
 @integer_args
 def se(piece):
-    x = piece.coord.x
-    y = piece.coord.y
-    ret = []
-    iterto = min(grid_width-x, y)
-    for i in range(1, iterto+1):
-        ret.append(Coord(x+i, y-i))
-    return ret
-__all__.append('se')
+    iterto = min(grid_width-x, piece.coord.y)
+    return [Coord(piece.coord.x+i, piece.coord.y-i) for i in xrange(1, iterto+1)]
 
 @call_trace(9)
 @integer_args
 def nw(piece):
-    x = piece.coord.x
-    y = piece.coord.y
-    ret = []
-    iterto = min(x, grid_height-y)
-    for i in range(1, iterto+1):
-        ret.append(Coord(x-i, y+i))
-    return ret
-__all__.append('nw')
+    iterto = min(piece.coord.x, grid_height-y)
+    return [Coord(piece.coord.x-i, piece.coord.y+i) for i in xrange(1, iterto+1)]
 
 @call_trace(9)
 @integer_args
 def sw(piece):
-    x = piece.coord.x
-    y = piece.coord.y
-    ret = []
-    iterto = min(x, y)
-    for i in range(1, iterto+1):
-        ret.append(Coord(x-i, y-i))
-    return ret
-__all__.append('sw')
+    iterto = min(piece.coord.x, piece.coord.y)
+    return [Coord(piece.coord.x-i, piece.coord.y-i) for i in xrange(1, iterto+1)]
 
 @call_trace(9)
 @integer_args
@@ -130,7 +82,7 @@ def unknown(piece):
     known = join(north, south, east, west, ne, se, nw, sw)
     alltiles = piece.owner.board.tiles
     all = [tile.coord for tile in alltiles]
-    ret = [c for c in all if not c in known]
-    return ret
-__all__.append('unknown')
+    return [c for c in all if not c in known]
+
+__all__ = [func.__name__ for func in (north, south, east, west, ne, se, nw, sw, unknown)]
     
