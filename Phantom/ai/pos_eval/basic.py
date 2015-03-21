@@ -22,18 +22,9 @@
 from Phantom.ai.settings import scores, colors, king_material
 
 def pos_eval_basic(board):
-    score = 0
-    for piece in board.pieces:
-        piecescore = scores[piece.ptype] * colors[piece.color.color]
-        score += piecescore
-    return score
+    return sum(scores[p.ptype] * colors[p.color.color]
+                  for p in board.pieces)
 
 def pos_material(board):
-    score = 0
-    for piece in board.pieces:
-        if piece.ptype == 'king':
-            score += king_material
-        else:
-            score += scores[piece.ptype]
-    return score
-
+    return sum(king_material if p.ptype == 'king' else scores[p.ptype]
+                  for p in board.pieces)
