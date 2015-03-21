@@ -29,9 +29,8 @@ def dirfinder(piece, target):
     """Locate the direction in which the target lies and return a 2-tuple of:
         (the string of the direction,
          the function that gives it)"""
-    ret = ('unknown', lambda p: [0])
     for func in (north, south, east, west, ne, nw, se, sw):
         if target in func(piece):
-            ret = (func.__name__, func)
-    return ret
+            return (func.__name__, func)
+    return ('unknown', lambda p: [0])
 __all__.append('dirfinder')
