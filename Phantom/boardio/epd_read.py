@@ -96,7 +96,7 @@ from Phantom.core.pieces import ChessPiece
 from Phantom.core.board import Board
 from Phantom.core.players import Side
 from Phantom.constants import default_halfmove, default_fullmove, save_epd, phantom_dir
-import re
+#import re
 
 opcodes = {
 'acn'         : 'analysis count nodes',
@@ -124,47 +124,32 @@ opcodes = {
 'tcri'        : 'telecommunication reciever identification',
 'tcsi'        : 'telecommunication sender identification',}
 
+def valid_lines_from_file(file_path):
+    with open(file_path) as in_file:
+        return [line.strip() for line in in_file.readlines()
+                if line.strip() and line.strip()[0] != '#']
+
 def _load_name(name):
     import os
-    read = os.path.join(phantom_dir, 'boardio', save_epd)
-    with open(read, 'r') as f:
-        lines = f.readlines()
     ret = None
-    for line in lines:
-        line = line.strip()
-        print line
-        if (line == '') or (line[0] == '#'):
-            pass
-        else:
-            split = line.index(':')
-            lname = line[:split]
-            val = line[split+1:].strip()
-            if lname == name:
-                ret = val
+    file_path = os.path.join(phantom_dir, 'boardio', save_epd)
+    for line in valid_lines_from_file(file_path):
+        lname, _, val = line.partition(':')
+        if lname.strip() == name:
+                    ret = val.strip()
     return ret
 
 def listgames():
     import os
-    read = os.path.join(phantom_dir, 'boardio', save_epd)
-    with open(read, 'r') as f:
-        lines = f.readlines()
-    ret = []
-    for line in lines:
-        line = line.strip()
-        if (line[0] == '#') or (line == ''):
-            continue
-        ret.append(line[:line.index(':')])
-    return ret
+    file_path = os.path.join(phantom_dir, 'boardio', save_epd)
+    return [line.partition(':')[0].strip() for line in valid_lines_from_file(file_path)]
 
 def load_epd(string):
     """Load an EPD from a string and return a board with namespace variables set accordingly."""
     halfmove = str(default_halfmove)
     fullmove = str(default_fullmove)
     fields = string.split()
-    layout = fields[0]
-    moving = fields[1]
-    castling_rights = fields[2]
-    en_passant_rights = fields[3]
+    layout, moving, castling_rights, en_passant_rights = fields[:4]
     operations = ' '.join(fields[4:])
     op_fields = operations.split(';')[:-1]  # remove last '' element
     fen = ' '.join([layout, moving, castling_rights, en_passant_rights, halfmove, fullmove])
@@ -189,42 +174,18 @@ def load_epd(string):
 def load_test_string(name):
     from Phantom.constants import test_suite
     import os
-    read = os.path.join(phantom_dir, 'boardio', test_suite)
-    with open(read, 'r') as f:
-        lines = f.readlines()
-    ret = None
-    for line in lines:
-        line = line.strip()
-        if (line == '') or (line[0] == '#'):
-            continue
-        else:
-            split = line.index(':')
-            lname = line[:split]
-            if lname == name:
-                ret = line[split+1:].strip()
-                break
-    return ret
+    file_path = os.path.join(phantom_dir, 'boardio', test_suite)
+    for line in valid_lines_from_file(file_path):
+        lname, _, val = line.partition(':')
+        if lname.strip() == name:
+            return val.strip()
 
 def load_test(name):
     """Load a test from the self-test suite."""
-    epd = load_test_string(name)
-    b = load_epd(epd)
-    return b
+    return load_epd(load_test_string(name))
 
 def list_tests():
     from Phantom.constants import test_suite
     import os
-    read = os.path.join(phantom_dir, 'boardio', test_suite)
-    with open(read, 'r') as f:
-        lines = f.readlines()
-    ret = []
-    for line in lines:
-        line = line.strip()
-        if (line == '') or (line[0] == '#'):
-            continue
-        else:
-            split = line.index(':')
-            name = line[:split]
-            ret.append(name)
-    return ret
-
+    file_path = os.path.join(phantom_dir, 'boardio', test_suite)
+    return [line.partition(':')[0].strip() for line in valid_lines_from_file(file_path)]
