@@ -46,56 +46,55 @@ I'm not going to document the reasoning for each of these rules -- they should b
 locatable on the internet.
 """ 
 
+import string
 from Phantom.ai.phases import Phase
 from Phantom.core.coord.point import Coord
 from Phantom.constants import *
 from Phantom.utils.debug import call_trace, log_msg
 
-board_north_edge = [Coord(x, 7) for x in range(grid_width)]
-board_south_edge = [Coord(x, 0) for x in range(grid_width)]
-board_east_edge = [Coord(7, y) for y in range(grid_height)]
-board_west_edge = [Coord(0, y) for y in range(grid_height)]
+board_north_edge = [Coord(x, 7) for x in xrange(grid_width)]
+board_south_edge = [Coord(x, 0) for x in xrange(grid_width)]
+board_east_edge  = [Coord(7, y) for y in xrange(grid_height)]
+board_west_edge  = [Coord(0, y) for y in xrange(grid_height)]
 board_rim = board_north_edge + board_south_edge + board_east_edge + board_west_edge
 
 files = dict(
-a = [Coord(0, y) for y in range(grid_height)],
-b = [Coord(1, y) for y in range(grid_height)],
-c = [Coord(2, y) for y in range(grid_height)],
-d = [Coord(3, y) for y in range(grid_height)],
-e = [Coord(4, y) for y in range(grid_height)],
-f = [Coord(5, y) for y in range(grid_height)],
-g = [Coord(6, y) for y in range(grid_height)],
-h = [Coord(7, y) for y in range(grid_height)],
+a = [Coord(0, y) for y in xrange(grid_height)],
+b = [Coord(1, y) for y in xrange(grid_height)],
+c = [Coord(2, y) for y in xrange(grid_height)],
+d = [Coord(3, y) for y in xrange(grid_height)],
+e = [Coord(4, y) for y in xrange(grid_height)],
+f = [Coord(5, y) for y in xrange(grid_height)],
+g = [Coord(6, y) for y in xrange(grid_height)],
+h = [Coord(7, y) for y in xrange(grid_height)],
 )
+#the following dict comprehension is equivalent and faster but not as easy to understand
+#filez = {string.lowercase[i]:[Coord(i, y) for y in xrange(grid_height)]
+#         for i in xrange(grid_width)}
+#assert files == filez, '{}\n{}'.format(files, filez)
 
 all_rules = []
 
 @call_trace(3)
+def get_piece_list(board, ptype=None, color=None):
+    pieces = [p for p in board.pieces if p.ptype == ptype] if ptype else board.pieces
+    return [p for p in pieces if p.color == color] if color else pieces 
+    
+@call_trace(3)
 def knight_on_edge(board):
     from Phantom.ai.settings import knight_on_edge_score
-    score = 0
-    for piece in board.pieces:
-        if piece.ptype == 'knight':
-            if piece.coord in board_east_edge + board_west_edge:
-                if piece.color == 'white':
-                    score += knight_on_edge_score
-                else:
-                    score -= knight_on_edge_score
-    return score
+    east_west_edges = board_east_edge + board_west_edge
+    return sum(knight_on_edge_score * 1 if p.color == 'white' else -1
+               for p in get_piece_list(board, ptype='knight')
+               if p.coord in east_west_edges)
 # this is left out for the more advanced & precise assess_knights()
 #all_rules.append(knight_on_edge)
 
 @call_trace(3)
 def developed_pieces(board):
     from Phantom.ai.settings import developed_scores
-    score = 0
-    for piece in board.pieces:
-        if not piece.firstmove:
-            if piece.color == 'white':
-                score += developed_scores[piece.ptype]
-            else:
-                score -= developed_scores[piece.ptype]
-    return score
+    return sum(developed_scores[p.ptype] * 1 if p.color == 'white' else -1
+               for p in board.pieces if not p.firstmove)
 all_rules.append(developed_pieces)
 
 @call_trace(3)
@@ -103,18 +102,17 @@ def advanced_pawns(board):
     from Phantom.ai.settings import advanced_pawn_mul, promotable_bonus
     from Phantom.constants import grid_height
     score = 0
-    for piece in board.pieces:
-        if piece.ptype == 'pawn':
-            if piece.color == 'white':
-                if piece.coord.y >= 4:
-                    score += piece.coord.y * advanced_pawn_mul
-                if piece.is_promotable:
-                    score += promotable_bonus
-            elif piece.color == 'black':
-                if piece.coord.y <= 3:
-                    score -= (grid_height - piece.coord.y) * advanced_pawn_mul
-                if piece.is_promotable:
-                    score -= promotable_bonus
+    for piece in get_piece_list(board, ptype='pawn'):
+        if piece.color == 'white':
+            if piece.coord.y >= 4:
+                score += piece.coord.y * advanced_pawn_mul
+            if piece.is_promotable:
+                score += promotable_bonus
+        elif piece.color == 'black':
+            if piece.coord.y <= 3:
+                score -= (grid_height - piece.coord.y) * advanced_pawn_mul
+            if piece.is_promotable:
+                score -= promotable_bonus
     return score
 all_rules.append(advanced_pawns)
 
@@ -122,33 +120,19 @@ all_rules.append(advanced_pawns)
 def rate_kings(board):
     from Phantom.ai.settings import king_endgame
     from Phantom.ai.phases import Phase
-    score = 0
-    if Phase.analyze(board) == Phase.endgame:
-        for piece in board.pieces:
-            if piece.ptype == 'king':
-                if piece.color == 'white':
-                    score += king_endgame
-                elif piece.color == 'black':
-                    score -= king_endgame
-    return score
+    if Phase.analyze(board) != Phase.endgame:
+        return 0
+    return sum(king_endgame * 1 if p.color == 'white' else -1
+               for p in get_piece_list(board, ptype='king'))
 all_rules.append(rate_kings)
 
 @call_trace(3)
 def bishop_pair(board):
     from Phantom.ai.settings import bishop_pair_bonus
-    score = 0
-    num_white_bishops = num_black_bishops = 0
-    for piece in board.pieces:
-        if piece.ptype == 'bishop':
-            if piece.color == 'white':
-                num_white_bishops += 1
-            elif piece.color == 'black':
-                num_black_bishops += 1
-    if num_white_bishops >= 2:
-        score += bishop_pair_bonus
-    if num_black_bishops >= 2:
-        score -= bishop_pair_bonus
-    return score
+    white_bishops = get_piece_list(board, ptype='bishop', color='white')
+    black_bishops = get_piece_list(board, ptype='bishop', color='black')
+    return (bishop_pair_bonus if len(white_bishops) >= 2 else 0
+          - bishop_pair_bonus if len(black_bishops) >= 2 else 0)
 all_rules.append(bishop_pair)
 
 @call_trace(3)
@@ -158,29 +142,25 @@ def has_castled(board):
     def sides_castled():
         ret = ['white', 'black']
         castle = board.castling_rights
-        if ('K' in castle) or ('Q' in castle):
+        if 'K' in castle or 'Q' in castle:
             ret.remove('white')
-        if ('k' in castle) or ('q' in castle):
+        if 'k' in castle or 'q' in castle:
             ret.remove('black')
         return ret
     score = 0
     castled = sides_castled()
-    phase = Phase.analyze(board)
-    if phase == Phase.opening:
+    if 'white' in castled or 'black' in castled:
+        phase = Phase.analyze(board)
+        if phase == Phase.opening:
+            bonus = castle_opening_bonus
+        elif phase == Phase.midgame:
+            bonus = castle_midgame_bonus
+        elif phase == Phase.endgame:
+            bonus = castle_endgame_bonus
         if 'white' in castled:
-            score += castle_opening_bonus
+            score += bonus
         if 'black' in castled:
-            score -= castle_opening_bonus
-    elif phase == Phase.midgame:
-        if 'white' in castled:
-            score += castle_midgame_bonus
-        if 'black' in castled:
-            score -= castle_midgame_bonus
-    elif phase == Phase.endgame:
-        if 'white' in castled:
-            score += castle_endgame_bonus
-        if 'black' in castled:
-            score -= castle_endgame_bonus
+            score -= bonus
     return score
 all_rules.append(has_castled)
 
@@ -190,14 +170,9 @@ def pawn_structure(board):
     from Phantom.ai.settings import (doubled_pawn, tripled_pawn, isolated_pawn,
                                      pawn_ram, eight_pawns, passed_pawn)
     from Phantom.core.coord.point import Coord
-    white_pawns = black_pawns = []
-    for piece in board.pieces:
-        if piece.ptype == 'pawn':
-            if piece.color == 'white':
-                white_pawns.append(piece)
-            elif piece.color == 'black':
-                black_pawns.append(piece)
-    pawns = white_pawns + black_pawns
+    pawns       = get_piece_list(board, ptype='pawn')
+    white_pawns = [p for p in pawns if p.color == 'white']
+    black_pawns = [p for p in pawns if p.color == 'black']
     
     log_msg('pawn_structure: counting pawns...', 5)
     if len(white_pawns) == 8:
@@ -207,12 +182,8 @@ def pawn_structure(board):
     log_msg('pawn_structure: finished pawn count score={}'.format(score), 5)
     
     log_msg('pawn_structure: analyzing passed pawns...', 5)
-    for pawn in white_pawns:
-        if pawn.coord.y >= 5:
-            score += passed_pawn
-    for pawn in black_pawns:
-        if pawn.coord.y <= 2:
-            score -= passed_pawn
+    score += passed_pawn * [pawn for pawn in white_pawns if pawn.coord.y >= 5]
+    score -= passed_pawn * [pawn for pawn in black_pawns if pawn.coord.y <= 2]
     log_msg('pawn_structure: finished passed pawns score={}'.format(score), 5)
     
     log_msg('pawn_structure: analyzing doubled pawns...', 5)
@@ -220,20 +191,22 @@ def pawn_structure(board):
         xf = files[pawn.coord.as_chess()[0]]
         for c in xf:
             p = pawn.owner.board[c]
-            if (p is None) or (p is pawn):
-                continue
-            if (p.ptype == 'pawn') and (p.color == 'white'):
-                if p.coord.y == (pawn.coord.y - 1):
-                    score += doubled_pawn
+            if (p
+            and p is pawn
+            and p.ptype == 'pawn'
+            and p.color == 'white'
+            and p.coord.y == (pawn.coord.y - 1)):
+                score += doubled_pawn
     for pawn in black_pawns:
         xf = files[pawn.coord.as_chess()[0]]
         for c in xf:
             p = pawn.owner.board[c]
-            if (p is None) or (p is pawn):
-                continue
-            if (p.ptype == 'pawn') and (p.color == 'black'):
-                if p.coord.y == (pawn.coord.y - 1):
-                    score += doubled_pawn
+            if (p
+            and p is not pawn
+            and p.ptype == 'pawn'
+            and p.color == 'black'
+            and p.coord.y == (pawn.coord.y - 1)):
+                score += doubled_pawn  # CCC: should this be minus instead of plus?!?
     log_msg('pawn_structure: finished doubled pawns score={}'.format(score), 5)
 
     log_msg('pawn_structure: analyzing isolated pawns...', 5)
@@ -244,7 +217,7 @@ def pawn_structure(board):
         p_c, iso = pawn.coord, True
         for test in tests:
             t_c = p_c + test
-            if board[t_c] is not None:
+            if board[t_c]:
                 iso = False
                 break
         if iso:
@@ -262,10 +235,7 @@ all_rules.append(pawn_structure)
 @call_trace(3)
 def mobility(board):
     from Phantom.ai.settings import mobility_mul, colors
-    score = 0
-    for piece in board.pieces:
-        score += (mobility_mul * len(piece.valid())) * colors[piece.color.color]
-    return score
+    return sum(mobility_mul * len(p.valid()) * colors[p.color.color] for p in board.pieces)
 # too slow, can take up to 5 minutes in some situations
 #all_rules.append(mobility)
 
@@ -273,24 +243,14 @@ def mobility(board):
 def bad_bishops(board):
     from Phantom.ai.settings import bad_bishop_mul, colors
     score = 0
-    white_pawns = black_pawns = []
-    white_bishops = black_bishops = []
-    for piece in board.pieces:
-        if piece.ptype == 'pawn':
-            if piece.color == 'white':
-                white_pawns.append(piece)
-            elif piece.color == 'black':
-                white_pawns.append(piece)
-        elif piece.ptype == 'bishop':
-            if piece.color == 'white':
-                white_bishops.append(piece)
-            elif piece.color == 'black':
-                black_bishops.append(piece)
-    for bishop in white_bishops:
+    white_pawns = get_piece_list(board, ptype='pawn',   color='white')
+    for bishop in get_piece_list(board, ptype='bishop', color='white'):
         tc = board.tile_at(bishop.coord).color
         same_color = [pawn for pawn in white_pawns if board.tile_at(pawn.coord).color == tc]
         score += (bad_bishop_mul * len(same_color)) * colors['white']
-    for bishop in black_bishops:
+
+    black_pawns = get_piece_list(board, ptype='pawn',   color='black')
+    for bishop in get_piece_list(board, ptype='bishop', color='black'):
         tc = board.tile_at(bishop.coord).color
         same_color = [pawn for pawn in black_pawns if board.tile_at(pawn.coord).color == tc]
         score += (bad_bishop_mul * len(same_color)) * colors['black']
@@ -303,13 +263,12 @@ def pawn_assess(board):
     from Phantom.ai.pos_eval.piece_tables import white_pawns, black_pawns
     from Phantom.constants import grid_height
     score = 0
-    for piece in board.pieces:
+    for piece in get_piece_list(board, ptype='pawn'):
         x, y = piece.coord.x, (grid_height - piece.coord.y) - 1
-        if piece.ptype == 'pawn':
-            if piece.color == 'white':
-                score += white_pawns[y][x]
-            elif piece.color == 'black':
-                score += black_pawns[y][x]
+        if piece.color == 'white':
+            score += white_pawns[y][x]
+        elif piece.color == 'black':
+            score += black_pawns[y][x]
     return score
 all_rules.append(pawn_assess)
 
@@ -318,13 +277,12 @@ def knight_assess(board):
     from Phantom.ai.pos_eval.piece_tables import white_knights, black_knights
     from Phantom.constants import grid_height
     score = 0
-    for piece in board.pieces:
+    for piece in get_piece_list(board, ptype='knight'):
         x, y = piece.coord.x, (grid_height - piece.coord.y) - 1
-        if piece.ptype == 'knight':
-            if piece.color == 'white':
-                score += white_knights[y][x]
-            elif piece.color == 'black':
-                score += black_knights[y][x]
+        if piece.color == 'white':
+            score += white_knights[y][x]
+        elif piece.color == 'black':
+            score += black_knights[y][x]
     return score
 all_rules.append(knight_assess)
 
@@ -333,13 +291,12 @@ def bishop_assess(board):
     from Phantom.ai.pos_eval.piece_tables import white_bishops, black_bishops
     from Phantom.constants import grid_height
     score = 0
-    for piece in board.pieces:
+    for piece in get_piece_list(board, ptype='bishop'):
         x, y = piece.coord.x, (grid_height - piece.coord.y) - 1
-        if piece.ptype == 'bishop':
-            if piece.color == 'white':
-                score += white_bishops[y][x]
-            elif piece.color == 'black':
-                score += black_bishops[y][x]
+        if piece.color == 'white':
+            score += white_bishops[y][x]
+        elif piece.color == 'black':
+            score += black_bishops[y][x]
     return score
 all_rules.append(bishop_assess)
 
@@ -348,13 +305,12 @@ def rook_assess(board):
     from Phantom.ai.pos_eval.piece_tables import white_rooks, black_rooks
     from Phantom.constants import grid_height
     score = 0
-    for piece in board.pieces:
+    for piece in get_piece_list(board, ptype='rook'):
         x, y = piece.coord.x, (grid_height - piece.coord.y) - 1
-        if piece.ptype == 'rook':
-            if piece.color == 'white':
-                score += white_rooks[y][x]
-            elif piece.color == 'black':
-                score += black_rooks[y][x]
+        if piece.color == 'white':
+            score += white_rooks[y][x]
+        elif piece.color == 'black':
+            score += black_rooks[y][x]
     return score
 all_rules.append(rook_assess)
 
@@ -363,13 +319,12 @@ def queen_assess(board):
     from Phantom.ai.pos_eval.piece_tables import white_queens, black_queens
     from Phantom.constants import grid_height
     score = 0
-    for piece in board.pieces:
+    for piece in get_piece_list(board, ptype='queen'):
         x, y = piece.coord.x, (grid_height - piece.coord.y) - 1
-        if piece.ptype == 'queen':
-            if piece.color == 'white':
-                score += white_queens[y][x]
-            elif piece.color == 'black':
-                score += black_queens[y][x]
+        if piece.color == 'white':
+            score += white_queens[y][x]
+        elif piece.color == 'black':
+            score += black_queens[y][x]
     return score
 all_rules.append(queen_assess)
 
@@ -383,23 +338,20 @@ def king_assess(board):
     score = 0
     phase = Phase.analyze(board)
     if phase in (Phase.opening, Phase.midgame):
-        for piece in board.pieces:
+        for piece in get_piece_list(board, ptype='king'):
             x, y = piece.coord.x, (grid_height - piece.coord.y) - 1
-            if piece.ptype == 'king':
-                if piece.color == 'white':
-                    score += white_kings[y][x]
-                elif piece.color == 'black':
-                    score += black_kings[y][x]
+            if piece.color == 'white':
+                score += white_kings[y][x]
+            elif piece.color == 'black':
+                score += black_kings[y][x]
     elif phase == Phase.endgame:
-        for piece in board.pieces:
+        for piece in get_piece_list(board, ptype='king'):
             x, y = piece.coord.x, (grid_height - piece.coord.y) - 1
-            if piece.ptype == 'king':
-                if piece.color == 'white':
-                    score += white_kings_endgame[y][x]
-                elif piece.color == 'black':
-                    score += black_kings_endgame[y][x]
+            if piece.color == 'white':
+                score += white_kings_endgame[y][x]
+            elif piece.color == 'black':
+                score += black_kings_endgame[y][x]
     return score
 all_rules.append(king_assess)
 
 # ----------------------------------------end piece layout assessment-------------------------------------------------------
-
