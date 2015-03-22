@@ -158,6 +158,11 @@ class Board (PhantomObj):
     def __contains__(self, elem):
         return elem in self.pieces
     
+    #@call_trace(3)  # ccc: I am not sure what call_trace is needed here
+    def get_piece_list(self, ptype=None, color=None):
+        pieces = [p for p in self.pieces if p.ptype == ptype] if ptype else self.pieces
+        return [p for p in pieces if p.color == color] if color else pieces 
+
     @call_trace(4)
     def fen_str(self):
         rank_split = '/'
@@ -520,4 +525,3 @@ if __name__ == '__main__':
     b = Board()
     b.set_name('Chess')
     b.pprint()
-
