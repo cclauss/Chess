@@ -36,7 +36,7 @@ __all__ = []
 class ChessPiece (PhantomObj):
     
     allIsFrozen = False  # all piece level freeze
-    bounds = bounds  # ccc: this line does nothing!  Is it supposed to be: self.bounds = bounds
+    bounds = bounds
     
     # overwritten by subclasses
     ptype = None
@@ -74,6 +74,18 @@ class ChessPiece (PhantomObj):
         # by shortening the list it must iterate through
         self.subvalidcache = self.update_cache()
     
+    def __str__(self):
+        fmt = """    {}
+    Color: {}
+    Valid moves: {}
+    Is promotable: {}
+    This piece threatens: {}
+    This piece is threatened by: {}
+    """
+        valid = [c.as_chess() for c in self.valid()]
+        return fmt.format(repr(self), self.color.color, valid,
+                          self.promotable, self.threatens(), self.threatened_by())
+
     def __repr__(self):
         return '<{} at {} in {}>'.format(self.ptype, self.coord, hex(id(self)))
     
