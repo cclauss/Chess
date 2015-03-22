@@ -36,11 +36,8 @@ import sys
 class Namespace (PhantomObj): 
     
     def __getitem__(self, i):
-        if hasattr(self, i):
-            return getattr(self, i)
-        else:
-            return None
-    
+        return getattr(self, i, None)
+
     def __setitem__(self, i, val):
         setattr(self, i, val)
     
@@ -49,12 +46,10 @@ class Namespace (PhantomObj):
     
     def copy_data_from(self, other):
         if not isinstance(other, self.__class__):
-            raise TypeError('Argument to copy_data_from must be {} instance, got {}'.format(
-                                                self.__class__.__name__,      type(other)))
-        
-        d = other.__dict__  # kinda dirty...oops...
-        for key in d:
-            self[key] = d[key]
+            fmt = 'Argument to copy_data_from must be {} instance, got {}'
+            raise TypeError(fmt.format(self.__class__.__name__, type(other)))
+        for key, value in other.__dict__.iteritems():
+            self[key] = value
 
 class Cfg (Namespace, PhantomObj):
     
@@ -81,4 +76,3 @@ class Cfg (Namespace, PhantomObj):
 
     def set_game(self, g):
         self.game = g
-
