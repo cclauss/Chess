@@ -31,11 +31,7 @@ def dist(p1, p2):
 
 def round_down(x, place=1):
     val = math.trunc(x*place) / float(place)
-    if int(val) == val:
-        return int(val)
-    else:
-        return val
+    return int(val) if int(val) == val else val
 
 def round_up(x):
     return round_down(x) + 1
-
