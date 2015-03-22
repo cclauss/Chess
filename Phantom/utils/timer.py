@@ -53,12 +53,8 @@ class Timer (PhantomObj):
         self.pause_time = self.resume_time = None
     
     def get_total(self):
-        if self.stop_time is None:
-            return time.time() - self.start_time
-        else:
-            return self.stop_time - self.start_time
+        return (self.stop_time or time.time()) - self.start_time
     
     def get_run(self):
         totaltime = self.get_total()
         return totaltime - self.stopped_total
-
