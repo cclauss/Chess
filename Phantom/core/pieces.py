@@ -36,7 +36,7 @@ __all__ = []
 class ChessPiece (PhantomObj):
     
     allIsFrozen = False  # all piece level freeze
-    bounds = bounds  # ccc: this line does nothing!  Is it supposed to be: self.bounds = bounds
+    bounds = bounds
     
     # overwritten by subclasses
     ptype = None
@@ -156,7 +156,7 @@ class ChessPiece (PhantomObj):
     
     @staticmethod
     def type_from_chr(chr):
-        piece_dict = {'p' : Pawn, 'r' : Rook, 'n' : Knight, 'q' : Queen, 'k' : King}
+        piece_dict = {'p' : Pawn, 'r' : Rook, 'n' : Knight, 'b' : Bishop, 'q' : Queen, 'k' : King}
         return piece_dict.get(chr.lower(), None)
         
     @call_trace(3)
