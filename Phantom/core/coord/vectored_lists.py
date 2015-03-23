@@ -51,19 +51,19 @@ def west(piece):
 @call_trace(9)
 @integer_args
 def ne(piece):
-    iterto = min(grid_width-x, grid_height-y)
+    iterto = min(grid_width-piece.coord.x, grid_height-piece.coord.y)
     return [Coord(piece.coord.x+i, piece.coord.y+i) for i in xrange(1, iterto)]
 
 @call_trace(9)
 @integer_args
 def se(piece):
-    iterto = min(grid_width-x, piece.coord.y)
+    iterto = min(grid_width-piece.coord.x, piece.coord.y)
     return [Coord(piece.coord.x+i, piece.coord.y-i) for i in xrange(1, iterto+1)]
 
 @call_trace(9)
 @integer_args
 def nw(piece):
-    iterto = min(piece.coord.x, grid_height-y)
+    iterto = min(piece.coord.x, grid_height-piece.coord.y)
     return [Coord(piece.coord.x-i, piece.coord.y+i) for i in xrange(1, iterto+1)]
 
 @call_trace(9)
