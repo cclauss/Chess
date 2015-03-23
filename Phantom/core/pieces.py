@@ -152,7 +152,7 @@ class ChessPiece (PhantomObj):
         path = dir[1](self)
         squares = path
         while len(squares) > dist_to:
-            squares.pop()
+            squares = squares[:-1]
         return squares
     
     @call_trace(2)
