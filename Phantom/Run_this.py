@@ -133,21 +133,7 @@ if __name__ == '__main__':
                 print "\tGetting information for {}...".format(user_in)
                 pos = Coord.from_chess(user_in)
                 piece = game.board[pos]
-                if piece is None:
-                    print "\tNo piece at {}".format(user_in)
-                    continue
-                valid = [c.as_chess() for c in piece.valid()]
-                promo = piece.is_promotable
-                threatens = piece.threatens()
-                threatened = piece.threatened_by()
-                s = """    Piece at {}: {}
-    Color: {}
-    Valid moves: {}
-    Is promotable: {}
-    This piece threatens: {}
-    This piece is threatened by: {}
-    """.format(pos.as_chess(), piece, piece.color.color, valid, promo, threatens, threatened)
-                print s
+                print(piece if piece else '\tNo piece at {}'.format(user_in))
             elif is_cmd(castle_re, user_in):
                 fields = user_in.split(' ')
                 game.castle(fields[1])
