@@ -168,7 +168,7 @@ class ChessPiece (PhantomObj):
     
     @staticmethod
     def type_from_chr(chr):
-        piece_dict = {'p' : Pawn, 'r' : Rook, 'n' : Knight, 'q' : Queen, 'k' : King}
+        piece_dict = {'p' : Pawn, 'r' : Rook, 'n' : Knight, 'b' : Bishop, 'q' : Queen, 'k' : King}
         return piece_dict.get(chr.lower(), None)
         
     @call_trace(3)
