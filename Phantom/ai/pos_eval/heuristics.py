@@ -182,8 +182,8 @@ def pawn_structure(board):
     log_msg('pawn_structure: finished pawn count score={}'.format(score), 5)
     
     log_msg('pawn_structure: analyzing passed pawns...', 5)
-    score += passed_pawn * [pawn for pawn in white_pawns if pawn.coord.y >= 5]
-    score -= passed_pawn * [pawn for pawn in black_pawns if pawn.coord.y <= 2]
+    score += passed_pawn * len([pawn for pawn in white_pawns if pawn.coord.y >= 5])
+    score -= passed_pawn * len([pawn for pawn in black_pawns if pawn.coord.y <= 2])
     log_msg('pawn_structure: finished passed pawns score={}'.format(score), 5)
     
     log_msg('pawn_structure: analyzing doubled pawns...', 5)
