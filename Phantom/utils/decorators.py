@@ -61,8 +61,8 @@ class exc_catch (object):
                         raise e
                     else:
                         if self.log:
-                            fmt = 'exc_catch: caught unpassed exception of type {}: {}'
-                            log_msg(fmt.format(e.__class__, e.message), self.log, err=True)
+                            fmt = 'exc_catch: caught an unpassed exception {}: {}'
+                            log_msg(fmt.format(e.__class__.__name__, e.message), self.log, err=True)
                         return retval
         
         return wrapped
