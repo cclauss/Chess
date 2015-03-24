@@ -1,3 +1,4 @@
+#!/usr/env/bin python
 # -*- coding: utf-8 -*-
 
 #########################################################################
@@ -133,7 +134,7 @@ if __name__ == '__main__':
                 print "\tGetting information for {}...".format(user_in)
                 pos = Coord.from_chess(user_in)
                 piece = game.board[pos]
-                print(piece if piece else '\tNo piece at {}'.format(user_in))
+                print(piece.as_str() if piece else '\tNo piece at {}'.format(user_in))
             elif is_cmd(castle_re, user_in):
                 fields = user_in.split(' ')
                 game.castle(fields[1])
