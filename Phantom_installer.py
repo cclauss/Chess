@@ -6,6 +6,7 @@ Run this file to download PhantomChess to the current working directory and inst
 print('=' * 31)
 
 import os
+import platform
 import shutil
 import sys
 import urllib
@@ -44,4 +45,19 @@ except:
 shutil.copytree(os.path.join(master_name, module_name), module_name)
 shutil.rmtree(master_name)
 os.remove(zip_filename)
+
+def unix_chmod_plus_x(filepath= 'Phantom/Run_this.py'):
+    platform_sys = platform.system()
+    if ((platform_sys == 'Darwin' and platform.machine().startswith('iP'))  # on iOS
+      or platform_sys in ('Windows', 'Java')):                              # not on unix
+        return 
+    try:
+        import stat
+        plus_x = os.stat(filepath).st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH
+        os.chmod(filepath, plus_x)
+        fmt = 'To run {} from the command line, type: {}'
+        print(fmt.format(module_name, filepath))
+    except ImportError:
+        pass
+unix_chmod_plus_x(module_name + '/Run_this.py')
 print('Done! {}'.format('=' * 25))
