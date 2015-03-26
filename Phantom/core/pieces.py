@@ -75,7 +75,7 @@ class ChessPiece (PhantomObj):
         self.subvalidcache = self.update_cache()
     
     #def __str__(self):  # disable ChessPiece.__str__() for now because it causes loops
-    def as_str(self)#
+    def as_str(self):
         fmt = """    {}
     Color: {}
     Valid moves: {}
