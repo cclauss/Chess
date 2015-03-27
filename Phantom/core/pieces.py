@@ -189,7 +189,7 @@ class ChessPiece (PhantomObj):
     
     @call_trace(4)
     def update_cache(self):
-        return [tile for tile in self.owner.board.tiles if self.apply_ruleset(tile.coord)]
+        return [tile.coord for tile in self.owner.board.tiles if self.apply_ruleset(tile.coord)]
         
 __all__.append('ChessPiece')
 
