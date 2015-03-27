@@ -53,6 +53,8 @@ class exc_catch (object):
             try:
                 f(*args, **kwargs)
             except Exception as e:
+                #import traceback  # uncomment these two lines when looking for hard to find bugs
+                #traceback.print_exc()  # prints a full stack trace
                 if e.__class__.__name__ in self.passes:
                     return f(*args, **kwargs)
             finally:
@@ -61,8 +63,8 @@ class exc_catch (object):
                         raise e
                     else:
                         if self.log:
-                            fmt = 'exc_catch: caught unpassed exception of type {}: {}'
-                            log_msg(fmt.format(e.__class__, e.message), self.log, err=True)
+                            fmt = 'exc_catch: caught an unpassed exception - {}:\n    {}'
+                            log_msg(fmt.format(e.__class__.__name__, e.message), self.log, err=True)
                         return retval
         
         return wrapped
