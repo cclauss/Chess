@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 #########################################################################
@@ -26,21 +27,22 @@ from Phantom.core.coord.point import Coord
 from Phantom.boardio.epd_read import load_test
 
 game = ChessGame()
-print "PhantomChess Copyright (C) 2015 671620616"
-print "This program comes with ABSOLUTELY NO WARRANTY; for details enter license"
-print "This is free software, and you are welcome to redistribute it"
-print "under certain conditions; type license for details."
-print
-print "Your game can be displayed by typing 'game'"
-print "To move, type 'e2e4' or similar."
-print "To execute a function, simply type the function as you normally would."
-print "To exit, type 'quit' or close the program."
-print "For a full list of commands, type 'help'."
+print """PhantomChess Copyright (C) 2015 671620616
+This program comes with ABSOLUTELY NO WARRANTY; for details enter 'license'
+This is free software, and you are welcome to redistribute it
+under certain conditions; type 'license' for details.
+
+Your game can be displayed by typing 'game'
+To move, type 'e2e4' or similar.
+To execute a function, simply type the function as you normally would.
+To exit, type 'quit' or close the program.
+For a full list of commands, type 'help'."""
 
 print game
 
 if __name__ == '__main__':
     import re
+    move_re = coord_re = valid_filename_re = None  # will be created just in time
     help_str = """
     e2e4                  Move a piece from e2 to e4
     e2                    Get information about the piece at e2
@@ -72,79 +74,101 @@ if __name__ == '__main__':
         hard              Make a smart move
         rate              Get an integer representing the positional score of the board
     """
-    move_re = re.compile(r'[a-h][1-8][a-h][1-8]')
-    coord_re = re.compile(r'[a-h][1-8]')
-    save_re = re.compile(r'save [a-zA-Z0-9\x20]+')
-    load_re = re.compile(r'load [a-zA-Z0-9\x20]+')
-    game_re = re.compile(r'game')
-    quit_re = re.compile(r'quit')
-    gui_re = re.compile(r'gui')
-    help_re = re.compile(r'help')
-    saves_re = re.compile(r'saves')
-    rst_re = re.compile(r'reset')
-    aieasy_re = re.compile(r'ai easy')
-    aihard_re = re.compile(r'ai hard')
-    airate_re = re.compile(r'ai rate')
-    license_re = re.compile(r'license')
-    castle_re = re.compile(r'castle [KQkq]')
-    promote_re = re.compile(r'promote [QRBN]')
+
     def is_cmd(pattern, user):
         finds = pattern.findall(user)
         return finds and finds[0] == user
+
+    def is_valid_filename(filename):
+        global valid_filename_re
+        valid_filename_re = valid_filename_re or re.compile(r'[a-zA-Z0-9_\x20]+')  # just in time
+        return is_cmd(valid_filename_re, filename)
+
+    def ai_command(command):
+        if command == 'easy':
+            game.ai_easy()
+            return game
+        elif command == 'hard':
+            game.ai_hard()
+            return game
+        elif command == 'rate':
+            from Phantom.ai.pos_eval.advanced import pos_eval_advanced
+            return pos_eval_advanced(game.board)
+        else:
+            return 'Valid "ai" commands are "easy", "hard", and "rate".'
+    
+    def is_text_command(user_in):
+        global game, valid_filename_re
+        cmd_parts = user_in.split()
+        if (not cmd_parts):
+            return False
+        cmd = cmd_parts[0].lower()
+        if not cmd in 'ai castle game gui help license load promote reset save saves'.split():
+            return False  # fast fail
+        modifier = cmd_parts[1] if len(cmd_parts) > 1 else ''  # some commands require a modifier
+        if cmd == 'ai':
+            print(str(ai_command(modifier.lower())))
+        elif cmd == 'castle':
+            if modifier.lower() in ('k', 'q'):
+                game.castle(modifier)
+            else:
+                print('"castel" must be followed by "K", "Q", "k", or "q".')
+        elif cmd == 'game':
+            print(game)
+        elif cmd == 'gui':
+            game.gui()
+        elif cmd == 'help':
+            print(help_str)
+        elif cmd == 'license':
+            print(license())
+        elif cmd == 'load':
+            filename = ' '.join(cmd_parts[1:])
+            if is_valid_filename(filename):
+                from Phantom.core.game_class import loadgame
+                game = loadgame(filename)
+                print(game)
+            else:
+                print(filename + ' is not a valid filename.')
+        elif cmd == 'promote':
+            game.promote(cmd_parts[1], cmd_parts[2])
+        elif cmd == 'reset':
+            game = ChessGame()
+            print game
+        elif cmd == 'save':
+            filename = ' '.join(cmd_parts[1:])
+            if is_valid_filename(filename):
+                game.board.save(filename)
+            else:
+                print(filename + ' is not a valid filename.')
+        elif cmd == 'saves':
+            from Phantom.boardio.load import listgames
+            print '\n'.join('{:>3} {}'.format(i+1, game_name)
+                       for i, game_name in enumerate(sorted(listgames())))
+        else:
+            assert False, 'This should never happen.'
+        return True
+
     running = True
     while running:
         user_in = raw_input(':> ').strip()
-        try:
-            if '(' in user_in or ')' in user_in:
-                # assume a function was called
-                exec user_in
-            elif is_cmd(game_re, user_in):
-                print game
-            elif is_cmd(quit_re, user_in):
-                running = False
-                break
-            elif is_cmd(save_re, user_in):
-                game.board.save(' '.join(user_in.split()[1:]))
-            elif is_cmd(load_re, user_in):
-                from Phantom.core.game_class import loadgame
-                game = loadgame(' '.join(user_in.split()[1:]))
-            elif is_cmd(gui_re, user_in):
-                game.gui()
-            elif is_cmd(help_re, user_in):
-                print help_str
-            elif is_cmd(saves_re, user_in):
-                from Phantom.boardio.load import listgames
-                print listgames()
-            elif is_cmd(rst_re, user_in):
-                game = ChessGame()
-                print game
-            elif is_cmd(aieasy_re, user_in):
-                game.ai_easy()
-                print game
-            elif is_cmd(aihard_re, user_in):
-                game.ai_hard()
-                print game
-            elif is_cmd(airate_re, user_in):
-                from Phantom.ai.pos_eval.advanced import pos_eval_advanced
-                print pos_eval_advanced(game.board)
-            elif is_cmd(license_re, user_in):
-                print license()
-            elif is_cmd(coord_re, user_in):
+        if not user_in:
+            continue
+        if user_in.split()[0].lower() in ('quit', 'exit'):
+            running = False
+        elif '(' in user_in and ')' in user_in:
+            # assume a function was called
+            exec user_in
+        elif not is_text_command(user_in):
+            coord_re = coord_re or re.compile(r'[a-h][1-8]')  # just in time
+            if is_cmd(coord_re, user_in):
                 print "\tGetting information for {}...".format(user_in)
                 pos = Coord.from_chess(user_in)
                 piece = game.board[pos]
                 print(piece if piece else '\tNo piece at {}'.format(user_in))
-            elif is_cmd(castle_re, user_in):
-                fields = user_in.split(' ')
-                game.castle(fields[1])
-            elif is_cmd(promote_re, user_in):
-                fields = user_in.split(' ')
-                game.promote(fields[1], fields[2])
             else:
                 # assume a move, like "e2e4"
+                move_re = move_re or re.compile(r'[a-h][1-8][a-h][1-8]')  # just in time
                 if is_cmd(move_re, user_in):
                     # is definitely a move
                     game.move(user_in)
                     print game
-        except Exception as e:
-            print "exception: {}".format(e)
