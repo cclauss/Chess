@@ -79,7 +79,7 @@ all_rules = []
 def knight_on_edge(board):
     from Phantom.ai.settings import knight_on_edge_score
     east_west_edges = board_east_edge + board_west_edge
-    return sum(knight_on_edge_score * 1 if p.color == 'white' else -1
+    return sum(knight_on_edge_score * (1 if p.color == 'white' else -1)
                for p in board.get_piece_list(ptype='knight')
                if p.coord in east_west_edges)
 # this is left out for the more advanced & precise assess_knights()
@@ -88,7 +88,7 @@ def knight_on_edge(board):
 @call_trace(3)
 def developed_pieces(board):
     from Phantom.ai.settings import developed_scores
-    return sum(developed_scores[p.ptype] * 1 if p.color == 'white' else -1
+    return sum(developed_scores[p.ptype] * (1 if p.color == 'white' else -1)
                for p in board.pieces if not p.firstmove)
 all_rules.append(developed_pieces)
 
@@ -117,7 +117,7 @@ def rate_kings(board):
     from Phantom.ai.phases import Phase
     if Phase.analyze(board) != Phase.endgame:
         return 0
-    return sum(king_endgame * 1 if p.color == 'white' else -1
+    return sum(king_endgame * (1 if p.color == 'white' else -1)
                for p in board.get_piece_list(ptype='king'))
 all_rules.append(rate_kings)
 
